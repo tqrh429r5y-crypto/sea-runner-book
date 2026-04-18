@@ -38,16 +38,29 @@ function SeaRunnerLogo({ size = 'md' }) {
   );
 }
 
-// Logo version for dark backgrounds (header/footer)
+// Logo ufficiale Sea Runner
 function SeaRunnerLogoCompact({ size = 'sm' }) {
-  const sizes = { sm: 32, md: 48 };
+  const sizes = { sm: 50, md: 80 };
   const s = sizes[size];
   return (
-    <svg width={s} height={s * 0.5} viewBox="0 0 200 100">
-      <path d="M 20,40 Q 60,15 100,35 Q 140,20 180,35" stroke="#60a5fa" strokeWidth="10" fill="none" strokeLinecap="round"/>
-      <path d="M 25,55 Q 65,30 105,50 Q 145,35 180,50" stroke="#3b82f6" strokeWidth="9" fill="none" strokeLinecap="round"/>
-      <path d="M 110,48 Q 140,40 170,48" stroke="#fbbf24" strokeWidth="7" fill="none" strokeLinecap="round"/>
-    </svg>
+    <img 
+      src="https://i.postimg.cc/kGkzJwgs/LOGO-NUOVO.png"
+      alt="Sea Runner"
+      style={{ 
+        height: s, 
+        width: 'auto', 
+        objectFit: 'contain',
+        mixBlendMode: 'lighten'
+      }}
+      onError={(e) => {
+        // Fallback SVG se l'immagine non carica
+        e.target.outerHTML = `<svg width="${s*2}" height="${s}" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 20,40 Q 60,15 100,35 Q 140,20 180,35" stroke="#60a5fa" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M 25,55 Q 65,30 105,50 Q 145,35 180,50" stroke="#3b82f6" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M 110,48 Q 140,40 170,48" stroke="#fbbf24" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </svg>`;
+      }}
+    />
   );
 }
 
@@ -56,44 +69,45 @@ function TourCardImage({ tour }) {
   // Se il tour ha un'immagine reale, la mostriamo a schermo intero
   if (tour.cardImage) {
     return (
-      <div className="relative overflow-hidden" style={{ 
+      <div className="relative overflow-hidden flex items-center justify-center" style={{ 
         backgroundColor: tour.brandColor, 
         aspectRatio: '1/1',
-        maxHeight: '320px'
+        width: '100%'
       }}>
         <img 
           src={tour.cardImage} 
           alt={tour.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full"
+          style={{ 
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
+          loading="lazy"
           onError={(e) => { 
             e.target.style.display = 'none';
           }}
         />
-        {/* Fallback nascosto dietro se l'immagine non carica */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 pointer-events-none" style={{ zIndex: -1 }}>
-          <p className="text-white/60 text-sm italic mb-2" style={{ fontFamily: 'Georgia, serif' }}>{tour.subtitle}</p>
-          <h3 className="text-white text-4xl text-center" style={{ fontFamily: '"Brush Script MT", cursive' }}>{tour.name}</h3>
-        </div>
       </div>
     );
   }
   
   // Fallback: illustrazione SVG per tour senza immagine (Portofino, Custom)
   return (
-    <div className="relative overflow-hidden" style={{ 
+    <div className="relative overflow-hidden flex flex-col" style={{ 
       backgroundColor: tour.brandColor, 
-      height: '200px'
+      aspectRatio: '1/1',
+      width: '100%'
     }}>
-      <div className="relative pt-4 px-4 text-center z-10">
-        <p className="text-white/80 text-[11px] italic mb-0.5" style={{ fontFamily: 'Georgia, serif' }}>{tour.subtitle}</p>
-        <h3 className="text-white text-2xl leading-tight" style={{ 
+      <div className="relative pt-6 px-4 text-center z-10">
+        <p className="text-white/80 text-xs italic mb-1" style={{ fontFamily: 'Georgia, serif' }}>{tour.subtitle}</p>
+        <h3 className="text-white text-3xl leading-tight" style={{ 
           fontFamily: '"Brush Script MT", "Lucida Handwriting", cursive',
           fontWeight: 'normal',
           letterSpacing: '0.02em'
         }}>{tour.name}</h3>
       </div>
       
-      <div className="px-4 mt-2 grid grid-cols-3 gap-1.5">
+      <div className="px-4 mt-4 grid grid-cols-3 gap-2 flex-1">
         {[0, 1, 2].map((i) => (
           <div key={i} className="aspect-[3/4] rounded-sm overflow-hidden relative" style={{ backgroundColor: tour.illustrationBg || '#4a7ba8' }}>
             <svg viewBox="0 0 60 80" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -134,8 +148,8 @@ function TourCardImage({ tour }) {
         ))}
       </div>
       
-      <div className="absolute bottom-0 left-0 right-0 px-3 py-2 border-t border-white/20 bg-black/10">
-        <p className="text-white/90 text-[9px] text-center leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="px-3 py-3 border-t border-white/20 bg-black/10 mt-auto">
+        <p className="text-white/90 text-[10px] text-center leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
           {tour.itinerary.slice(0, 4).map(i => i.place).join(' • ')}
           {tour.itinerary.length > 4 && '...'}
         </p>
