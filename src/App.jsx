@@ -44,7 +44,7 @@ function SeaRunnerLogoCompact({ size = 'sm' }) {
   const s = sizes[size];
   return (
     <img 
-      src="/logo.png"
+      src="/logo-v2.png"
       alt="Sea Runner"
       style={{ 
         height: s, 
@@ -215,7 +215,7 @@ const initialTours = [
     brandColor: '#065f46',
     brandColorLight: '#e4f0ec',
     accent: '#6ee7b7',
-    cardImage: '/portofino.png',
+    cardImage: '/portofino-v2.png',
     mapImage: null,
     servicesImage: null,
     includedImage: null,
