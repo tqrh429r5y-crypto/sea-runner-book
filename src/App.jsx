@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Clock, Users, MapPin, Check, Anchor, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Camera, Fish, Edit2, Save, Euro, TrendingUp } from 'lucide-react';
 
 // ============ LOGO COMPONENT ============
@@ -156,10 +156,6 @@ const initialTours = [
     brandColorLight: '#e8edf4',
     accent: '#fbbf24',
     cardImage: '/cinque-terre-v2.png',
-    cardImage: 'https://i.postimg.cc/Xpn2qPST/5-Terre-1.png',
-    mapImage: 'https://i.postimg.cc/HVTSnN1D/5-Terre-3.png',
-    servicesImage: 'https://i.postimg.cc/Vdz7vhQx/5-Terre-2.png',
-    includedImage: 'https://i.postimg.cc/qzpmqFHf/5-Terre-4.png',
     shortDesc: 'UNESCO coastline from La Spezia to Monterosso.',
     longDesc: 'Cruise the entire UNESCO coastline passing all five iconic villages perched on dramatic cliffs. Swim in hidden coves, snorkel through the marine reserve with your guide, and savour a light Italian lunch with local wine as the colourful houses drift by.',
     timeSlots: ['10:30 – 17:30', '13:00 – 20:00'],
@@ -186,10 +182,6 @@ const initialTours = [
     brandColorLight: '#e6efef',
     accent: '#fbbf24',
     cardImage: '/golfo-poeti-v2.png',
-    cardImage: 'https://i.postimg.cc/fknqnL8P/Golfo-dei-Poeti-1.png',
-    mapImage: 'https://i.postimg.cc/WFR8vWw7/Golfo-dei-Poeti-3.png',
-    servicesImage: 'https://i.postimg.cc/Q9Lm34JH/Golfo-dei-Poeti-2.png',
-    includedImage: 'https://i.postimg.cc/k6rsm1vT/Golfo-dei-Poeti-4.png',
     shortDesc: 'The gulf that enchanted Byron, Shelley and D.H. Lawrence.',
     longDesc: 'Explore the gulf that enchanted Byron, Shelley and D.H. Lawrence. From Portovenere\'s medieval waterfront to the wild islands of Palmaria, Tino and Tinetto, then along the eastern shore through San Terenzo, elegant Lerici and the hidden gem of Tellaro.',
     timeSlots: ['10:30 – 17:30', '13:00 – 20:00'],
@@ -244,11 +236,6 @@ const initialTours = [
     brandColorLight: '#fdecd9',
     accent: '#fdba74',
     cardImage: '/sunset-v2.png',
-    cardImage: 'https://i.postimg.cc/9wmN6gWh/Sunset-1.png',
-    mapImage: 'https://i.postimg.cc/4nP06G53/Sunset-4.png',
-    mapImage2: 'https://i.postimg.cc/TpP4Qs7R/Sunset-5.png',
-    servicesImage: 'https://i.postimg.cc/H8YPqvpd/Sunset-2.png',
-    includedImage: 'https://i.postimg.cc/qg4Y6q2R/Sunset-3.png',
     shortDesc: 'The most romantic way to end the day.',
     longDesc: 'Watch the sun set over the Ligurian Sea as the coastline glows in shades of amber and rose. Sip an Italian aperitivo with local wines while the music plays softly. Choose between the Gulf of Poets route or a Cinque Terre sunset cruise.',
     timeSlots: ['17:30 – 21:00', '16:00 – 20:30'],
@@ -381,79 +368,7 @@ export default function SeaRunnerApp() {
   };
   const toggleAddOn = (id) => setSelectedAddOns(selectedAddOns.includes(id) ? selectedAddOns.filter(a => a !== id) : [...selectedAddOns, id]);
 
-  // ============ GOOGLE CALENDAR SYNC ============
-  const CALENDAR_ICS_URL = 'https://calendar.google.com/calendar/ical/searunnerprenotazioni%40gmail.com/public/basic.ics';
-  const [calendarBookedDates, setCalendarBookedDates] = useState([]);
-  const [calendarLoading, setCalendarLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCalendar = async () => {
-      try {
-        // Usiamo un proxy CORS gratuito per leggere il file iCal
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(CALENDAR_ICS_URL)}`;
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        const icsText = data.contents;
-
-        // Parse degli eventi iCal
-        const bookedDates = [];
-        const lines = icsText.split('\n');
-        let currentEventStart = null;
-        let currentEventEnd = null;
-        let inEvent = false;
-
-        for (let line of lines) {
-          line = line.trim();
-          if (line === 'BEGIN:VEVENT') {
-            inEvent = true;
-            currentEventStart = null;
-            currentEventEnd = null;
-          }
-          if (inEvent && line.startsWith('DTSTART')) {
-            // Gestisce sia date intere (DTSTART;VALUE=DATE:20260615) che datetime (DTSTART:20260615T...)
-            const dateStr = line.split(':').pop().trim().substring(0, 8);
-            currentEventStart = new Date(
-              parseInt(dateStr.substring(0, 4)),
-              parseInt(dateStr.substring(4, 6)) - 1,
-              parseInt(dateStr.substring(6, 8))
-            );
-          }
-          if (inEvent && line.startsWith('DTEND')) {
-            const dateStr = line.split(':').pop().trim().substring(0, 8);
-            currentEventEnd = new Date(
-              parseInt(dateStr.substring(0, 4)),
-              parseInt(dateStr.substring(4, 6)) - 1,
-              parseInt(dateStr.substring(6, 8))
-            );
-          }
-          if (line === 'END:VEVENT' && currentEventStart) {
-            // Aggiungi tutte le date tra start e end
-            const endDate = currentEventEnd || currentEventStart;
-            const d = new Date(currentEventStart);
-            while (d < endDate) {
-              bookedDates.push(d.toDateString());
-              d.setDate(d.getDate() + 1);
-            }
-            // Se evento di un solo giorno (start = end)
-            if (!currentEventEnd || currentEventStart.toDateString() === currentEventEnd.toDateString()) {
-              bookedDates.push(currentEventStart.toDateString());
-            }
-            inEvent = false;
-          }
-        }
-        setCalendarBookedDates([...new Set(bookedDates)]); // rimuove duplicati
-      } catch (error) {
-        console.error('Calendar sync error:', error);
-      } finally {
-        setCalendarLoading(false);
-      }
-    };
-
-    fetchCalendar();
-    // Aggiorna ogni 5 minuti
-    const interval = setInterval(fetchCalendar, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
+  // ============ EMAIL CONFIG ============
   // 🔧 CONFIGURAZIONE: Sostituisci con la tua chiave Web3Forms
   // Ottienila gratis su https://web3forms.com (ti ho guidato nella chat)
   const WEB3FORMS_KEY = '970b85ef-e255-4ada-8ecf-52673d5cecc5';
@@ -563,16 +478,13 @@ ${customerData.notes || 'No special requests'}
     for (let i = 1; i < 29; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const key = date.toISOString().split('T')[0];
-      const override = dateOverrides[key];
-      // Bloccato se: prenotazione confermata locale, override chiuso, O evento su Google Calendar
-      const isBookedLocally = bookings.some(b => b.date.toDateString() === date.toDateString() && b.status === 'confirmed');
-      const isBookedOnCalendar = calendarBookedDates.includes(date.toDateString());
+      const dateKey = date.toISOString().split('T')[0];
+      const override = dateOverrides[dateKey];
+      const isBooked = bookings.some(b => b.date.toDateString() === date.toDateString() && b.status === 'confirmed');
       const isClosed = override?.closed;
       dates.push({
-        date,
-        available: !isBookedLocally && !isBookedOnCalendar && !isClosed,
-        fromCalendar: isBookedOnCalendar, // utile per mostrare icona Google Calendar
+        date, 
+        available: !isBooked && !isClosed,
         dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
         dayNum: date.getDate(),
         monthName: date.toLocaleDateString('en-US', { month: 'short' })
@@ -1385,15 +1297,11 @@ ${customerData.notes || 'No special requests'}
           {/* CALENDAR & TIME */}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="bg-slate-900 border border-slate-800 p-6">
-              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2">
-                <Calendar className="w-3 h-3" /> SELECT DATE
-                {calendarLoading && <span className="text-slate-500 italic">syncing with Google Calendar...</span>}
-                {!calendarLoading && <span className="text-emerald-400 italic">● synced with Google Calendar</span>}
-              </p>
+              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Calendar className="w-3 h-3" /> SELECT DATE</p>
               <div className="grid grid-cols-7 gap-1">
                 {calendarDates.map((day, idx) => (
                   <button key={idx} onClick={() => day.available && setSelectedDate(day.date)} disabled={!day.available}
-                    className={`p-2 text-center transition relative ${
+                    className={`p-2 text-center transition ${
                       selectedDate?.toDateString() === day.date.toDateString() ? 'bg-amber-400 text-slate-950'
                       : day.available ? 'bg-slate-800 text-white hover:bg-slate-700'
                       : 'bg-slate-900 text-slate-700 cursor-not-allowed line-through'
@@ -1401,13 +1309,10 @@ ${customerData.notes || 'No special requests'}
                     <div className="text-[9px] tracking-wider">{day.dayName}</div>
                     <div className="text-lg">{day.dayNum}</div>
                     <div className="text-[9px]">{day.monthName}</div>
-                    {day.fromCalendar && !day.available && (
-                      <div className="text-[8px] text-red-400 mt-0.5">📅</div>
-                    )}
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-500 mt-3 tracking-wider">CROSSED OUT = UNAVAILABLE • 📅 = FROM GOOGLE CALENDAR</p>
+              <p className="text-[10px] text-slate-500 mt-3 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
             </div>
 
             <div className="space-y-6">
