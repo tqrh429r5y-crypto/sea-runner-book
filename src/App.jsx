@@ -373,7 +373,12 @@ export default function SeaRunnerApp() {
     setTempTourPrice('');
   };
 
-  const handleTourSelect = (tour) => { setSelectedTour(tour); setSelectedTimeSlot(tour.timeSlots[0]); setCurrentStep(2); };
+  const handleTourSelect = (tour) => { 
+    setSelectedTour(tour); 
+    setSelectedTimeSlot(tour.timeSlots[0]); 
+    setCurrentStep(2); 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const toggleAddOn = (id) => setSelectedAddOns(selectedAddOns.includes(id) ? selectedAddOns.filter(a => a !== id) : [...selectedAddOns, id]);
 
   // ============ EMAIL CONFIG ============
@@ -1229,7 +1234,7 @@ ${customerData.notes || 'No special requests'}
       {/* STEP 2 */}
       {currentStep === 2 && selectedTour && (
         <div className="max-w-5xl mx-auto px-4 py-12">
-          <button onClick={() => setCurrentStep(1)} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← CHANGE TOUR</button>
+          <button onClick={() => { setCurrentStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← CHANGE TOUR</button>
 
           {/* TOUR RECAP */}
           <div className="mb-8">
@@ -1388,7 +1393,7 @@ ${customerData.notes || 'No special requests'}
             </div>
           </div>
 
-          <button onClick={() => selectedDate && selectedTimeSlot && setCurrentStep(3)} disabled={!selectedDate || !selectedTimeSlot}
+          <button onClick={() => selectedDate && selectedTimeSlot && (setCurrentStep(3), window.scrollTo({ top: 0, behavior: 'smooth' }))} disabled={!selectedDate || !selectedTimeSlot}
             className={`w-full py-4 tracking-[0.3em] text-sm transition ${selectedDate && selectedTimeSlot ? 'bg-amber-400 text-slate-950 hover:bg-amber-300' : 'bg-slate-800 text-slate-600 cursor-not-allowed'}`}>
             CONTINUE TO DETAILS →
           </button>
@@ -1398,7 +1403,7 @@ ${customerData.notes || 'No special requests'}
       {/* STEP 3 */}
       {currentStep === 3 && (
         <div className="max-w-2xl mx-auto px-4 py-12">
-          <button onClick={() => setCurrentStep(2)} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← BACK</button>
+          <button onClick={() => { setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← BACK</button>
 
           <div className="text-center mb-8">
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">FINAL STEP</p>
