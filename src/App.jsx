@@ -51,14 +51,39 @@ function SeaRunnerLogoCompact({ size = 'sm' }) {
   );
 }
 
-// ============ TOUR CARD IMAGE - versione compatta ============
+// ============ TOUR CARD IMAGE - con immagini reali ============
 function TourCardImage({ tour }) {
+  // Se il tour ha un'immagine reale, la mostriamo a schermo intero
+  if (tour.cardImage) {
+    return (
+      <div className="relative overflow-hidden" style={{ 
+        backgroundColor: tour.brandColor, 
+        aspectRatio: '1/1',
+        maxHeight: '320px'
+      }}>
+        <img 
+          src={tour.cardImage} 
+          alt={tour.name}
+          className="w-full h-full object-cover"
+          onError={(e) => { 
+            e.target.style.display = 'none';
+          }}
+        />
+        {/* Fallback nascosto dietro se l'immagine non carica */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 pointer-events-none" style={{ zIndex: -1 }}>
+          <p className="text-white/60 text-sm italic mb-2" style={{ fontFamily: 'Georgia, serif' }}>{tour.subtitle}</p>
+          <h3 className="text-white text-4xl text-center" style={{ fontFamily: '"Brush Script MT", cursive' }}>{tour.name}</h3>
+        </div>
+      </div>
+    );
+  }
+  
+  // Fallback: illustrazione SVG per tour senza immagine (Portofino, Custom)
   return (
     <div className="relative overflow-hidden" style={{ 
       backgroundColor: tour.brandColor, 
       height: '200px'
     }}>
-      {/* Title */}
       <div className="relative pt-4 px-4 text-center z-10">
         <p className="text-white/80 text-[11px] italic mb-0.5" style={{ fontFamily: 'Georgia, serif' }}>{tour.subtitle}</p>
         <h3 className="text-white text-2xl leading-tight" style={{ 
@@ -68,61 +93,10 @@ function TourCardImage({ tour }) {
         }}>{tour.name}</h3>
       </div>
       
-      {/* 3 illustration panels (più piccole) */}
       <div className="px-4 mt-2 grid grid-cols-3 gap-1.5">
         {[0, 1, 2].map((i) => (
           <div key={i} className="aspect-[3/4] rounded-sm overflow-hidden relative" style={{ backgroundColor: tour.illustrationBg || '#4a7ba8' }}>
             <svg viewBox="0 0 60 80" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
-              {tour.id === 'cinque-terre' && (
-                <>
-                  <rect y="55" width="60" height="25" fill="#4fb4d8" opacity="0.9"/>
-                  <path d="M 0,55 Q 15,52 30,55 T 60,55 L 60,60 L 0,60 Z" fill="#6ec9e8" opacity="0.7"/>
-                  <path d="M 0,0 L 0,55 L 60,55 L 60,15 L 50,10 L 40,20 L 30,12 L 20,18 L 10,8 Z" fill="#8b9a7a"/>
-                  <rect x="8" y="25" width="6" height="15" fill="#f4a261"/>
-                  <rect x="16" y="22" width="6" height="18" fill="#e76f51"/>
-                  <rect x="24" y="28" width="6" height="12" fill="#f4d35e"/>
-                  <rect x="32" y="24" width="6" height="16" fill="#ee8959"/>
-                  <rect x="40" y="27" width="6" height="13" fill="#f4a261"/>
-                  <rect x="48" y="22" width="6" height="18" fill="#e9c46a"/>
-                </>
-              )}
-              {tour.id === 'golfo-poeti' && (
-                <>
-                  <defs>
-                    <linearGradient id={`sky-gp-${i}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f4a261"/>
-                      <stop offset="100%" stopColor="#ffd89c"/>
-                    </linearGradient>
-                  </defs>
-                  <rect width="60" height="45" fill={`url(#sky-gp-${i})`}/>
-                  <rect y="45" width="60" height="35" fill="#1e5f7e"/>
-                  <path d="M 0,45 Q 15,47 30,45 T 60,45 L 60,50 L 0,50 Z" fill="#2d7a9c" opacity="0.6"/>
-                  <path d="M 40,15 L 45,25 L 50,20 L 55,30 L 60,25 L 60,45 L 40,45 Z" fill="#a0a098"/>
-                  <rect x="22" y="20" width="8" height="25" fill="#c1666b"/>
-                  <polygon points="22,20 26,12 30,20" fill="#8b3a3a"/>
-                  <ellipse cx="15" cy="55" rx="6" ry="2" fill="#1a1a2e"/>
-                </>
-              )}
-              {tour.id === 'sunset' && (
-                <>
-                  <defs>
-                    <linearGradient id={`sunset-sky-${i}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#ff6b6b"/>
-                      <stop offset="50%" stopColor="#feca57"/>
-                      <stop offset="100%" stopColor="#ff9ff3"/>
-                    </linearGradient>
-                  </defs>
-                  <rect width="60" height="55" fill={`url(#sunset-sky-${i})`}/>
-                  <circle cx="30" cy="38" r="8" fill="#fff3b0" opacity="0.9"/>
-                  <circle cx="30" cy="38" r="5" fill="#ffe66d"/>
-                  <rect y="55" width="60" height="25" fill="#2c3e50"/>
-                  <path d="M 25,55 Q 30,58 35,55 L 35,75 L 25,75 Z" fill="#feca57" opacity="0.4"/>
-                  {i === 2 && <>
-                    <rect x="45" y="30" width="4" height="25" fill="#1a1a2e"/>
-                    <rect x="44" y="27" width="6" height="4" fill="#1a1a2e"/>
-                  </>}
-                </>
-              )}
               {tour.id === 'portofino' && (
                 <>
                   <rect width="60" height="40" fill="#87ceeb"/>
@@ -160,7 +134,6 @@ function TourCardImage({ tour }) {
         ))}
       </div>
       
-      {/* Stops list at bottom */}
       <div className="absolute bottom-0 left-0 right-0 px-3 py-2 border-t border-white/20 bg-black/10">
         <p className="text-white/90 text-[9px] text-center leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
           {tour.itinerary.slice(0, 4).map(i => i.place).join(' • ')}
@@ -213,6 +186,7 @@ const initialTours = [
     brandColorLight: '#e8edf4',
     accent: '#fbbf24',
     cardImage: 'https://i.postimg.cc/Xpn2qPST/5-Terre-1.png',
+    cardImage: 'https://i.postimg.cc/Xpn2qPST/5-Terre-1.png',
     mapImage: 'https://i.postimg.cc/HVTSnN1D/5-Terre-3.png',
     servicesImage: 'https://i.postimg.cc/Vdz7vhQx/5-Terre-2.png',
     includedImage: 'https://i.postimg.cc/qzpmqFHf/5-Terre-4.png',
@@ -241,6 +215,7 @@ const initialTours = [
     brandColor: '#0e5d63',
     brandColorLight: '#e6efef',
     accent: '#fbbf24',
+    cardImage: 'https://i.postimg.cc/fknqnL8P/Golfo-dei-Poeti-1.png',
     cardImage: 'https://i.postimg.cc/fknqnL8P/Golfo-dei-Poeti-1.png',
     mapImage: 'https://i.postimg.cc/WFR8vWw7/Golfo-dei-Poeti-3.png',
     servicesImage: 'https://i.postimg.cc/Q9Lm34JH/Golfo-dei-Poeti-2.png',
@@ -298,6 +273,7 @@ const initialTours = [
     brandColor: '#e8893b',
     brandColorLight: '#fdecd9',
     accent: '#fdba74',
+    cardImage: 'https://i.postimg.cc/9wmN6gWh/Sunset-1.png',
     cardImage: 'https://i.postimg.cc/9wmN6gWh/Sunset-1.png',
     mapImage: 'https://i.postimg.cc/4nP06G53/Sunset-4.png',
     mapImage2: 'https://i.postimg.cc/TpP4Qs7R/Sunset-5.png',
