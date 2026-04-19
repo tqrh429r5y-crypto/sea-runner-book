@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw } from 'lucide-react';
 
 // ============ GOOGLE CALENDAR SYNC ============
-// l'app legge il google calendar "Prenotazioni" di sea runner tramite un proxy CORS.
+// l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
 // il calendario è pubblico in modalità "solo disponibilità": gli orari sono preservati,
 // i titoli sono tutti "Busy" — usiamo gli orari per classificare il tipo di slot occupato.
 const GOOGLE_CALENDAR_ICS_URL = 'https://calendar.google.com/calendar/ical/searunnerprenotazioni%40gmail.com/public/basic.ics';
-// proxy cors pubblico — se un giorno smette di funzionare, cambiare solo questa riga.
-// alternative: https://api.allorigins.win/raw?url=   oppure   https://cors-anywhere.herokuapp.com/
-const CORS_PROXY = 'https://corsproxy.io/?';
+// proxy cors pubblici — proviamo in ordine: se il primo fallisce passiamo al secondo.
+// quando un proxy va giù (capita coi servizi gratis) l'altro solitamente funziona.
+const CORS_PROXIES = [
+  (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+];
 
 // converte una stringa UTC del formato "20260616T070000Z" in un oggetto Date
 function parseIcsDate(str) {
@@ -42,14 +46,41 @@ function classifyCalendarEvent(startUtc, endUtc) {
   return 'full-day';
 }
 
-// fa il fetch del .ics e restituisce un array di eventi normalizzati:
-// [{ date: Date, slotType: 'full-day'|..., part: 'morning'|..., source: 'gcal' }]
+// fa il fetch del .ics e restituisce un array di eventi normalizzati.
+// prova in cascata i proxy CORS configurati: se uno fallisce passa al successivo.
 async function fetchGoogleCalendarEvents() {
-  try {
-    const response = await fetch(CORS_PROXY + encodeURIComponent(GOOGLE_CALENDAR_ICS_URL));
-    if (!response.ok) throw new Error('CORS proxy failed: ' + response.status);
-    const icsText = await response.text();
+  let icsText = null;
+  let lastError = null;
 
+  for (const proxyFn of CORS_PROXIES) {
+    try {
+      const proxyUrl = proxyFn(GOOGLE_CALENDAR_ICS_URL);
+      const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        lastError = `proxy returned ${response.status}`;
+        continue;
+      }
+      const text = await response.text();
+      // verifichiamo che sia davvero un .ics valido (non una pagina di errore HTML)
+      if (!text.includes('BEGIN:VCALENDAR')) {
+        lastError = 'proxy returned invalid content (not an ICS file)';
+        continue;
+      }
+      icsText = text;
+      console.log('[sea-runner] calendar synced via', proxyUrl.split('?')[0]);
+      break;
+    } catch (err) {
+      lastError = err.message || String(err);
+      continue;
+    }
+  }
+
+  if (!icsText) {
+    console.warn('[sea-runner] all CORS proxies failed, using internal bookings only. last error:', lastError);
+    return null;
+  }
+
+  try {
     const events = [];
     const blocks = icsText.split('BEGIN:VEVENT').slice(1);
     for (const block of blocks) {
@@ -62,13 +93,11 @@ async function fetchGoogleCalendarEvents() {
       if (!startUtc || !endUtc) continue;
 
       const slotType = classifyCalendarEvent(startUtc, endUtc);
-      // deriviamo "part" (morning/afternoon/evening) dallo slotType per compatibilità con la logica interna
       let part = null;
       if (slotType === 'half-day-morning') part = 'morning';
       else if (slotType === 'half-day-afternoon') part = 'afternoon';
       else if (slotType === 'sunset') part = 'evening';
 
-      // normalizziamo gli slotType half-day-* nel singolo 'half-day-choice' usato internamente
       let normalizedSlot = slotType;
       if (slotType === 'half-day-morning' || slotType === 'half-day-afternoon') {
         normalizedSlot = 'half-day-choice';
@@ -83,8 +112,8 @@ async function fetchGoogleCalendarEvents() {
     }
     return events;
   } catch (error) {
-    console.warn('[sea-runner] google calendar sync failed, using internal bookings only:', error);
-    return null; // null = errore, array vuoto = "ok ma nessun evento"
+    console.warn('[sea-runner] ICS parsing failed:', error);
+    return null;
   }
 }
 
@@ -261,6 +290,19 @@ export default function SeaRunnerApp() {
   const [gcalEvents, setGcalEvents] = useState([]);
   const [gcalStatus, setGcalStatus] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
   const [gcalLastSync, setGcalLastSync] = useState(null);
+
+  // mese visualizzato nel calendario cliente (step 2)
+  const [customerCalendarMonth, setCustomerCalendarMonth] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d;
+  });
+
+  const changeCustomerMonth = (delta) => {
+    const d = new Date(customerCalendarMonth);
+    d.setMonth(d.getMonth() + delta);
+    setCustomerCalendarMonth(d);
+  };
 
   // scarica gli eventi di google calendar al mount e ogni volta che si arriva allo step 2 (scelta data)
   const syncGoogleCalendar = async () => {
@@ -444,24 +486,45 @@ Reply to: ${customerData.email}`.trim();
     setCustomerData({ name: '', email: '', phone: '', notes: '', language: 'EN', noAllergies: false, allergiesDetails: '', reducedMobility: false, mobilityDetails: '' });
   };
 
-  const generateCalendarDates = () => {
+  // ============ CALENDARIO CLIENTE — griglia mensile navigabile ============
+  // il calendario cliente mostra un mese alla volta, con frecce prev/next per scorrere.
+  // stato del mese attualmente visualizzato nello step 2
+  // (inizializzato al mese corrente)
+
+  const generateCalendarMonth = (baseMonth) => {
     const dates = [];
     const today = new Date();
-    for (let i = 1; i < 29; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const availInfo = selectedTour ? isTourAvailableOnDate(selectedTour, date) : { available: true };
+    today.setHours(0, 0, 0, 0);
+    const year = baseMonth.getFullYear();
+    const month = baseMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    // giorno della settimana del primo giorno (lunedì = 0)
+    const startWeekDay = (firstDay.getDay() + 6) % 7;
+
+    // celle vuote per allineare il primo giorno del mese al giorno corretto
+    for (let i = 0; i < startWeekDay; i++) {
+      dates.push({ empty: true });
+    }
+
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      const date = new Date(year, month, d);
+      const isPast = date < today;
+      const availInfo = selectedTour && !isPast ? isTourAvailableOnDate(selectedTour, date) : { available: !isPast };
       dates.push({
-        date, available: availInfo.available,
-        needsConfirmation: availInfo.needsConfirmation, reason: availInfo.reason,
+        date,
+        isPast,
+        available: !isPast && availInfo.available,
+        needsConfirmation: availInfo.needsConfirmation,
+        reason: availInfo.reason,
         bookedParts: availInfo.bookedParts,
-        dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
-        dayNum: date.getDate(), monthName: date.toLocaleDateString('en-US', { month: 'short' })
+        dayNum: d
       });
     }
     return dates;
   };
-  const calendarDates = generateCalendarDates();
+
+  const calendarDates = generateCalendarMonth(customerCalendarMonth);
 
   // ============ SKIPPER LOGIN ============
   if (showSkipperLogin) {
@@ -839,22 +902,39 @@ Reply to: ${customerData.email}`.trim();
           {/* DATE + TIME + GUESTS */}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="bg-slate-900 border border-slate-800 p-6">
-              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Calendar className="w-3 h-3" /> SELECT DATE</p>
-              <div className="grid grid-cols-7 gap-1">
-                {calendarDates.map((day, idx) => (
-                  <button key={idx} onClick={() => day.available && setSelectedDate(day.date)} disabled={!day.available}
-                    className={`p-2 text-center transition ${
-                      selectedDate?.toDateString() === day.date.toDateString() ? 'bg-amber-400 text-slate-950'
-                      : day.available && day.needsConfirmation ? 'bg-slate-800 text-amber-400 hover:bg-slate-700 border border-amber-400/30'
-                      : day.available ? 'bg-slate-800 text-white hover:bg-slate-700'
-                      : 'bg-slate-900 text-slate-700 cursor-not-allowed line-through'
-                    }`}
-                    title={day.needsConfirmation ? day.reason : ''}>
-                    <div className="text-[9px] tracking-wider">{day.dayName}</div>
-                    <div className="text-lg">{day.dayNum}</div>
-                    <div className="text-[9px]">{day.monthName}</div>
-                  </button>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-amber-400 text-[10px] tracking-[0.3em] flex items-center gap-2"><Calendar className="w-3 h-3" /> SELECT DATE</p>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => changeCustomerMonth(-1)} className="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-sm">‹</button>
+                  <button onClick={() => changeCustomerMonth(1)} className="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-sm">›</button>
+                </div>
+              </div>
+              <p className="text-center text-white text-base mb-3">
+                {customerCalendarMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+              </p>
+              <div className="grid grid-cols-7 gap-1 mb-1">
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                  <div key={i} className="text-center text-[9px] tracking-widest text-slate-500 py-1">{d}</div>
                 ))}
+              </div>
+              <div className="grid grid-cols-7 gap-1">
+                {calendarDates.map((day, idx) => {
+                  if (day.empty) return <div key={idx} className="aspect-square"></div>;
+                  const isSelected = selectedDate?.toDateString() === day.date.toDateString();
+                  return (
+                    <button key={idx} onClick={() => day.available && setSelectedDate(day.date)} disabled={!day.available}
+                      className={`aspect-square flex items-center justify-center text-sm transition ${
+                        isSelected ? 'bg-amber-400 text-slate-950'
+                        : day.available && day.needsConfirmation ? 'bg-slate-800 text-amber-400 hover:bg-slate-700 border border-amber-400/30'
+                        : day.available ? 'bg-slate-800 text-white hover:bg-slate-700'
+                        : day.isPast ? 'bg-slate-900/50 text-slate-700 cursor-not-allowed'
+                        : 'bg-slate-900 text-slate-700 cursor-not-allowed line-through'
+                      }`}
+                      title={day.needsConfirmation ? day.reason : ''}>
+                      {day.dayNum}
+                    </button>
+                  );
+                })}
               </div>
               <div className="mt-3 space-y-1">
                 <p className="text-[10px] text-slate-500 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
