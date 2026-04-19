@@ -248,7 +248,7 @@ const addOns = [
   { id: 'cooking', name: 'Ligurian Cooking Class', desc: 'Traditional Italian cuisine with local chef', icon: Sparkles }
 ];
 
-const defaultPickupPoints = ['Porto Mirabello', 'Portovenere', 'Le Grazie', 'Lerici'];
+const defaultPickupPoints = ['Porto Mirabello (La Spezia)', 'Portovenere', 'Le Grazie', 'Lerici'];
 
 const initialBookings = [
   { id: 1, tourId: 'cinque-terre', tourName: 'Cinque Terre', customerName: 'Marco Rossi', email: 'marco@email.com', phone: '+39 333 1234567', date: new Date(Date.now() + 3*86400000), timeSlot: '10:00 – 17:00', slotType: 'full-day', people: 4, notes: 'Wedding anniversary', addOns: ['wine'], status: 'pending', basePrice: 1500, finalPrice: null, language: 'IT' },
@@ -266,7 +266,7 @@ export default function SeaRunnerApp() {
   const [halfDayChoiceTime, setHalfDayChoiceTime] = useState(null);
   const [numPeople, setNumPeople] = useState(2);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
-  const [meetingPoint, setMeetingPoint] = useState('Porto Mirabello');
+  const [meetingPoint, setMeetingPoint] = useState('Porto Mirabello (La Spezia)');
   const [customMeetingPoint, setCustomMeetingPoint] = useState('');
   const [customerData, setCustomerData] = useState({ 
     name: '', email: '', phone: '', notes: '', language: 'EN',
@@ -298,10 +298,79 @@ export default function SeaRunnerApp() {
     return d;
   });
 
+  // calendario skipper — date bloccate e moltiplicatori prezzo
+  const [skipperCalendarMonth, setSkipperCalendarMonth] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d;
+  });
+  const [selectedSkipperDate, setSelectedSkipperDate] = useState(null);
+  const [dateOverrides, setDateOverrides] = useState({}); // { 'YYYY-MM-DD': { closed, priceMultiplier, note } }
+  const [tempDatePrice, setTempDatePrice] = useState('1');
+  const [tempDateNote, setTempDateNote] = useState('');
+
   const changeCustomerMonth = (delta) => {
     const d = new Date(customerCalendarMonth);
     d.setMonth(d.getMonth() + delta);
     setCustomerCalendarMonth(d);
+  };
+
+  // helpers calendario skipper
+  const dateToKey = (date) => date.toISOString().split('T')[0];
+
+  const getDateInfo = (date) => {
+    const key = dateToKey(date);
+    const override = dateOverrides[key] || {};
+    const internalBookings = bookings.filter(b => b.date.toDateString() === date.toDateString());
+    const gcalOnDate = gcalEvents.filter(e => e.date.toDateString() === date.toDateString());
+    return {
+      closed: override.closed || false,
+      priceMultiplier: override.priceMultiplier || 1,
+      note: override.note || '',
+      pendingBookings: internalBookings.filter(b => b.status === 'pending'),
+      confirmedBookings: internalBookings.filter(b => b.status === 'confirmed'),
+      gcalEvents: gcalOnDate,
+      hasAny: internalBookings.length > 0 || gcalOnDate.length > 0
+    };
+  };
+
+  const generateSkipperMonthGrid = (baseDate) => {
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startWeekDay = (firstDay.getDay() + 6) % 7;
+    const grid = [];
+    for (let i = 0; i < startWeekDay; i++) grid.push(null);
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      grid.push(new Date(year, month, d));
+    }
+    return grid;
+  };
+
+  const toggleDateClosed = (date) => {
+    const key = dateToKey(date);
+    const current = dateOverrides[key] || {};
+    setDateOverrides({ ...dateOverrides, [key]: { ...current, closed: !current.closed } });
+  };
+
+  const setDatePriceMultiplier = (date, multiplier, note = '') => {
+    const key = dateToKey(date);
+    const current = dateOverrides[key] || {};
+    setDateOverrides({ ...dateOverrides, [key]: { ...current, priceMultiplier: multiplier, note } });
+  };
+
+  const clearDateOverride = (date) => {
+    const key = dateToKey(date);
+    const newOverrides = { ...dateOverrides };
+    delete newOverrides[key];
+    setDateOverrides(newOverrides);
+  };
+
+  const changeSkipperMonth = (delta) => {
+    const d = new Date(skipperCalendarMonth);
+    d.setMonth(d.getMonth() + delta);
+    setSkipperCalendarMonth(d);
   };
 
   // scarica gli eventi di google calendar al mount e ogni volta che si arriva allo step 2 (scelta data)
@@ -371,6 +440,10 @@ export default function SeaRunnerApp() {
   };
 
   const isTourAvailableOnDate = (tour, date) => {
+    // prima cosa: controllo se lo skipper ha chiuso questa data dalla dashboard
+    const key = dateToKey(date);
+    if (dateOverrides[key]?.closed) return { available: false };
+
     const booked = getBookedSlotsOnDate(date);
     if (booked.length === 0) return { available: true };
     const hasExtended = booked.some(b => b.slotType === 'full-day-extended');
@@ -482,7 +555,7 @@ Reply to: ${customerData.email}`.trim();
   const resetBooking = () => {
     setSubmitted(false); setCurrentStep(1); setSelectedTour(null); setSelectedDate(null);
     setHalfDayChoiceItinerary(null); setHalfDayChoiceTime(null);
-    setSelectedAddOns([]); setNumPeople(2); setMeetingPoint('Porto Mirabello'); setCustomMeetingPoint('');
+    setSelectedAddOns([]); setNumPeople(2); setMeetingPoint('Porto Mirabello (La Spezia)'); setCustomMeetingPoint('');
     setCustomerData({ name: '', email: '', phone: '', notes: '', language: 'EN', noAllergies: false, allergiesDetails: '', reducedMobility: false, mobilityDetails: '' });
   };
 
@@ -583,7 +656,11 @@ Reply to: ${customerData.email}`.trim();
           </div>
 
           <div className="flex gap-1 border-b border-slate-300 mt-6 mb-6 overflow-x-auto">
-            {[{ id: 'bookings', label: 'Bookings', icon: Calendar }, { id: 'pricing', label: 'Pricing', icon: Euro }].map(tab => {
+            {[
+              { id: 'bookings', label: 'Bookings', icon: Calendar },
+              { id: 'calendar', label: 'Calendar', icon: Calendar },
+              { id: 'pricing', label: 'Pricing', icon: Euro }
+            ].map(tab => {
               const Icon = tab.icon;
               return (
                 <button key={tab.id} onClick={() => setSkipperTab(tab.id)}
@@ -714,6 +791,214 @@ Reply to: ${customerData.email}`.trim();
             </>
           )}
 
+          {skipperTab === 'calendar' && (
+            <div>
+              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-blue-900 font-semibold mb-1">Calendar Management</p>
+                    <p className="text-xs text-blue-800 leading-relaxed">Click any date to open/close availability or set a special price multiplier (e.g. 1.3x for high season). Changes apply to all tours on that date.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3 mb-6 text-xs">
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-emerald-100 border-2 border-emerald-500"></div><span className="text-slate-700">Available</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-red-100 border-2 border-red-500"></div><span className="text-slate-700">Closed</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-amber-100 border-2 border-amber-500"></div><span className="text-slate-700">Pending booking</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-100 border-2 border-blue-500"></div><span className="text-slate-700">Confirmed / gcal event</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-purple-100 border-2 border-purple-500"></div><span className="text-slate-700">Special price</span></div>
+              </div>
+
+              <div className="bg-white shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <button onClick={() => changeSkipperMonth(-1)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 tracking-wider text-sm">← PREV</button>
+                  <h3 className="text-2xl text-slate-900">
+                    {skipperCalendarMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                  </h3>
+                  <button onClick={() => changeSkipperMonth(1)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 tracking-wider text-sm">NEXT →</button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-1 mb-1">
+                  {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(d => (
+                    <div key={d} className="text-center text-[10px] tracking-widest text-slate-500 py-2">{d}</div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-1">
+                  {generateSkipperMonthGrid(skipperCalendarMonth).map((date, idx) => {
+                    if (!date) return <div key={idx} className="aspect-square"></div>;
+
+                    const info = getDateInfo(date);
+                    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+                    const isPast = date < todayStart;
+                    const isToday = date.toDateString() === new Date().toDateString();
+
+                    let bgColor = 'bg-emerald-50 border-emerald-300 hover:bg-emerald-100';
+                    let textColor = 'text-emerald-900';
+                    if (isPast) {
+                      bgColor = 'bg-slate-50 border-slate-200';
+                      textColor = 'text-slate-400';
+                    } else if (info.closed) {
+                      bgColor = 'bg-red-50 border-red-400 hover:bg-red-100';
+                      textColor = 'text-red-900';
+                    } else if (info.confirmedBookings.length > 0 || info.gcalEvents.length > 0) {
+                      bgColor = 'bg-blue-50 border-blue-400 hover:bg-blue-100';
+                      textColor = 'text-blue-900';
+                    } else if (info.pendingBookings.length > 0) {
+                      bgColor = 'bg-amber-50 border-amber-400 hover:bg-amber-100';
+                      textColor = 'text-amber-900';
+                    } else if (info.priceMultiplier !== 1) {
+                      bgColor = 'bg-purple-50 border-purple-400 hover:bg-purple-100';
+                      textColor = 'text-purple-900';
+                    }
+
+                    return (
+                      <button key={idx} disabled={isPast}
+                        onClick={() => {
+                          setSelectedSkipperDate(date);
+                          setTempDatePrice(String(info.priceMultiplier));
+                          setTempDateNote(info.note);
+                        }}
+                        className={`aspect-square p-1 border-2 transition relative ${bgColor} ${isToday ? 'ring-2 ring-amber-500' : ''} ${isPast ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                        <div className={`text-sm font-semibold ${textColor}`}>{date.getDate()}</div>
+                        {!isPast && (
+                          <div className="absolute bottom-1 left-1 right-1 flex flex-col gap-0.5">
+                            {info.priceMultiplier !== 1 && (
+                              <div className="text-[9px] text-purple-700 font-semibold">{info.priceMultiplier}x</div>
+                            )}
+                            {info.pendingBookings.length > 0 && (
+                              <div className="text-[9px] text-amber-700">{info.pendingBookings.length} pending</div>
+                            )}
+                            {(info.confirmedBookings.length + info.gcalEvents.length) > 0 && (
+                              <div className="text-[9px] text-blue-700">✓ {info.confirmedBookings.length + info.gcalEvents.length}</div>
+                            )}
+                            {info.closed && (
+                              <div className="text-[9px] text-red-700 font-semibold">CLOSED</div>
+                            )}
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* MODAL per gestire la data selezionata */}
+              {selectedSkipperDate && (() => {
+                const info = getDateInfo(selectedSkipperDate);
+                return (
+                  <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" onClick={() => setSelectedSkipperDate(null)}>
+                    <div className="bg-white shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                      <div className="bg-slate-950 text-white p-5 flex items-center justify-between border-b-2 border-amber-400">
+                        <div>
+                          <p className="text-[10px] text-amber-400 tracking-widest">MANAGE DATE</p>
+                          <h3 className="text-xl">{selectedSkipperDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</h3>
+                        </div>
+                        <button onClick={() => setSelectedSkipperDate(null)} className="text-slate-400 hover:text-white"><X className="w-6 h-6" /></button>
+                      </div>
+
+                      <div className="p-5 space-y-5">
+                        <div className={`p-3 text-center text-sm tracking-wider ${info.closed ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                          {info.closed ? '🔒 DATE CLOSED — NOT BOOKABLE' : '✓ DATE OPEN — BOOKABLE'}
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] text-slate-500 tracking-widest mb-2">AVAILABILITY</p>
+                          <button onClick={() => toggleDateClosed(selectedSkipperDate)}
+                            className={`w-full py-3 text-sm tracking-wider transition ${info.closed ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-red-600 text-white hover:bg-red-700'}`}>
+                            {info.closed ? '🔓 OPEN THIS DATE' : '🔒 CLOSE THIS DATE'}
+                          </button>
+                        </div>
+
+                        {!info.closed && (
+                          <div>
+                            <p className="text-[10px] text-slate-500 tracking-widest mb-2">PRICE MULTIPLIER</p>
+                            <div className="grid grid-cols-4 gap-2 mb-3">
+                              {[
+                                { val: 0.8, label: '-20%' },
+                                { val: 1, label: 'Normal' },
+                                { val: 1.2, label: '+20%' },
+                                { val: 1.5, label: '+50%' }
+                              ].map(opt => (
+                                <button key={opt.val} onClick={() => setTempDatePrice(String(opt.val))}
+                                  className={`py-2 text-xs tracking-wider transition ${parseFloat(tempDatePrice) === opt.val ? 'bg-slate-950 text-amber-400' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                                  {opt.label}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-xs text-slate-500 tracking-wider">CUSTOM:</span>
+                              <input type="number" step="0.1" min="0.5" max="3" value={tempDatePrice}
+                                onChange={(e) => setTempDatePrice(e.target.value)}
+                                className="flex-1 px-3 py-2 border border-slate-300 text-sm" />
+                              <span className="text-sm text-slate-600">x</span>
+                            </div>
+                            <input type="text" value={tempDateNote} onChange={(e) => setTempDateNote(e.target.value)}
+                              placeholder="Note (e.g. 'High season', 'Holiday')"
+                              className="w-full px-3 py-2 border border-slate-300 text-sm mb-3" />
+                            <div className="bg-slate-50 p-3 text-xs mb-3">
+                              <p className="text-slate-500 tracking-wider mb-2">PRICE PREVIEW ON THIS DATE:</p>
+                              {tours.filter(t => !t.isCustom).map(t => (
+                                <div key={t.id} className="flex justify-between py-1">
+                                  <span className="text-slate-700">{t.name}</span>
+                                  <span className="text-slate-900 font-semibold">
+                                    €{t.basePrice} → <span className="text-amber-600">€{Math.round(t.basePrice * parseFloat(tempDatePrice || 1))}</span>
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                            <button onClick={() => {
+                                setDatePriceMultiplier(selectedSkipperDate, parseFloat(tempDatePrice), tempDateNote);
+                                setSelectedSkipperDate(null);
+                              }}
+                              className="w-full py-3 bg-amber-400 text-slate-950 text-sm tracking-wider hover:bg-amber-300 transition">
+                              SAVE PRICE OVERRIDE
+                            </button>
+                          </div>
+                        )}
+
+                        {info.hasAny && (
+                          <div className="border-t pt-4">
+                            <p className="text-[10px] text-slate-500 tracking-widest mb-3">EVENTS ON THIS DATE</p>
+                            <div className="space-y-2">
+                              {[...info.pendingBookings, ...info.confirmedBookings].map(b => (
+                                <div key={b.id} className="flex items-center justify-between p-3 bg-slate-50 text-sm">
+                                  <div>
+                                    <p className="text-slate-900">{b.customerName}</p>
+                                    <p className="text-xs text-slate-500">{b.tourName} • {b.people} guests • {b.timeSlot}</p>
+                                  </div>
+                                  <span className={`text-xs px-2 py-1 tracking-wider ${b.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>{b.status.toUpperCase()}</span>
+                                </div>
+                              ))}
+                              {info.gcalEvents.map((e, i) => (
+                                <div key={`gcal-${i}`} className="flex items-center justify-between p-3 bg-blue-50 text-sm">
+                                  <div>
+                                    <p className="text-slate-900">Google Calendar event</p>
+                                    <p className="text-xs text-slate-500">{e.slotType}{e.part ? ` — ${e.part}` : ''}</p>
+                                  </div>
+                                  <span className="text-xs px-2 py-1 tracking-wider bg-blue-100 text-blue-800">GCAL</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {(info.closed || info.priceMultiplier !== 1) && (
+                          <button onClick={() => { clearDateOverride(selectedSkipperDate); setSelectedSkipperDate(null); }}
+                            className="w-full py-2 text-xs text-red-600 hover:bg-red-50 tracking-wider">
+                            RESET DATE TO DEFAULT
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
           {skipperTab === 'pricing' && (
             <div>
               <div className="grid md:grid-cols-2 gap-4">
@@ -800,7 +1085,7 @@ Reply to: ${customerData.email}`.trim();
           <div className="flex items-center gap-3">
             <SeaRunnerLogoCompact size="sm" />
             <div><h1 className="text-white text-lg tracking-[0.2em]">SEA RUNNER</h1>
-              <p className="text-amber-400 text-[10px] tracking-[0.3em]">DAILY BOAT TRIP</p></div>
+              <p className="text-amber-400 text-[10px] tracking-[0.3em]">PRIVATE BOAT TOURS</p></div>
           </div>
           <div className="hidden md:flex items-center gap-4">
             {['TOUR', 'DATE', 'DETAILS'].map((label, idx) => (
@@ -874,7 +1159,7 @@ Reply to: ${customerData.email}`.trim();
             <div className="bg-slate-900 border border-slate-800 border-t-0 p-8">
               <p className="text-slate-300 leading-relaxed max-w-3xl mb-6">{selectedTour.longDesc}</p>
               <div className="flex flex-wrap gap-4 text-sm text-slate-300 pt-4 border-t border-slate-800">
-                <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {selectedTour.duration}{selectedTour.fixedTime && ` (${selectedTour.fixedTime})`}</span>
+                <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {selectedTour.duration}{selectedTour.fixedTime && ` (~${selectedTour.fixedTime}, flexible)`}</span>
                 <span className="flex items-center gap-1"><Users className="w-4 h-4 text-amber-400" /> 1-{selectedTour.maxPeople} guests</span>
                 {!selectedTour.isCustom && (
                   <span className="flex items-center gap-1 text-amber-400">from €{selectedTour.basePrice.toLocaleString()}</span>
@@ -968,8 +1253,9 @@ Reply to: ${customerData.email}`.trim();
                 <div className="bg-slate-900 border border-slate-800 p-6">
                   <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> SCHEDULE</p>
                   <div className="bg-slate-800 border border-amber-400/30 px-4 py-4 text-center">
+                    <p className="text-[10px] text-slate-500 tracking-wider mb-1">APPROX.</p>
                     <p className="text-2xl text-amber-400">{selectedTour.fixedTime}</p>
-                    <p className="text-[10px] text-slate-500 tracking-wider mt-1">FIXED SCHEDULE</p>
+                    <p className="text-[10px] text-slate-500 tracking-wider mt-2 italic">flexible — customizable on request</p>
                   </div>
                 </div>
               ) : selectedTour.slotType === 'half-day-choice' ? (
@@ -977,7 +1263,25 @@ Reply to: ${customerData.email}`.trim();
                   <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> TIME OF DAY</p>
                   <div className="space-y-2">
                     {selectedTour.timeOfDay.map(td => {
-                      const partBooked = selectedDate && calendarDates.find(d => d.date.toDateString() === selectedDate.toDateString())?.bookedParts?.[td.id];
+                      // calcolo robusto: guardo direttamente cosa è prenotato nella selectedDate,
+                      // senza dipendere dall'oggetto calendarDates (che può essere di un mese diverso)
+                      let partBooked = false;
+                      if (selectedDate) {
+                        const bookedOnThatDate = getBookedSlotsOnDate(selectedDate);
+                        if (td.id === 'morning') {
+                          partBooked = bookedOnThatDate.some(b => 
+                            (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning'
+                          );
+                        } else if (td.id === 'afternoon') {
+                          partBooked = bookedOnThatDate.some(b => 
+                            (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon'
+                          );
+                        } else if (td.id === 'evening') {
+                          partBooked = bookedOnThatDate.some(b => 
+                            b.slotType === 'sunset' || (b.slotType === 'half-day-choice' && b.part === 'evening')
+                          );
+                        }
+                      }
                       const Icon = td.icon === 'sunset' ? Sunset : Sun;
                       return (
                         <button key={td.id} onClick={() => !partBooked && setHalfDayChoiceTime(td.id)} disabled={partBooked}
@@ -1229,7 +1533,7 @@ Reply to: ${customerData.email}`.trim();
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
-          <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">DAILY BOAT TRIP</p>
+          <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
           <p className="text-slate-500 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
           <p className="text-slate-700 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
         </div>
