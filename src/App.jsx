@@ -1,5 +1,92 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw } from 'lucide-react';
+
+// ============ GOOGLE CALENDAR SYNC ============
+// l'app legge il google calendar "Prenotazioni" di sea runner tramite un proxy CORS.
+// il calendario è pubblico in modalità "solo disponibilità": gli orari sono preservati,
+// i titoli sono tutti "Busy" — usiamo gli orari per classificare il tipo di slot occupato.
+const GOOGLE_CALENDAR_ICS_URL = 'https://calendar.google.com/calendar/ical/searunnerprenotazioni%40gmail.com/public/basic.ics';
+// proxy cors pubblico — se un giorno smette di funzionare, cambiare solo questa riga.
+// alternative: https://api.allorigins.win/raw?url=   oppure   https://cors-anywhere.herokuapp.com/
+const CORS_PROXY = 'https://corsproxy.io/?';
+
+// converte una stringa UTC del formato "20260616T070000Z" in un oggetto Date
+function parseIcsDate(str) {
+  const m = str.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/);
+  if (!m) return null;
+  return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]));
+}
+
+// dato un evento (DTSTART, DTEND in UTC), determina il tipo di slot in ora italiana.
+// regole concordate:
+//   durata >= 9h                       → full-day-extended (Portofino 10h)
+//   durata 6-9h                        → full-day (Cinque Terre / Golfo 7h)
+//   durata 3-5h, inizio prima delle 12 → half-day-morning
+//   durata 3-5h, inizio 12-16          → half-day-afternoon
+//   durata 3-5h, inizio dopo le 16     → sunset / evening
+//   altri casi                         → full-day (fallback prudente: blocca mattina+pom)
+function classifyCalendarEvent(startUtc, endUtc) {
+  const durationHours = (endUtc - startUtc) / (1000 * 60 * 60);
+  // converto l'inizio in ora Europa/Roma per leggere l'ora locale
+  const startLocal = new Date(startUtc.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+  const startHour = startLocal.getHours();
+
+  if (durationHours >= 9) return 'full-day-extended';
+  if (durationHours >= 6) return 'full-day';
+  if (durationHours >= 3) {
+    if (startHour < 12) return 'half-day-morning';
+    if (startHour < 16) return 'half-day-afternoon';
+    return 'sunset';
+  }
+  // evento breve anomalo — lo trattiamo come full-day per prudenza
+  return 'full-day';
+}
+
+// fa il fetch del .ics e restituisce un array di eventi normalizzati:
+// [{ date: Date, slotType: 'full-day'|..., part: 'morning'|..., source: 'gcal' }]
+async function fetchGoogleCalendarEvents() {
+  try {
+    const response = await fetch(CORS_PROXY + encodeURIComponent(GOOGLE_CALENDAR_ICS_URL));
+    if (!response.ok) throw new Error('CORS proxy failed: ' + response.status);
+    const icsText = await response.text();
+
+    const events = [];
+    const blocks = icsText.split('BEGIN:VEVENT').slice(1);
+    for (const block of blocks) {
+      const startMatch = block.match(/DTSTART[^:]*:([0-9TZ]+)/);
+      const endMatch = block.match(/DTEND[^:]*:([0-9TZ]+)/);
+      if (!startMatch || !endMatch) continue;
+
+      const startUtc = parseIcsDate(startMatch[1]);
+      const endUtc = parseIcsDate(endMatch[1]);
+      if (!startUtc || !endUtc) continue;
+
+      const slotType = classifyCalendarEvent(startUtc, endUtc);
+      // deriviamo "part" (morning/afternoon/evening) dallo slotType per compatibilità con la logica interna
+      let part = null;
+      if (slotType === 'half-day-morning') part = 'morning';
+      else if (slotType === 'half-day-afternoon') part = 'afternoon';
+      else if (slotType === 'sunset') part = 'evening';
+
+      // normalizziamo gli slotType half-day-* nel singolo 'half-day-choice' usato internamente
+      let normalizedSlot = slotType;
+      if (slotType === 'half-day-morning' || slotType === 'half-day-afternoon') {
+        normalizedSlot = 'half-day-choice';
+      }
+
+      events.push({
+        date: new Date(startUtc),
+        slotType: normalizedSlot,
+        part,
+        source: 'gcal'
+      });
+    }
+    return events;
+  } catch (error) {
+    console.warn('[sea-runner] google calendar sync failed, using internal bookings only:', error);
+    return null; // null = errore, array vuoto = "ok ma nessun evento"
+  }
+}
 
 // ============ LOGO ============
 function SeaRunnerLogoCompact({ size = 'sm' }) {
@@ -170,6 +257,27 @@ export default function SeaRunnerApp() {
   const [editingTourPrice, setEditingTourPrice] = useState(null);
   const [tempTourPrice, setTempTourPrice] = useState('');
 
+  // google calendar sync state
+  const [gcalEvents, setGcalEvents] = useState([]);
+  const [gcalStatus, setGcalStatus] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
+  const [gcalLastSync, setGcalLastSync] = useState(null);
+
+  // scarica gli eventi di google calendar al mount e ogni volta che si arriva allo step 2 (scelta data)
+  const syncGoogleCalendar = async () => {
+    setGcalStatus('syncing');
+    const events = await fetchGoogleCalendarEvents();
+    if (events === null) {
+      setGcalStatus('error');
+    } else {
+      setGcalEvents(events);
+      setGcalStatus('synced');
+      setGcalLastSync(new Date());
+    }
+  };
+
+  useEffect(() => { syncGoogleCalendar(); }, []);
+  useEffect(() => { if (currentStep === 2) syncGoogleCalendar(); }, [currentStep]);
+
   const SKIPPER_PASSWORD = 'searunner2025';
 
   const handleSkipperLogin = () => {
@@ -201,8 +309,10 @@ export default function SeaRunnerApp() {
   const toggleAddOn = (id) => setSelectedAddOns(selectedAddOns.includes(id) ? selectedAddOns.filter(a => a !== id) : [...selectedAddOns, id]);
 
   // ============ LOGICA SLOT ============
+  // unisce due sorgenti: bookings interni (dal form sea runner) + eventi google calendar (dal .ics).
+  // entrambi hanno la stessa struttura { slotType, part }, così la logica a valle non cambia.
   const getBookedSlotsOnDate = (date) => {
-    return bookings
+    const internalSlots = bookings
       .filter(b => b.date.toDateString() === date.toDateString() && (b.status === 'confirmed' || b.status === 'pending'))
       .map(b => ({
         slotType: b.slotType,
@@ -210,6 +320,12 @@ export default function SeaRunnerApp() {
               b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
               b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null
       }));
+
+    const gcalSlots = gcalEvents
+      .filter(e => e.date.toDateString() === date.toDateString())
+      .map(e => ({ slotType: e.slotType, part: e.part }));
+
+    return [...internalSlots, ...gcalSlots];
   };
 
   const isTourAvailableOnDate = (tour, date) => {
@@ -743,6 +859,27 @@ Reply to: ${customerData.email}`.trim();
               <div className="mt-3 space-y-1">
                 <p className="text-[10px] text-slate-500 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
                 <p className="text-[10px] text-amber-400/70 tracking-wider">AMBER BORDER = SKIPPER WILL CONFIRM</p>
+                {/* indicatore sincronizzazione google calendar */}
+                <div className="flex items-center gap-2 pt-2 mt-2 border-t border-slate-800">
+                  {gcalStatus === 'syncing' && (
+                    <>
+                      <RefreshCw className="w-3 h-3 text-slate-500 animate-spin" />
+                      <p className="text-[10px] text-slate-500 tracking-wider">SYNCING CALENDAR...</p>
+                    </>
+                  )}
+                  {gcalStatus === 'synced' && (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-500" />
+                      <p className="text-[10px] text-emerald-500/80 tracking-wider">CALENDAR SYNCED ({gcalEvents.length} events)</p>
+                    </>
+                  )}
+                  {gcalStatus === 'error' && (
+                    <>
+                      <AlertCircle className="w-3 h-3 text-amber-500" />
+                      <p className="text-[10px] text-amber-500/80 tracking-wider">USING LOCAL BOOKINGS ONLY</p>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
