@@ -130,6 +130,39 @@ function SeaRunnerLogoCompact({ size = 'sm' }) {
   );
 }
 
+// icona whatsapp (lucide-react non la include, la inlineo)
+function WhatsAppIcon({ className = 'w-5 h-5' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  );
+}
+
+// numero whatsapp sea runner (formato internazionale senza + e senza spazi)
+const WHATSAPP_NUMBER = '393488289438';
+
+// costruisce un link whatsapp con messaggio precompilato
+function whatsappLink(prefilledMessage = '') {
+  const encoded = encodeURIComponent(prefilledMessage);
+  return `https://wa.me/${WHATSAPP_NUMBER}${encoded ? `?text=${encoded}` : ''}`;
+}
+
+// bottone floating whatsapp visibile in tutte le pagine cliente
+function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about your tours.' }) {
+  return (
+    <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer"
+      className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-lg hover:shadow-xl transition-all p-4 flex items-center justify-center group"
+      style={{ boxShadow: '0 4px 20px rgba(37, 211, 102, 0.4)' }}
+      title="Chat with us on WhatsApp">
+      <WhatsAppIcon className="w-6 h-6" />
+      <span className="absolute right-full mr-3 px-3 py-2 bg-slate-900 text-white text-xs tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        Chat with us
+      </span>
+    </a>
+  );
+}
+
 // ============ TOUR CARD IMAGE ============
 function TourCardImage({ tour }) {
   // se il tour ha un'immagine reale, la mostriamo in formato 3:2
@@ -279,8 +312,7 @@ export default function SeaRunnerApp() {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [bookings, setBookings] = useState(initialBookings);
-  const [skipperFilter, setSkipperFilter] = useState('all');
-  const [skipperTab, setSkipperTab] = useState('bookings');
+  const [skipperTab, setSkipperTab] = useState('calendar');
   const [editingPriceId, setEditingPriceId] = useState(null);
   const [tempPrice, setTempPrice] = useState('');
   const [editingTourPrice, setEditingTourPrice] = useState(null);
@@ -305,8 +337,8 @@ export default function SeaRunnerApp() {
     return d;
   });
   const [selectedSkipperDate, setSelectedSkipperDate] = useState(null);
-  const [dateOverrides, setDateOverrides] = useState({}); // { 'YYYY-MM-DD': { closed, priceMultiplier, note } }
-  const [tempDatePrice, setTempDatePrice] = useState('1');
+  const [dateOverrides, setDateOverrides] = useState({}); // { 'YYYY-MM-DD': { closed, tourPrices: {tourId: price}, note } }
+  const [tempTourPrices, setTempTourPrices] = useState({}); // { tourId: price }
   const [tempDateNote, setTempDateNote] = useState('');
 
   const changeCustomerMonth = (delta) => {
@@ -325,12 +357,13 @@ export default function SeaRunnerApp() {
     const gcalOnDate = gcalEvents.filter(e => e.date.toDateString() === date.toDateString());
     return {
       closed: override.closed || false,
-      priceMultiplier: override.priceMultiplier || 1,
+      tourPrices: override.tourPrices || {}, // { tourId: customPrice }
       note: override.note || '',
       pendingBookings: internalBookings.filter(b => b.status === 'pending'),
       confirmedBookings: internalBookings.filter(b => b.status === 'confirmed'),
       gcalEvents: gcalOnDate,
-      hasAny: internalBookings.length > 0 || gcalOnDate.length > 0
+      hasAny: internalBookings.length > 0 || gcalOnDate.length > 0,
+      hasCustomPrices: override.tourPrices && Object.keys(override.tourPrices).length > 0
     };
   };
 
@@ -354,10 +387,10 @@ export default function SeaRunnerApp() {
     setDateOverrides({ ...dateOverrides, [key]: { ...current, closed: !current.closed } });
   };
 
-  const setDatePriceMultiplier = (date, multiplier, note = '') => {
+  const setDateTourPrices = (date, tourPrices, note = '') => {
     const key = dateToKey(date);
     const current = dateOverrides[key] || {};
-    setDateOverrides({ ...dateOverrides, [key]: { ...current, priceMultiplier: multiplier, note } });
+    setDateOverrides({ ...dateOverrides, [key]: { ...current, tourPrices, note } });
   };
 
   const clearDateOverride = (date) => {
@@ -765,11 +798,6 @@ ${customerData.notes || 'No special requests'}
 
   // ============ SKIPPER DASHBOARD ============
   if (mode === 'skipper' && skipperAuth) {
-    const filteredBookings = skipperFilter === 'all' ? bookings : bookings.filter(b => b.status === skipperFilter);
-    const pendingCount = bookings.filter(b => b.status === 'pending').length;
-    const confirmedCount = bookings.filter(b => b.status === 'confirmed').length;
-    const totalRevenue = bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.finalPrice || b.basePrice), 0);
-
     return (
       <div className="min-h-screen bg-slate-100" style={{ fontFamily: 'Georgia, serif' }}>
         <div className="bg-slate-950 text-white border-b-2 border-amber-400">
@@ -791,7 +819,6 @@ ${customerData.notes || 'No special requests'}
 
           <div className="flex gap-1 border-b border-slate-300 mt-6 mb-6 overflow-x-auto">
             {[
-              { id: 'bookings', label: 'Bookings', icon: Calendar },
               { id: 'calendar', label: 'Calendar', icon: Calendar },
               { id: 'pricing', label: 'Pricing', icon: Euro }
             ].map(tab => {
@@ -805,125 +832,6 @@ ${customerData.notes || 'No special requests'}
             })}
           </div>
 
-          {skipperTab === 'bookings' && (
-            <>
-              <div className="grid md:grid-cols-3 gap-4 mb-8">
-                <div className="bg-white border-l-4 border-amber-400 p-5 shadow-sm">
-                  <p className="text-xs tracking-widest text-slate-500 mb-2">PENDING REQUESTS</p>
-                  <p className="text-4xl text-slate-900">{pendingCount}</p>
-                </div>
-                <div className="bg-white border-l-4 border-emerald-500 p-5 shadow-sm">
-                  <p className="text-xs tracking-widest text-slate-500 mb-2">CONFIRMED TOURS</p>
-                  <p className="text-4xl text-slate-900">{confirmedCount}</p>
-                </div>
-                <div className="bg-slate-950 border-l-4 border-amber-400 p-5 shadow-sm text-white">
-                  <p className="text-xs tracking-widest text-amber-400 mb-2">REVENUE (CONFIRMED)</p>
-                  <p className="text-4xl">€{totalRevenue.toLocaleString()}</p>
-                </div>
-              </div>
-
-              <div className="flex gap-2 mb-6 flex-wrap">
-                {['all', 'pending', 'confirmed', 'rejected'].map(f => (
-                  <button key={f} onClick={() => setSkipperFilter(f)}
-                    className={`px-4 py-2 text-sm tracking-wider uppercase transition ${skipperFilter === f ? 'bg-slate-950 text-amber-400' : 'bg-white text-slate-600 hover:bg-slate-200'}`}>
-                    {f === 'all' ? 'All' : f} {f === 'pending' && pendingCount > 0 && `(${pendingCount})`}
-                  </button>
-                ))}
-              </div>
-
-              <div className="space-y-4">
-                {filteredBookings.length === 0 && <div className="bg-white p-12 text-center text-slate-400">No bookings in this category</div>}
-                {filteredBookings.map(booking => (
-                  <div key={booking.id} className="bg-white shadow-sm border-l-4 border-slate-300 hover:border-amber-400 transition">
-                    <div className="p-5">
-                      <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                        <div>
-                          <div className="flex items-center gap-3 mb-1 flex-wrap">
-                            <h3 className="text-xl text-slate-900">{booking.customerName}</h3>
-                            <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded tracking-wider">{booking.language}</span>
-                            {booking.status === 'pending' && <span className="text-xs px-2 py-1 bg-amber-100 text-amber-800 tracking-wider">PENDING</span>}
-                            {booking.status === 'confirmed' && <span className="text-xs px-2 py-1 bg-emerald-100 text-emerald-800 tracking-wider">CONFIRMED</span>}
-                            {booking.status === 'rejected' && <span className="text-xs px-2 py-1 bg-red-100 text-red-800 tracking-wider">REJECTED</span>}
-                          </div>
-                          <p className="text-amber-600 text-sm tracking-widest">{booking.tourName.toUpperCase()}</p>
-                        </div>
-                        <div className="text-right">
-                          {editingPriceId === booking.id ? (
-                            <div className="flex items-center gap-2">
-                              <span className="text-slate-500">€</span>
-                              <input type="number" value={tempPrice} onChange={(e) => setTempPrice(e.target.value)}
-                                className="w-24 px-2 py-1 border border-slate-300 text-right text-xl" autoFocus
-                                onKeyDown={(e) => e.key === 'Enter' && handleSavePrice(booking.id)} />
-                              <button onClick={() => handleSavePrice(booking.id)} className="p-1 bg-emerald-500 text-white hover:bg-emerald-600"><Save className="w-4 h-4" /></button>
-                              <button onClick={() => { setEditingPriceId(null); setTempPrice(''); }} className="p-1 bg-slate-300 hover:bg-slate-400"><X className="w-4 h-4" /></button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2 justify-end">
-                              <div>
-                                <p className="text-2xl text-slate-900">€{booking.finalPrice || booking.basePrice}</p>
-                                {booking.finalPrice && booking.finalPrice !== booking.basePrice && (
-                                  <p className="text-[10px] text-slate-400 tracking-wider line-through">€{booking.basePrice} est.</p>
-                                )}
-                                <p className="text-xs text-slate-500 tracking-wider">{booking.people} GUESTS</p>
-                              </div>
-                              <button onClick={() => { setEditingPriceId(booking.id); setTempPrice(booking.finalPrice || booking.basePrice); }}
-                                className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded" title="Adjust price"><Edit2 className="w-4 h-4" /></button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid md:grid-cols-4 gap-4 text-sm mb-4 pb-4 border-b border-slate-100">
-                        <div><p className="text-xs text-slate-400 tracking-wider mb-1">DATE</p><p className="text-slate-800">{booking.date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p></div>
-                        <div><p className="text-xs text-slate-400 tracking-wider mb-1">TIME</p><p className="text-slate-800">{booking.timeSlot}</p></div>
-                        <div><p className="text-xs text-slate-400 tracking-wider mb-1">EMAIL</p><p className="text-slate-800 truncate">{booking.email}</p></div>
-                        <div><p className="text-xs text-slate-400 tracking-wider mb-1">PHONE</p><p className="text-slate-800">{booking.phone}</p></div>
-                      </div>
-
-                      {booking.addOns && booking.addOns.length > 0 && (
-                        <div className="mb-3">
-                          <p className="text-xs text-slate-400 tracking-wider mb-2">ADD-ONS REQUESTED</p>
-                          <div className="flex flex-wrap gap-2">
-                            {booking.addOns.map(a => {
-                              const addon = addOns.find(ad => ad.id === a);
-                              return <span key={a} className="text-xs bg-amber-50 text-amber-800 px-2 py-1">{addon?.name}</span>;
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      {(booking.allergies || booking.mobility) && (
-                        <div className="bg-slate-50 p-3 mb-3 grid md:grid-cols-2 gap-3 text-xs">
-                          {booking.allergies && <div><span className="text-slate-400 tracking-wider">ALLERGIES:</span> <span className="text-slate-700">{booking.allergies}</span></div>}
-                          {booking.mobility && <div><span className="text-slate-400 tracking-wider">MOBILITY:</span> <span className="text-slate-700">{booking.mobility}</span></div>}
-                        </div>
-                      )}
-
-                      {booking.notes && (
-                        <div className="bg-slate-50 p-3 mb-4">
-                          <p className="text-xs text-slate-400 tracking-wider mb-1">NOTES</p>
-                          <p className="text-sm text-slate-700 italic">"{booking.notes}"</p>
-                        </div>
-                      )}
-
-                      {booking.status === 'pending' && (
-                        <div className="flex gap-2 flex-wrap">
-                          <button onClick={() => handleBookingAction(booking.id, 'confirmed', booking.finalPrice || booking.basePrice)}
-                            className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 text-sm tracking-wider hover:bg-emerald-700 transition">
-                            <CheckCircle className="w-4 h-4" /> CONFIRM AT €{booking.finalPrice || booking.basePrice}
-                          </button>
-                          <button onClick={() => handleBookingAction(booking.id, 'rejected')}
-                            className="flex items-center gap-2 bg-white border border-red-300 text-red-600 px-4 py-2 text-sm tracking-wider hover:bg-red-50 transition">
-                            <XCircle className="w-4 h-4" /> REJECT
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
 
           {skipperTab === 'calendar' && (
             <div>
@@ -932,7 +840,7 @@ ${customerData.notes || 'No special requests'}
                   <Calendar className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-blue-900 font-semibold mb-1">Calendar Management</p>
-                    <p className="text-xs text-blue-800 leading-relaxed">Click any date to open/close availability or set a special price multiplier (e.g. 1.3x for high season). Changes apply to all tours on that date.</p>
+                    <p className="text-xs text-blue-800 leading-relaxed">Click any date to open/close availability or set custom prices for specific tours on that date. Different tours can have different custom prices.</p>
                   </div>
                 </div>
               </div>
@@ -942,7 +850,7 @@ ${customerData.notes || 'No special requests'}
                 <div className="flex items-center gap-2"><div className="w-4 h-4 bg-red-100 border-2 border-red-500"></div><span className="text-slate-700">Closed</span></div>
                 <div className="flex items-center gap-2"><div className="w-4 h-4 bg-amber-100 border-2 border-amber-500"></div><span className="text-slate-700">Pending booking</span></div>
                 <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-100 border-2 border-blue-500"></div><span className="text-slate-700">Confirmed / gcal event</span></div>
-                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-purple-100 border-2 border-purple-500"></div><span className="text-slate-700">Special price</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-purple-100 border-2 border-purple-500"></div><span className="text-slate-700">Custom prices</span></div>
               </div>
 
               <div className="bg-white shadow-sm p-6">
@@ -983,7 +891,7 @@ ${customerData.notes || 'No special requests'}
                     } else if (info.pendingBookings.length > 0) {
                       bgColor = 'bg-amber-50 border-amber-400 hover:bg-amber-100';
                       textColor = 'text-amber-900';
-                    } else if (info.priceMultiplier !== 1) {
+                    } else if (info.hasCustomPrices) {
                       bgColor = 'bg-purple-50 border-purple-400 hover:bg-purple-100';
                       textColor = 'text-purple-900';
                     }
@@ -992,15 +900,15 @@ ${customerData.notes || 'No special requests'}
                       <button key={idx} disabled={isPast}
                         onClick={() => {
                           setSelectedSkipperDate(date);
-                          setTempDatePrice(String(info.priceMultiplier));
+                          setTempTourPrices({ ...info.tourPrices });
                           setTempDateNote(info.note);
                         }}
                         className={`aspect-square p-1 border-2 transition relative ${bgColor} ${isToday ? 'ring-2 ring-amber-500' : ''} ${isPast ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                         <div className={`text-sm font-semibold ${textColor}`}>{date.getDate()}</div>
                         {!isPast && (
                           <div className="absolute bottom-1 left-1 right-1 flex flex-col gap-0.5">
-                            {info.priceMultiplier !== 1 && (
-                              <div className="text-[9px] text-purple-700 font-semibold">{info.priceMultiplier}x</div>
+                            {info.hasCustomPrices && (
+                              <div className="text-[9px] text-purple-700 font-semibold">custom €</div>
                             )}
                             {info.pendingBookings.length > 0 && (
                               <div className="text-[9px] text-amber-700">{info.pendingBookings.length} pending</div>
@@ -1048,47 +956,48 @@ ${customerData.notes || 'No special requests'}
 
                         {!info.closed && (
                           <div>
-                            <p className="text-[10px] text-slate-500 tracking-widest mb-2">PRICE MULTIPLIER</p>
-                            <div className="grid grid-cols-4 gap-2 mb-3">
-                              {[
-                                { val: 0.8, label: '-20%' },
-                                { val: 1, label: 'Normal' },
-                                { val: 1.2, label: '+20%' },
-                                { val: 1.5, label: '+50%' }
-                              ].map(opt => (
-                                <button key={opt.val} onClick={() => setTempDatePrice(String(opt.val))}
-                                  className={`py-2 text-xs tracking-wider transition ${parseFloat(tempDatePrice) === opt.val ? 'bg-slate-950 text-amber-400' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
-                                  {opt.label}
-                                </button>
-                              ))}
-                            </div>
-                            <div className="flex items-center gap-2 mb-3">
-                              <span className="text-xs text-slate-500 tracking-wider">CUSTOM:</span>
-                              <input type="number" step="0.1" min="0.5" max="3" value={tempDatePrice}
-                                onChange={(e) => setTempDatePrice(e.target.value)}
-                                className="flex-1 px-3 py-2 border border-slate-300 text-sm" />
-                              <span className="text-sm text-slate-600">x</span>
+                            <p className="text-[10px] text-slate-500 tracking-widest mb-2">CUSTOM PRICES FOR THIS DATE</p>
+                            <p className="text-[11px] text-slate-500 italic mb-3">Leave empty to use the default price. Enter a custom price only for the tours you want to override on this specific date.</p>
+                            <div className="space-y-2 mb-3">
+                              {tours.filter(t => !t.isCustom).map(t => {
+                                const customValue = tempTourPrices[t.id];
+                                const displayedPrice = customValue !== undefined && customValue !== '' ? customValue : '';
+                                return (
+                                  <div key={t.id} className="flex items-center gap-2 p-2 bg-slate-50">
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm text-slate-900 truncate">{t.name}</p>
+                                      <p className="text-[10px] text-slate-500 tracking-wider">DEFAULT €{t.basePrice.toLocaleString()}</p>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-slate-500 text-sm">€</span>
+                                      <input type="number" value={displayedPrice}
+                                        onChange={(e) => {
+                                          const newPrices = { ...tempTourPrices };
+                                          if (e.target.value === '') delete newPrices[t.id];
+                                          else newPrices[t.id] = parseFloat(e.target.value);
+                                          setTempTourPrices(newPrices);
+                                        }}
+                                        placeholder={String(t.basePrice)}
+                                        className="w-24 px-2 py-1 border border-slate-300 text-right text-sm" />
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                             <input type="text" value={tempDateNote} onChange={(e) => setTempDateNote(e.target.value)}
                               placeholder="Note (e.g. 'High season', 'Holiday')"
                               className="w-full px-3 py-2 border border-slate-300 text-sm mb-3" />
-                            <div className="bg-slate-50 p-3 text-xs mb-3">
-                              <p className="text-slate-500 tracking-wider mb-2">PRICE PREVIEW ON THIS DATE:</p>
-                              {tours.filter(t => !t.isCustom).map(t => (
-                                <div key={t.id} className="flex justify-between py-1">
-                                  <span className="text-slate-700">{t.name}</span>
-                                  <span className="text-slate-900 font-semibold">
-                                    €{t.basePrice} → <span className="text-amber-600">€{Math.round(t.basePrice * parseFloat(tempDatePrice || 1))}</span>
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
                             <button onClick={() => {
-                                setDatePriceMultiplier(selectedSkipperDate, parseFloat(tempDatePrice), tempDateNote);
+                                // pulisco prezzi vuoti o non validi
+                                const cleaned = {};
+                                for (const [k, v] of Object.entries(tempTourPrices)) {
+                                  if (typeof v === 'number' && !isNaN(v) && v > 0) cleaned[k] = v;
+                                }
+                                setDateTourPrices(selectedSkipperDate, cleaned, tempDateNote);
                                 setSelectedSkipperDate(null);
                               }}
                               className="w-full py-3 bg-amber-400 text-slate-950 text-sm tracking-wider hover:bg-amber-300 transition">
-                              SAVE PRICE OVERRIDE
+                              SAVE CUSTOM PRICES
                             </button>
                           </div>
                         )}
@@ -1119,7 +1028,7 @@ ${customerData.notes || 'No special requests'}
                           </div>
                         )}
 
-                        {(info.closed || info.priceMultiplier !== 1) && (
+                        {(info.closed || info.hasCustomPrices) && (
                           <button onClick={() => { clearDateOverride(selectedSkipperDate); setSelectedSkipperDate(null); }}
                             className="w-full py-2 text-xs text-red-600 hover:bg-red-50 tracking-wider">
                             RESET DATE TO DEFAULT
@@ -1192,11 +1101,12 @@ ${customerData.notes || 'No special requests'}
           <h2 className="text-4xl mb-6">Thank you,<br/>{customerData.name.split(' ')[0]}</h2>
           <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
           <p className="text-slate-300 mb-6 leading-relaxed">
-            Captain Marco and Paola will review your request and contact you as soon as possible.
+            Captain Marco and Paola will review your request and contact you as soon as possible at <span className="text-amber-400">{customerData.email}</span>.
           </p>
-          {/* contatti: email + or + telefono */}
+          <p className="text-slate-400 text-xs tracking-widest mb-3">NEED TO REACH US DIRECTLY?</p>
+          {/* contatti sea runner: email generica + telefono attività */}
           <div className="flex items-center justify-center gap-3 mb-8 text-sm">
-            <a href={`mailto:${customerData.email}`} className="text-amber-400 hover:text-amber-300 transition">{customerData.email}</a>
+            <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:text-amber-300 transition">searunnerprenotazioni@gmail.com</a>
             <span className="text-slate-500 uppercase text-xs tracking-widest">or</span>
             <a href="tel:+393488289438" className="text-amber-400 hover:text-amber-300 transition">+39 348 828 9438</a>
           </div>
@@ -1229,6 +1139,17 @@ ${customerData.notes || 'No special requests'}
             </div>
           </div>
           <button onClick={resetBooking} className="border border-amber-400 text-amber-400 px-8 py-3 tracking-widest hover:bg-amber-400 hover:text-slate-950 transition">NEW BOOKING</button>
+
+          {/* call-to-action whatsapp per domande post-prenotazione */}
+          <div className="mt-8 pt-8 border-t border-slate-800">
+            <p className="text-slate-400 text-sm mb-4">Have any other questions? Don't hesitate to message us.</p>
+            <a href={whatsappLink(`Hi! I just submitted a booking request for ${selectedTour?.name} on ${selectedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. I have a question...`)}
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 tracking-wider transition">
+              <WhatsAppIcon className="w-5 h-5" />
+              <span>MESSAGE US ON WHATSAPP</span>
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -1703,6 +1624,15 @@ ${customerData.notes || 'No special requests'}
           <p className="text-slate-700 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
         </div>
       </footer>
+
+      {/* bottone whatsapp floating visibile in tutte le pagine cliente */}
+      <WhatsAppFloatingButton message={
+        currentStep === 1
+          ? 'Hi! I would like to know more about Sea Runner tours.'
+          : selectedTour
+            ? `Hi! I have a question about the ${selectedTour.name} tour.`
+            : 'Hi! I would like to know more about Sea Runner tours.'
+      } />
     </div>
   );
 }
