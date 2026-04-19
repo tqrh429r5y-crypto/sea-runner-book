@@ -270,7 +270,7 @@ export default function SeaRunnerApp() {
   const [customMeetingPoint, setCustomMeetingPoint] = useState('');
   const [customerData, setCustomerData] = useState({ 
     name: '', email: '', phone: '', notes: '', language: 'EN',
-    noAllergies: false, allergiesDetails: '',
+    hasAllergies: false, allergiesDetails: '',
     reducedMobility: false, mobilityDetails: ''
   });
   const [submitted, setSubmitted] = useState(false);
@@ -388,8 +388,10 @@ export default function SeaRunnerApp() {
 
   useEffect(() => { syncGoogleCalendar(); }, []);
   useEffect(() => { if (currentStep === 2) syncGoogleCalendar(); }, [currentStep]);
+  // scroll in cima ogni volta che cambia lo step (l'animazione smooth parte dopo il render)
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [currentStep]);
 
-  const SKIPPER_PASSWORD = 'searunner2025';
+  const SKIPPER_PASSWORD = 'Searunner646703';
 
   const handleSkipperLogin = () => {
     if (password === SKIPPER_PASSWORD) {
@@ -491,40 +493,173 @@ export default function SeaRunnerApp() {
 
   const handleSubmit = async () => {
     const addOnsText = selectedAddOns.length > 0 ? selectedAddOns.map(id => addOns.find(a => a.id === id)?.name).join(', ') : 'None';
-    const allergiesText = customerData.noAllergies ? 'No allergies/intolerances' : (customerData.allergiesDetails || 'Not specified');
-    const mobilityText = customerData.reducedMobility ? `Yes — ${customerData.mobilityDetails || 'details to be discussed'}` : 'No';
+    const allergiesText = customerData.hasAllergies ? (customerData.allergiesDetails || 'Yes (details to discuss)') : 'None';
+    const mobilityText = customerData.reducedMobility ? (customerData.mobilityDetails || 'Yes (details to discuss)') : 'None';
     const itineraryText = selectedTour.slotType === 'half-day-choice' && halfDayChoiceItinerary
       ? selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary)?.name : '';
+    const dateFormatted = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    const emailBody = `NEW BOOKING REQUEST - ${selectedTour.name}
+    // ordine richiesto: data, pax, nome, telefono, email, tipo tour, meeting point, prezzo, allergie, restrizioni
+    // versione plain text (fallback)
+    const emailBody = `NEW BOOKING REQUEST
 
-CUSTOMER
-Name: ${customerData.name}
-Email: ${customerData.email}
-Phone: ${customerData.phone}
-Language: ${customerData.language}
+QUICK INDEX
+1. Date & Time
+2. Guests
+3. Customer
+4. Contact
+5. Tour
+6. Meeting point
+7. Price estimate
+8. Allergies
+9. Mobility / restrictions
+10. Additional notes
 
-TOUR DETAILS
-Tour: ${selectedTour.name} - ${selectedTour.subtitle}
-${itineraryText ? `Itinerary: ${itineraryText}\n` : ''}Date: ${selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-Time: ${getFinalTimeSlot()}
+=============================
+1. DATE & TIME
+=============================
+${dateFormatted}
+${getFinalTimeSlot()}
 Duration: ${selectedTour.duration}
-Guests: ${numPeople}
-Meeting point: ${getFinalMeetingPoint()}
 
-ESTIMATED PRICE
-Base: EUR ${selectedTour.basePrice} (estimate — final quote from skipper)
-${selectedAddOns.length > 0 ? '+ add-ons (price on request)' : ''}
+=============================
+2. GUESTS
+=============================
+${numPeople} ${numPeople === 1 ? 'guest' : 'guests'}
 
-ADD-ONS: ${addOnsText}
+=============================
+3. CUSTOMER
+=============================
+${customerData.name}
+Preferred language: ${customerData.language}
 
-HEALTH & ACCESSIBILITY
-Allergies/intolerances: ${allergiesText}
-Reduced mobility: ${mobilityText}
+=============================
+4. CONTACT
+=============================
+Phone: ${customerData.phone}
+Email: ${customerData.email}
 
-NOTES: ${customerData.notes || 'No special requests'}
+=============================
+5. TOUR
+=============================
+${selectedTour.name} — ${selectedTour.subtitle}
+${itineraryText ? `Itinerary: ${itineraryText}` : ''}
+${selectedAddOns.length > 0 ? `Add-ons: ${addOnsText}` : 'Add-ons: none'}
 
-Reply to: ${customerData.email}`.trim();
+=============================
+6. MEETING POINT
+=============================
+${getFinalMeetingPoint()}
+
+=============================
+7. PRICE ESTIMATE
+=============================
+Base: EUR ${selectedTour.basePrice}${selectedAddOns.length > 0 ? ' + add-ons (price on request)' : ''}
+(estimate — final quote from skipper)
+
+=============================
+8. ALLERGIES
+=============================
+${allergiesText}
+
+=============================
+9. MOBILITY / RESTRICTIONS
+=============================
+${mobilityText}
+
+=============================
+10. ADDITIONAL NOTES
+=============================
+${customerData.notes || 'No special requests'}
+
+`.trim();
+
+    // versione HTML con indice cliccabile e sezioni ancorate
+    const emailHtml = `
+<div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #1e293b; background: #f8fafc; padding: 24px;">
+  <div style="background: #0a2540; color: white; padding: 20px; margin-bottom: 20px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0; font-size: 10px; letter-spacing: 3px; color: #fbbf24;">SEA RUNNER</p>
+    <h2 style="margin: 4px 0 0 0; font-size: 22px;">New Booking Request</h2>
+    <p style="margin: 8px 0 0 0; font-size: 14px; color: #cbd5e1;">${dateFormatted} — ${numPeople} ${numPeople === 1 ? 'guest' : 'guests'}</p>
+  </div>
+
+  <div style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+    <p style="margin: 0 0 10px 0; font-size: 10px; letter-spacing: 2px; color: #0a2540; font-weight: bold;">QUICK INDEX</p>
+    <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+      <li><a href="#s1" style="color: #0a2540; text-decoration: none;">Date &amp; Time</a></li>
+      <li><a href="#s2" style="color: #0a2540; text-decoration: none;">Guests</a></li>
+      <li><a href="#s3" style="color: #0a2540; text-decoration: none;">Customer</a></li>
+      <li><a href="#s4" style="color: #0a2540; text-decoration: none;">Contact</a></li>
+      <li><a href="#s5" style="color: #0a2540; text-decoration: none;">Tour</a></li>
+      <li><a href="#s6" style="color: #0a2540; text-decoration: none;">Meeting point</a></li>
+      <li><a href="#s7" style="color: #0a2540; text-decoration: none;">Price estimate</a></li>
+      <li><a href="#s8" style="color: #0a2540; text-decoration: none;">Allergies</a></li>
+      <li><a href="#s9" style="color: #0a2540; text-decoration: none;">Mobility / restrictions</a></li>
+      <li><a href="#s10" style="color: #0a2540; text-decoration: none;">Additional notes</a></li>
+    </ol>
+  </div>
+
+  <div id="s1" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">1 — DATE &amp; TIME</p>
+    <p style="margin: 0; font-size: 18px; color: #0a2540;"><strong>${dateFormatted}</strong></p>
+    <p style="margin: 4px 0 0 0; font-size: 14px; color: #475569;">${getFinalTimeSlot()} · Duration: ${selectedTour.duration}</p>
+  </div>
+
+  <div id="s2" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">2 — GUESTS</p>
+    <p style="margin: 0; font-size: 20px; color: #0a2540;"><strong>${numPeople}</strong> ${numPeople === 1 ? 'guest' : 'guests'}</p>
+  </div>
+
+  <div id="s3" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">3 — CUSTOMER</p>
+    <p style="margin: 0; font-size: 18px; color: #0a2540;"><strong>${customerData.name}</strong></p>
+    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Preferred language: ${customerData.language}</p>
+  </div>
+
+  <div id="s4" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">4 — CONTACT</p>
+    <p style="margin: 0; font-size: 15px;"><strong>Phone:</strong> <a href="tel:${customerData.phone}" style="color: #0a2540;">${customerData.phone}</a></p>
+    <p style="margin: 4px 0 0 0; font-size: 15px;"><strong>Email:</strong> <a href="mailto:${customerData.email}" style="color: #0a2540;">${customerData.email}</a></p>
+  </div>
+
+  <div id="s5" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">5 — TOUR</p>
+    <p style="margin: 0; font-size: 18px; color: #0a2540;"><strong>${selectedTour.name}</strong></p>
+    <p style="margin: 4px 0 0 0; font-size: 14px; color: #475569;">${selectedTour.subtitle}</p>
+    ${itineraryText ? `<p style="margin: 8px 0 0 0; font-size: 13px; color: #475569;">Itinerary: <strong>${itineraryText}</strong></p>` : ''}
+    <p style="margin: 8px 0 0 0; font-size: 13px; color: #475569;">Add-ons: ${selectedAddOns.length > 0 ? addOnsText : 'none'}</p>
+  </div>
+
+  <div id="s6" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">6 — MEETING POINT</p>
+    <p style="margin: 0; font-size: 16px; color: #0a2540;"><strong>${getFinalMeetingPoint()}</strong></p>
+  </div>
+
+  <div id="s7" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">7 — PRICE ESTIMATE</p>
+    <p style="margin: 0; font-size: 22px; color: #0a2540;"><strong>€${selectedTour.basePrice.toLocaleString()}</strong>${selectedAddOns.length > 0 ? ' <span style="font-size: 13px; color: #64748b;">+ add-ons (price on request)</span>' : ''}</p>
+    <p style="margin: 6px 0 0 0; font-size: 12px; font-style: italic; color: #64748b;">Estimate — final quote to be confirmed by skipper</p>
+  </div>
+
+  <div id="s8" style="background: ${customerData.hasAllergies ? '#fef3c7' : 'white'}; padding: 20px; margin-bottom: 12px; border-left: 4px solid ${customerData.hasAllergies ? '#f59e0b' : '#fbbf24'};">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">8 — ALLERGIES</p>
+    <p style="margin: 0; font-size: 15px; color: #0a2540;">${allergiesText}</p>
+  </div>
+
+  <div id="s9" style="background: ${customerData.reducedMobility ? '#fef3c7' : 'white'}; padding: 20px; margin-bottom: 12px; border-left: 4px solid ${customerData.reducedMobility ? '#f59e0b' : '#fbbf24'};">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">9 — MOBILITY / RESTRICTIONS</p>
+    <p style="margin: 0; font-size: 15px; color: #0a2540;">${mobilityText}</p>
+  </div>
+
+  <div id="s10" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
+    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">10 — ADDITIONAL NOTES</p>
+    <p style="margin: 0; font-size: 14px; color: #475569; font-style: ${customerData.notes ? 'normal' : 'italic'};">${customerData.notes || 'No special requests'}</p>
+  </div>
+
+  <div style="margin-top: 20px; padding: 16px; background: #0a2540; color: white; text-align: center; font-size: 12px; letter-spacing: 2px;">
+    SEA RUNNER · PRIVATE BOAT TOURS · LA SPEZIA
+  </div>
+</div>`.trim();
 
     if (WEB3FORMS_KEY && WEB3FORMS_KEY !== 'YOUR_ACCESS_KEY_HERE') {
       try {
@@ -532,9 +667,12 @@ Reply to: ${customerData.email}`.trim();
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify({
             access_key: WEB3FORMS_KEY,
-            subject: `New Booking: ${selectedTour.name} - ${customerData.name}`,
-            from_name: `Sea Runner - ${customerData.name}`,
-            email: customerData.email, message: emailBody
+            subject: `New Booking: ${selectedTour.name} — ${customerData.name} (${dateFormatted})`,
+            from_name: `Sea Runner — ${customerData.name}`,
+            email: customerData.email,
+            message: emailBody,
+            // web3forms supporta html_message per il rendering ricco
+            html_message: emailHtml
           })
         });
       } catch (error) { console.error('Email send error:', error); }
@@ -556,7 +694,7 @@ Reply to: ${customerData.email}`.trim();
     setSubmitted(false); setCurrentStep(1); setSelectedTour(null); setSelectedDate(null);
     setHalfDayChoiceItinerary(null); setHalfDayChoiceTime(null);
     setSelectedAddOns([]); setNumPeople(2); setMeetingPoint('Porto Mirabello (La Spezia)'); setCustomMeetingPoint('');
-    setCustomerData({ name: '', email: '', phone: '', notes: '', language: 'EN', noAllergies: false, allergiesDetails: '', reducedMobility: false, mobilityDetails: '' });
+    setCustomerData({ name: '', email: '', phone: '', notes: '', language: 'EN', hasAllergies: false, allergiesDetails: '', reducedMobility: false, mobilityDetails: '' });
   };
 
   // ============ CALENDARIO CLIENTE — griglia mensile navigabile ============
@@ -619,10 +757,6 @@ Reply to: ${customerData.email}`.trim();
               className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:border-amber-400 focus:outline-none" placeholder="password" autoFocus />
             {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
             <button onClick={handleSkipperLogin} className="w-full py-3 bg-amber-400 text-slate-950 rounded font-semibold hover:bg-amber-300 transition tracking-wider">ACCESS DASHBOARD</button>
-            <div className="bg-slate-800/50 border border-slate-700 rounded p-3">
-              <p className="text-xs text-slate-400 mb-1">Demo password:</p>
-              <code className="text-amber-400 text-sm">searunner2025</code>
-            </div>
           </div>
         </div>
       </div>
@@ -1047,7 +1181,7 @@ Reply to: ${customerData.email}`.trim();
   // ============ CONFIRMATION ============
   if (submitted) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4" style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 py-8" style={{ fontFamily: 'Georgia, serif' }}>
         <div className="max-w-md w-full text-center text-white">
           <div className="mb-6 flex justify-center"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-white text-sm tracking-[0.3em] mb-8">SEA RUNNER</p>
@@ -1057,18 +1191,41 @@ Reply to: ${customerData.email}`.trim();
           <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">REQUEST RECEIVED</p>
           <h2 className="text-4xl mb-6">Thank you,<br/>{customerData.name.split(' ')[0]}</h2>
           <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
-          <p className="text-slate-300 mb-8 leading-relaxed">
-            Captain Marco and Paola will review your request and contact you as soon as possible at <span className="text-amber-400">{customerData.email}</span>
+          <p className="text-slate-300 mb-6 leading-relaxed">
+            Captain Marco and Paola will review your request and contact you as soon as possible.
           </p>
-          <div className="bg-slate-900 border border-slate-800 p-6 text-left mb-6">
-            <p className="text-xs text-amber-400 tracking-widest mb-3">YOUR REQUEST</p>
-            <p className="text-white mb-1">{selectedTour?.name}</p>
-            <p className="text-sm text-slate-400 mb-3">{selectedTour?.subtitle}</p>
-            <div className="space-y-1 text-sm text-slate-300">
-              <p>Date: {selectedDate?.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-              <p>Time: {getFinalTimeSlot()}</p>
-              <p>Guests: {numPeople}</p>
-              <p>Meeting: {getFinalMeetingPoint()}</p>
+          {/* contatti: email + or + telefono */}
+          <div className="flex items-center justify-center gap-3 mb-8 text-sm">
+            <a href={`mailto:${customerData.email}`} className="text-amber-400 hover:text-amber-300 transition">{customerData.email}</a>
+            <span className="text-slate-500 uppercase text-xs tracking-widest">or</span>
+            <a href="tel:+393488289438" className="text-amber-400 hover:text-amber-300 transition">+39 348 828 9438</a>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 overflow-hidden mb-6">
+            {/* immagine del tour prenotato */}
+            {selectedTour && (
+              <div className="relative w-full" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
+                {selectedTour.cardImage ? (
+                  <img src={selectedTour.cardImage} alt={selectedTour.name}
+                    className="w-full h-full"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    onError={(e) => { e.target.style.display = 'none'; }} />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <h3 className="text-white text-3xl" style={{ fontFamily: '"Brush Script MT", cursive' }}>{selectedTour.name}</h3>
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="p-6 text-left">
+              <p className="text-xs text-amber-400 tracking-widest mb-3">YOUR REQUEST</p>
+              <p className="text-white mb-1">{selectedTour?.name}</p>
+              <p className="text-sm text-slate-400 mb-3">{selectedTour?.subtitle}</p>
+              <div className="space-y-1 text-sm text-slate-300">
+                <p>Date: {selectedDate?.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <p>Time: {getFinalTimeSlot()}</p>
+                <p>Guests: {numPeople}</p>
+                <p>Meeting: {getFinalMeetingPoint()}</p>
+              </div>
             </div>
           </div>
           <button onClick={resetBooking} className="border border-amber-400 text-amber-400 px-8 py-3 tracking-widest hover:bg-amber-400 hover:text-slate-950 transition">NEW BOOKING</button>
@@ -1322,10 +1479,18 @@ Reply to: ${customerData.email}`.trim();
           <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
             <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> MEETING POINT</p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-              {[...defaultPickupPoints, 'Other'].map(point => (
-                <button key={point} onClick={() => setMeetingPoint(point)}
-                  className={`px-3 py-2 text-sm transition ${meetingPoint === point ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>{point}</button>
-              ))}
+              {[...defaultPickupPoints, 'Other'].map(point => {
+                // Porto Mirabello va spezzato su 2 righe con "(La Spezia)" intero sotto
+                const isMirabello = point === 'Porto Mirabello (La Spezia)';
+                return (
+                  <button key={point} onClick={() => setMeetingPoint(point)}
+                    className={`px-3 py-2 text-sm transition leading-tight ${meetingPoint === point ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>
+                    {isMirabello ? (
+                      <>Porto Mirabello<br/><span className="text-xs opacity-80">(La Spezia)</span></>
+                    ) : point}
+                  </button>
+                );
+              })}
             </div>
             {meetingPoint === 'Other' && (
               <div className="mt-3">
@@ -1426,14 +1591,14 @@ Reply to: ${customerData.email}`.trim();
 
             {/* ALLERGIES & DIETARY */}
             <div className="border-t border-slate-800 pt-5">
-              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><AlertCircle className="w-3 h-3" /> DIETARY REQUIREMENTS *</p>
+              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><AlertCircle className="w-3 h-3" /> DIETARY REQUIREMENTS</p>
               <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-800/50 hover:bg-slate-800 transition">
-                <input type="checkbox" checked={customerData.noAllergies}
-                  onChange={(e) => setCustomerData({ ...customerData, noAllergies: e.target.checked, allergiesDetails: e.target.checked ? '' : customerData.allergiesDetails })}
+                <input type="checkbox" checked={customerData.hasAllergies}
+                  onChange={(e) => setCustomerData({ ...customerData, hasAllergies: e.target.checked, allergiesDetails: e.target.checked ? customerData.allergiesDetails : '' })}
                   className="mt-1 w-4 h-4 accent-amber-400" />
-                <span className="text-sm text-slate-300">I confirm that no guest has allergies or food intolerances</span>
+                <span className="text-sm text-slate-300">One or more guests have allergies or food intolerances</span>
               </label>
-              {!customerData.noAllergies && (
+              {customerData.hasAllergies && (
                 <div className="mt-3">
                   <label className="block text-[10px] text-slate-500 tracking-widest mb-2">PLEASE SPECIFY ALLERGIES OR INTOLERANCES *</label>
                   <textarea value={customerData.allergiesDetails} onChange={(e) => setCustomerData({ ...customerData, allergiesDetails: e.target.value })}
@@ -1445,7 +1610,7 @@ Reply to: ${customerData.email}`.trim();
 
             {/* MOBILITY */}
             <div className="border-t border-slate-800 pt-5">
-              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><Accessibility className="w-3 h-3" /> MOBILITY *</p>
+              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><Accessibility className="w-3 h-3" /> MOBILITY</p>
               <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-800/50 hover:bg-slate-800 transition">
                 <input type="checkbox" checked={customerData.reducedMobility}
                   onChange={(e) => setCustomerData({ ...customerData, reducedMobility: e.target.checked, mobilityDetails: e.target.checked ? customerData.mobilityDetails : '' })}
@@ -1512,13 +1677,13 @@ Reply to: ${customerData.email}`.trim();
 
           <button onClick={handleSubmit} disabled={
               !customerData.name || !customerData.email || !customerData.phone ||
-              (!customerData.noAllergies && !customerData.allergiesDetails.trim()) ||
+              (customerData.hasAllergies && !customerData.allergiesDetails.trim()) ||
               (customerData.reducedMobility && !customerData.mobilityDetails.trim()) ||
               (selectedTour?.isCustom && !customerData.notes)
             }
             className={`w-full py-4 tracking-[0.3em] text-sm transition ${
               customerData.name && customerData.email && customerData.phone &&
-              (customerData.noAllergies || customerData.allergiesDetails.trim()) &&
+              (!customerData.hasAllergies || customerData.allergiesDetails.trim()) &&
               (!customerData.reducedMobility || customerData.mobilityDetails.trim()) &&
               (!selectedTour?.isCustom || customerData.notes)
                 ? 'bg-amber-400 text-slate-950 hover:bg-amber-300' : 'bg-slate-800 text-slate-600 cursor-not-allowed'
