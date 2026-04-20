@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ============ GOOGLE CALENDAR SYNC ============
 // l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
@@ -1824,7 +1824,7 @@ function HomePage() {
         <h2 className="text-3xl md:text-4xl mb-6">A different way to see Liguria</h2>
         <div className="w-16 h-px bg-amber-400 mx-auto mb-8"></div>
         <p className="text-slate-300 text-lg leading-relaxed mb-6">
-          Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you, your guests, and the coastline unfolding at your own pace.
+          Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you and those you love, with the coastline unfolding at your own pace.
         </p>
         <p className="text-slate-400 leading-relaxed">
           Swim in hidden coves the big boats never reach. Snorkel the marine reserve with a guide. Enjoy a light Italian lunch on board with local wine while the colourful villages drift by. Every day at sea is crafted around you.
@@ -1840,49 +1840,28 @@ function HomePage() {
             </div>
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LOVED BY OUR GUESTS</p>
             <h2 className="text-3xl md:text-4xl mb-4">Highly rated across the web</h2>
-            <div className="w-16 h-px bg-amber-400 mx-auto"></div>
+            <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
+            <p className="text-slate-400 max-w-xl mx-auto">
+              Don't take our word for it — read what guests from all over the world have to say about their day at sea with us.
+            </p>
           </div>
 
-          {/* platform rating cards */}
-          <div className="grid sm:grid-cols-3 gap-4 mb-12">
+          {/* platform rating cards con link veri */}
+          <div className="grid sm:grid-cols-2 gap-4 mb-10 max-w-3xl mx-auto">
             {[
-              { name: 'Google', rating: '5.0', reviews: '—', url: 'https://www.google.com/search?q=sea+runner+la+spezia' },
-              { name: 'TripAdvisor', rating: '5.0', reviews: '—', url: 'https://www.tripadvisor.com' },
-              { name: 'Viator', rating: '5.0', reviews: '—', url: 'https://www.viator.com' }
+              { name: 'Google', url: 'https://share.google/6jVbuTak13P75aq2Y', cta: 'Read on Google' },
+              { name: 'TripAdvisor', url: 'https://www.tripadvisor.it/AttractionProductReview-g187824-d25176464-Cinque_Terre_and_Portovenere_Private_Boat_Tour_from_La_Spezia-La_Spezia_Province_o.html', cta: 'Read on TripAdvisor' }
             ].map(p => (
               <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
-                className="bg-slate-900 border border-slate-800 p-5 text-center hover:border-amber-400 transition block">
-                <p className="text-xs text-slate-500 tracking-[0.3em] mb-3">{p.name.toUpperCase()}</p>
-                <div className="flex items-center justify-center gap-1 mb-2">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
+                className="bg-slate-900 border border-slate-800 p-6 text-center hover:border-amber-400 transition block group">
+                <p className="text-xs text-slate-500 tracking-[0.3em] mb-4">{p.name.toUpperCase()}</p>
+                <div className="flex items-center justify-center gap-1 mb-3">
+                  {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />)}
                 </div>
-                <p className="text-2xl text-white mb-1">{p.rating}</p>
-                <p className="text-[10px] text-slate-500 tracking-widest">{p.reviews} REVIEWS</p>
+                <p className="text-sm text-amber-400 tracking-wider group-hover:underline">{p.cta} →</p>
               </a>
             ))}
           </div>
-
-          {/* testimonial quotes */}
-          <div className="grid md:grid-cols-3 gap-4">
-            {[
-              { text: 'An absolute highlight of our trip to Italy. Marco knows every corner of the coast and Paola made everything feel so personal.', author: 'Sarah, UK', platform: 'Google' },
-              { text: 'The boat is gorgeous, the food on board was delicious, and snorkeling in the marine reserve was unforgettable. Highly recommended.', author: 'Heinrich, DE', platform: 'TripAdvisor' },
-              { text: 'A luxury experience at a fair price. We felt like VIPs for the whole day. Will definitely come back next summer.', author: 'Pierre, FR', platform: 'Viator' }
-            ].map((q, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 p-6 flex flex-col">
-                <div className="flex items-center gap-1 mb-3">
-                  {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
-                </div>
-                <p className="text-slate-300 text-sm leading-relaxed italic mb-4 flex-1">"{q.text}"</p>
-                <div className="pt-3 border-t border-slate-800">
-                  <p className="text-white text-sm">{q.author}</p>
-                  <p className="text-[10px] text-slate-500 tracking-widest mt-1">VIA {q.platform.toUpperCase()}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-center text-[10px] text-slate-600 italic mt-8 tracking-wider">* Reviews shown are illustrative, verifiable on each platform</p>
         </div>
       </section>
 
@@ -1977,6 +1956,81 @@ function HomePage() {
 }
 
 
+// ============ BOAT PHOTO GALLERY ============
+// gallery scorribile della barca. quando avremo le foto reali basta sostituire
+// l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.jpg')
+const BOAT_PHOTOS = [
+  // { src: '/boat-1.jpg', caption: 'Main deck' },
+  // { src: '/boat-2.jpg', caption: 'Sunbathing area' },
+  // { src: '/boat-3.jpg', caption: 'Bathroom' },
+];
+
+function BoatPhotoGallery() {
+  const [index, setIndex] = useState(0);
+  const photos = BOAT_PHOTOS;
+  const hasPhotos = photos.length > 0;
+  const total = photos.length;
+
+  const prev = () => setIndex((index - 1 + total) % total);
+  const next = () => setIndex((index + 1) % total);
+
+  return (
+    <div className="mb-12">
+      <div className="aspect-[16/9] bg-slate-900 border border-slate-800 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
+        {hasPhotos ? (
+          <>
+            <img src={photos[index].src} alt={photos[index].caption || `Boat photo ${index + 1}`}
+              className="w-full h-full" style={{ objectFit: 'cover' }}
+              onError={(e) => { e.target.style.display = 'none'; }} />
+            {photos[index].caption && (
+              <div className="absolute bottom-4 left-4 bg-slate-950/70 px-3 py-2">
+                <p className="text-white text-xs tracking-wider">{photos[index].caption}</p>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Anchor className="w-32 h-32 text-amber-400/20" />
+            <div className="absolute bottom-4 left-4 right-4 text-center">
+              <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTOS COMING SOON</p>
+            </div>
+          </div>
+        )}
+
+        {/* frecce di navigazione — visibili solo se ci sono 2+ foto */}
+        {total > 1 && (
+          <>
+            <button onClick={prev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition"
+              aria-label="Previous photo">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button onClick={next}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition"
+              aria-label="Next photo">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+            {/* dots indicatore */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {photos.map((_, i) => (
+                <button key={i} onClick={() => setIndex(i)}
+                  className={`w-2 h-2 rounded-full transition ${i === index ? 'bg-amber-400 w-6' : 'bg-white/40 hover:bg-white/70'}`}
+                  aria-label={`Go to photo ${i + 1}`} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* counter sotto la gallery se ci sono più foto */}
+      {total > 1 && (
+        <p className="text-center text-[10px] text-slate-500 tracking-widest mt-3">{index + 1} / {total}</p>
+      )}
+    </div>
+  );
+}
+
+
 // ============ BOATPAGE (route /boat) ============
 function BoatPage() {
   return (
@@ -1995,13 +2049,8 @@ function BoatPage() {
           </p>
         </div>
 
-        {/* foto principale placeholder */}
-        <div className="aspect-[16/9] bg-slate-900 border border-slate-800 flex items-center justify-center mb-12 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
-          <Anchor className="w-32 h-32 text-amber-400/20" />
-          <div className="absolute bottom-4 left-4 right-4 text-center">
-            <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTO COMING SOON</p>
-          </div>
-        </div>
+        {/* foto gallery scorribile */}
+        <BoatPhotoGallery />
       </section>
 
       {/* 3 SPEC CARD */}
@@ -2013,14 +2062,14 @@ function BoatPage() {
             <p className="text-xs text-slate-500 tracking-widest">GUESTS</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
-            <Anchor className="w-6 h-6 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl mb-1">9 m</p>
-            <p className="text-xs text-slate-500 tracking-widest">LENGTH</p>
+            <Droplets className="w-6 h-6 text-amber-400 mx-auto mb-3" />
+            <p className="text-2xl mb-1">Bathroom</p>
+            <p className="text-xs text-slate-500 tracking-widest">ON BOARD</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
-            <MapPin className="w-6 h-6 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl mb-1">Porto Mirabello</p>
-            <p className="text-xs text-slate-500 tracking-widest">LA SPEZIA</p>
+            <Umbrella className="w-6 h-6 text-amber-400 mx-auto mb-3" />
+            <p className="text-2xl mb-1">Extendable</p>
+            <p className="text-xs text-slate-500 tracking-widest">BIMINI SHADE</p>
           </div>
         </div>
       </section>
@@ -2090,6 +2139,25 @@ function BoatPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* PLANIMETRIA — layout della barca dal sito jeanneau */}
+      <section className="max-w-4xl mx-auto px-4 mb-16">
+        <div className="text-center mb-8">
+          <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">BOAT LAYOUT</p>
+          <h3 className="text-2xl mb-2">How the boat is organized</h3>
+          <div className="w-16 h-px bg-amber-400/50 mx-auto"></div>
+        </div>
+        <div className="bg-white p-6 md:p-10">
+          {/* planimetria: placeholder finché non carichi l'immagine. il path /boat-layout.png è pronto da sostituire */}
+          <img src="/boat-layout.png" alt="Cap Camarat 9.0 WA layout"
+            className="w-full h-auto"
+            onError={(e) => {
+              // se l'immagine non c'è mostriamo un placeholder pulito
+              e.target.outerHTML = `<div style="aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #64748b; font-size: 12px; letter-spacing: 0.2em;">BOAT LAYOUT COMING SOON</div>`;
+            }} />
+        </div>
+        <p className="text-center text-[10px] text-slate-500 italic mt-3 tracking-wider">Official layout from Jeanneau</p>
       </section>
 
       {/* CTA */}
