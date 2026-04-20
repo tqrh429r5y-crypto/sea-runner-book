@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw } from 'lucide-react';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail } from 'lucide-react';
 
 // ============ GOOGLE CALENDAR SYNC ============
 // l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
@@ -394,7 +395,9 @@ const initialBookings = [
   { id: 3, tourId: 'golfo-poeti', tourName: 'Golfo dei poeti', customerName: 'Heinrich Mueller', email: 'h.mueller@email.de', phone: '+49 151 23456789', date: new Date(Date.now() + 7*86400000), timeSlot: '10:00 – 17:00', slotType: 'full-day', people: 6, notes: '', addOns: ['restaurant'], status: 'confirmed', basePrice: 1400, finalPrice: 1600, language: 'DE' }
 ];
 
-export default function SeaRunnerApp() {
+// ============ BOOKING APP (route /booking) ============
+// l'intero flusso a 3 step + dashboard skipper + schermata conferma
+function BookingApp() {
   const [tours, setTours] = useState(initialTours);
   const [mode, setMode] = useState('customer');
   const [currentStep, setCurrentStep] = useState(1);
@@ -1706,5 +1709,331 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
             : 'Hi! I would like to know more about Sea Runner tours.'
       } />
     </div>
+  );
+}
+
+
+// ============ NAVBAR CONDIVISA ============
+// mostrata in tutte le pagine tranne booking step 2/3 e dashboard skipper
+// (il booking ha già il suo header con gli step 1/2/3)
+function SharedNav() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const links = [
+    { to: '/', label: 'Home' },
+    { to: '/boat', label: 'The boat' },
+    { to: '/booking', label: 'Book a tour' }
+  ];
+
+  const go = (to) => {
+    setMenuOpen(false);
+    navigate(to);
+  };
+
+  return (
+    <header className="border-b border-slate-800 bg-slate-950 sticky top-0 z-40" style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-3">
+          <SeaRunnerLogoCompact size="sm" />
+          <div>
+            <h1 className="text-white text-lg tracking-[0.2em]">SEA RUNNER</h1>
+            <p className="text-amber-400 text-[10px] tracking-[0.3em]">PRIVATE BOAT TOURS</p>
+          </div>
+        </Link>
+
+        {/* nav desktop */}
+        <nav className="hidden md:flex items-center gap-6">
+          {links.map(l => (
+            <Link key={l.to} to={l.to}
+              className={`text-xs tracking-[0.2em] uppercase transition ${
+                location.pathname === l.to ? 'text-amber-400' : 'text-slate-400 hover:text-amber-400'
+              }`}>
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* menu hamburger mobile */}
+        <button onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden text-slate-400 hover:text-amber-400 transition"
+          aria-label="Toggle menu">
+          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {/* dropdown mobile */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-slate-800 bg-slate-950">
+          <nav className="flex flex-col">
+            {links.map(l => (
+              <button key={l.to} onClick={() => go(l.to)}
+                className={`px-6 py-4 text-left border-b border-slate-800 last:border-b-0 text-sm tracking-[0.2em] uppercase transition ${
+                  location.pathname === l.to ? 'text-amber-400 bg-slate-900' : 'text-slate-400 hover:bg-slate-900 hover:text-amber-400'
+                }`}>
+                {l.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
+    </header>
+  );
+}
+
+
+// ============ HOMEPAGE (route /) ============
+function HomePage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
+      <SharedNav />
+
+      {/* HERO */}
+      <section className="relative overflow-hidden" style={{ minHeight: '75vh' }}>
+        {/* background gradient + foto placeholder */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(180deg, #0a2540 0%, #1e5fa8 50%, #0b3d7e 100%)'
+        }}></div>
+        {/* overlay scuro leggero per leggibilità */}
+        <div className="absolute inset-0 bg-slate-950/30"></div>
+
+        <div className="relative max-w-5xl mx-auto px-4 py-24 md:py-32 text-center">
+          <p className="text-amber-400 text-xs tracking-[0.5em] mb-6">LA SPEZIA · ITALIAN RIVIERA</p>
+          <h1 className="text-5xl md:text-7xl mb-6 leading-tight">
+            Private boat tours along the<br/>
+            <span style={{ fontFamily: '"Brush Script MT", "Lucida Handwriting", cursive', color: '#fbbf24', fontSize: '1.2em' }}>italian riviera</span>
+          </h1>
+          <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
+          <p className="text-slate-200 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            Cinque Terre, Gulf of Poets, Portofino. Exclusive day trips with Captain Marco and Paola — since 2022.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/booking" className="bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
+              BOOK YOUR TOUR
+            </Link>
+            <Link to="/boat" className="border border-amber-400 text-amber-400 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-400 hover:text-slate-950 transition">
+              DISCOVER THE BOAT
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* INTRO */}
+      <section className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">OUR STORY</p>
+        <h2 className="text-3xl md:text-4xl mb-6">A different way to see Liguria</h2>
+        <div className="w-16 h-px bg-amber-400 mx-auto mb-8"></div>
+        <p className="text-slate-300 text-lg leading-relaxed mb-6">
+          Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you, your guests, and the coastline unfolding at your own pace.
+        </p>
+        <p className="text-slate-400 leading-relaxed">
+          Swim in hidden coves the big boats never reach. Snorkel the marine reserve with a guide. Enjoy a light Italian lunch on board with local wine while the colourful villages drift by. Every day at sea is crafted around you.
+        </p>
+      </section>
+
+      {/* TOURS PREVIEW */}
+      <section className="border-t border-slate-800 py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">EXCLUSIVE EXPERIENCES</p>
+            <h2 className="text-3xl md:text-4xl mb-4">Choose your tour</h2>
+            <div className="w-16 h-px bg-amber-400 mx-auto"></div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {initialTours.slice(0, 3).map(tour => (
+              <Link key={tour.id} to="/booking"
+                className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
+                <TourCardImage tour={tour} />
+                <div className="p-6">
+                  <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-slate-500 tracking-widest">FROM</p>
+                      <p className="text-3xl text-white">€{tour.basePrice.toLocaleString()}</p>
+                    </div>
+                    <div className="border border-amber-400 text-amber-400 px-4 py-2 text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition">
+                      BOOK →
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link to="/booking" className="text-amber-400 hover:text-amber-300 text-sm tracking-[0.3em] transition">
+              VIEW ALL TOURS →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* BOAT TEASER */}
+      <section className="border-t border-slate-800 py-20 bg-slate-900/30">
+        <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+          <div className="aspect-[4/3] bg-slate-800 flex items-center justify-center overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
+            {/* placeholder per foto barca - sostituire con foto reale */}
+            <Anchor className="w-24 h-24 text-amber-400/30" />
+            <div className="absolute bottom-4 left-4 right-4 text-center">
+              <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTO COMING SOON</p>
+            </div>
+          </div>
+          <div>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
+            <h2 className="text-3xl md:text-4xl mb-6">Our home at sea</h2>
+            <div className="w-16 h-px bg-amber-400 mb-6"></div>
+            <p className="text-slate-300 leading-relaxed mb-6">
+              Comfortable, private, and built for the Ligurian coast. Up to 8 guests, with shaded areas, fresh water shower, bathroom and all the equipment you need for a perfect day at sea.
+            </p>
+            <Link to="/boat" className="inline-block border border-amber-400 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] hover:bg-amber-400 hover:text-slate-950 transition">
+              DISCOVER THE BOAT →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT STRIP */}
+      <section className="border-t border-slate-800 py-16">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">GET IN TOUCH</p>
+          <h2 className="text-3xl mb-6">Questions before booking?</h2>
+          <p className="text-slate-400 mb-8">Marco and Paola reply personally. In Italian, English, French or German.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <a href={whatsappLink('Hi! I would like to know more about Sea Runner tours.')} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 text-xs tracking-[0.3em] transition">
+              <WhatsAppIcon className="w-4 h-4" /> WHATSAPP
+            </a>
+            <a href="tel:+393488289438" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] transition">
+              <Phone className="w-4 h-4" /> +39 348 828 9438
+            </a>
+            <a href="mailto:searunnerprenotazioni@gmail.com" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] transition">
+              <Mail className="w-4 h-4" /> EMAIL
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <SharedFooter />
+      <WhatsAppFloatingButton message="Hi! I would like to know more about Sea Runner tours." />
+    </div>
+  );
+}
+
+
+// ============ BOATPAGE (route /boat) ============
+function BoatPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
+      <SharedNav />
+
+      <section className="max-w-5xl mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
+          <h1 className="text-4xl md:text-5xl mb-4">Our home at sea</h1>
+          <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
+          <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            Comfortable, private, and built to let you enjoy every moment of the Ligurian coast.
+          </p>
+        </div>
+
+        {/* main photo placeholder */}
+        <div className="aspect-[16/9] bg-slate-900 border border-slate-800 flex items-center justify-center mb-10 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
+          <Anchor className="w-32 h-32 text-amber-400/20" />
+          <div className="absolute bottom-4 left-4 right-4 text-center">
+            <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTO COMING SOON</p>
+          </div>
+        </div>
+
+        {/* specs */}
+        <div className="grid md:grid-cols-3 gap-4 mb-12">
+          <div className="bg-slate-900 border border-slate-800 p-6 text-center">
+            <Users className="w-6 h-6 text-amber-400 mx-auto mb-3" />
+            <p className="text-2xl mb-1">up to 8</p>
+            <p className="text-xs text-slate-500 tracking-widest">GUESTS</p>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 p-6 text-center">
+            <Anchor className="w-6 h-6 text-amber-400 mx-auto mb-3" />
+            <p className="text-2xl mb-1">10 m</p>
+            <p className="text-xs text-slate-500 tracking-widest">LENGTH</p>
+          </div>
+          <div className="bg-slate-900 border border-slate-800 p-6 text-center">
+            <MapPin className="w-6 h-6 text-amber-400 mx-auto mb-3" />
+            <p className="text-2xl mb-1">Porto Mirabello</p>
+            <p className="text-xs text-slate-500 tracking-widest">LA SPEZIA</p>
+          </div>
+        </div>
+
+        {/* description */}
+        <div className="bg-slate-900 border border-slate-800 p-8 mb-8">
+          <p className="text-amber-400 text-xs tracking-[0.3em] mb-4">ON BOARD</p>
+          <p className="text-slate-300 leading-relaxed mb-6">
+            Designed for comfort and intimacy. Shaded areas for the hottest hours, open deck for sunbathing, comfortable seating for meals on board, and a generous swim platform for easy access to the sea.
+          </p>
+          <p className="text-slate-400 leading-relaxed">
+            Fresh water shower, bathroom with toilet, bluetooth audio system, fridge, snorkeling equipment and towels included. Everything you need for a perfect day at sea, without compromises.
+          </p>
+        </div>
+
+        {/* facilities grid */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-12">
+          {[
+            'Shaded areas', 'Open sunbathing deck', 'Comfortable seating',
+            'Swim platform', 'Fresh water shower', 'Bathroom on board',
+            'Bluetooth sound system', 'Fridge & cooler', 'Snorkeling equipment',
+            'Towels & blankets', 'Private parking (La Spezia)', 'Full safety equipment'
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-2 text-sm text-slate-300 bg-slate-900/50 p-3 border border-slate-800">
+              <Check className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center border-t border-slate-800 pt-12">
+          <p className="text-slate-400 mb-6">Ready to plan your day at sea?</p>
+          <Link to="/booking" className="inline-block bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
+            BOOK YOUR TOUR →
+          </Link>
+        </div>
+      </section>
+
+      <SharedFooter />
+      <WhatsAppFloatingButton message="Hi! I have a question about the boat." />
+    </div>
+  );
+}
+
+
+// ============ FOOTER CONDIVISO ============
+function SharedFooter() {
+  return (
+    <footer className="border-t border-slate-800 mt-20 py-10">
+      <div className="max-w-7xl mx-auto px-4 text-center" style={{ fontFamily: 'Georgia, serif' }}>
+        <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
+        <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
+        <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
+        <p className="text-slate-500 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
+        <p className="text-slate-700 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+      </div>
+    </footer>
+  );
+}
+
+
+// ============ ROOT APP CON ROUTER ============
+export default function SeaRunnerApp() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/boat" element={<BoatPage />} />
+        <Route path="/booking" element={<BookingApp />} />
+        {/* fallback: rotte non esistenti riportano a home */}
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
