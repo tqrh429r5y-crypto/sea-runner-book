@@ -262,7 +262,7 @@ const initialTours = [
       { place: 'Monterosso', note: 'Time ashore • Final stop' }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
-    includes: ['Light Italian lunch', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Multilingual hostess', 'Private parking', 'Towels & equipment']
+    includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
     id: 'golfo-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
@@ -283,7 +283,7 @@ const initialTours = [
       { place: 'Tellaro', note: 'Hidden gem of the Gulf' }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
-    includes: ['Light Italian lunch', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Multilingual hostess', 'Private parking', 'Towels & equipment']
+    includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
     id: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
@@ -302,7 +302,7 @@ const initialTours = [
       { place: 'Cinque Terre', note: 'Sunset cruise along the coast' }
     ],
     itineraryFootnote: 'Approx. 10 hours • Restaurant lunch not included',
-    includes: ['Light lunch on board', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Private parking', 'Towels & equipment'],
+    includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment'],
     notIncluded: 'Restaurant lunch in Portofino at own expense'
   },
   {
@@ -339,7 +339,7 @@ const initialTours = [
       { id: 'afternoon', label: 'Afternoon', time: '14:00 – 18:00', icon: 'sun' },
       { id: 'evening', label: 'Evening', time: '17:00 – 21:00', icon: 'sunset' }
     ],
-    includes: ['Italian aperitivo', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Private parking', 'Towels']
+    includes: ['Italian aperitivo', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels']
   },
   {
     id: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
@@ -369,7 +369,7 @@ const initialTours = [
       }
     ],
     itineraryFootnote: 'Approx. 3.5 hours • Flexible schedule',
-    includes: ['Italian aperitivo', 'Open bar with local wines', 'Hostess on board', 'Private parking', 'Towels']
+    includes: ['Italian aperitivo', 'Open bar with local wines', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels']
   },
   {
     id: 'custom', name: 'Tailored', subtitle: 'Your day, your way',
