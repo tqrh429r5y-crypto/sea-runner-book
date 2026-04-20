@@ -292,7 +292,7 @@ const initialTours = [
     basePrice: 2350, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
     cardImage: '/portofino-v2.png',
     itineraryAccent: '#2dd4bf',
-    shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on return.',
+    shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
     itinerary: [
       { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
@@ -306,13 +306,13 @@ const initialTours = [
     includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
-    id: 'half-day-choice', name: 'Half day', subtitle: 'Cinque Terre or Gulf of Poets',
+    id: 'half-day-choice', name: 'Half day', subtitle: 'Cinque Terre or Golfo dei Poeti',
     duration: '4 hours', slotType: 'half-day-choice',
     basePrice: 1000, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
     cardImage: '/half-day-v2.png',
     itineraryAccent: '#d4a355',
     shortDesc: 'Pick your coastline, pick your moment. Morning, afternoon or evening.',
-    longDesc: 'A shorter escape with the same magic. Choose between the Cinque Terre route or the Gulf of Poets, then pick the light you prefer: fresh morning, sunny afternoon, or evening golden hour.',
+    longDesc: 'A shorter escape with the same magic. Choose between the Cinque Terre route or the Golfo dei Poeti, then pick the light you prefer: fresh morning, sunny afternoon, or evening golden hour.',
     itineraryOptions: [
       { id: 'cinque', name: 'Cinque Terre', desc: 'Portovenere → Riomaggiore → Manarola → Vernazza',
         itinerary: [
@@ -323,7 +323,7 @@ const initialTours = [
           { place: 'Vernazza', note: 'Time ashore • Final stop' }
         ]
       },
-      { id: 'golfo', name: 'Gulf of Poets', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
+      { id: 'golfo', name: 'Golfo dei Poeti', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
         itinerary: [
           { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
           { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
@@ -348,7 +348,7 @@ const initialTours = [
     cardImage: '/sunset-v2.png',
     itineraryAccent: '#fdba74',
     shortDesc: 'Aperitivo at sea while the coast turns amber and rose.',
-    longDesc: 'The most romantic way to end the day. Sail the Gulf of Poets as the sun melts behind Palmaria, sip a Ligurian aperitivo with local wines, and let the colours do the rest.',
+    longDesc: 'The most romantic way to end the day. Sail the Golfo dei Poeti as the sun melts behind Palmaria, sip a Ligurian aperitivo with local wines, and let the colours do the rest.',
     // sunset ora ha 2 varianti come l'half-day
     itineraryOptions: [
       { id: 'cinque', name: 'Cinque Terre at sunset', desc: 'Portovenere → Riomaggiore → Manarola',
@@ -359,7 +359,7 @@ const initialTours = [
           { place: 'Manarola', note: 'Aperitivo • Final stop' }
         ]
       },
-      { id: 'golfo', name: 'Gulf of Poets at sunset', desc: 'Portovenere → Palmaria → Lerici',
+      { id: 'golfo', name: 'Golfo dei Poeti at sunset', desc: 'Portovenere → Palmaria → Lerici',
         itinerary: [
           { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
           { place: 'Portovenere', note: 'Medieval waterfront at dusk' },
@@ -414,6 +414,10 @@ function BookingApp() {
     hasAllergies: false, allergiesDetails: '',
     reducedMobility: false, mobilityDetails: ''
   });
+  // consenso privacy obbligatorio (GDPR art. 13)
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  // consenso esplicito per dati sanitari (GDPR art. 9.2.a) — richiesto solo se ci sono allergie/mobility
+  const [healthConsent, setHealthConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   // diagnostica invio email — visibile on-page se qualcosa va storto
   const [submitError, setSubmitError] = useState(null);
@@ -1666,13 +1670,37 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
             </div>
           )}
 
+          {/* CONSENSO PRIVACY (obbligatorio, GDPR art. 13) */}
+          <div className="mb-4 p-4 bg-slate-900/50 border border-slate-800 space-y-3">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)}
+                className="mt-1 w-4 h-4 accent-amber-400 flex-shrink-0" />
+              <span className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                I have read and accept the <Link to="/privacy" target="_blank" className="text-amber-400 hover:underline">Privacy Policy</Link>, and I consent to the processing of my personal data for the purpose of handling my booking request. <span className="text-red-400">*</span>
+              </span>
+            </label>
+
+            {/* consenso esplicito per dati sanitari — compare solo se uno ha flaggato allergie o mobility */}
+            {(customerData.hasAllergies || customerData.reducedMobility) && (
+              <label className="flex items-start gap-3 cursor-pointer pt-3 border-t border-slate-800">
+                <input type="checkbox" checked={healthConsent} onChange={(e) => setHealthConsent(e.target.checked)}
+                  className="mt-1 w-4 h-4 accent-amber-400 flex-shrink-0" />
+                <span className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  I explicitly consent to the processing of the health-related information I am providing (allergies and/or reduced mobility), to be used exclusively to ensure my safety and comfort on board (GDPR art. 9.2.a). <span className="text-red-400">*</span>
+                </span>
+              </label>
+            )}
+          </div>
+
           <button onClick={handleSubmit} disabled={
               !customerData.name || customerData.name.trim().length < 2 ||
               !customerData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerData.email) ||
               !customerData.phone || customerData.phone.replace(/\D/g, '').length < 8 ||
               (customerData.hasAllergies && !customerData.allergiesDetails.trim()) ||
               (customerData.reducedMobility && !customerData.mobilityDetails.trim()) ||
-              (selectedTour?.isCustom && !customerData.notes)
+              (selectedTour?.isCustom && !customerData.notes) ||
+              !privacyConsent ||
+              ((customerData.hasAllergies || customerData.reducedMobility) && !healthConsent)
             }
             className={`w-full py-4 tracking-[0.3em] text-sm transition ${
               customerData.name && customerData.name.trim().length >= 2 &&
@@ -1680,7 +1708,9 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
               customerData.phone && customerData.phone.replace(/\D/g, '').length >= 8 &&
               (!customerData.hasAllergies || customerData.allergiesDetails.trim()) &&
               (!customerData.reducedMobility || customerData.mobilityDetails.trim()) &&
-              (!selectedTour?.isCustom || customerData.notes)
+              (!selectedTour?.isCustom || customerData.notes) &&
+              privacyConsent &&
+              (!(customerData.hasAllergies || customerData.reducedMobility) || healthConsent)
                 ? 'bg-amber-400 text-slate-950 hover:bg-amber-300' : 'bg-slate-800 text-slate-600 cursor-not-allowed'
             }`}>
             REQUEST QUOTE
@@ -1812,7 +1842,7 @@ function HomePage() {
           </h1>
           <div className="w-20 sm:w-24 h-px bg-amber-400 mx-auto mb-5 sm:mb-6"></div>
           <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2">
-            Cinque Terre, Gulf of Poets, Portofino. Exclusive day trips with Captain Marco and Paola.
+            Cinque Terre, Golfo dei Poeti, Portofino. Exclusive day trips with Captain Marco and Paola.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/booking" className="bg-amber-400 text-slate-950 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-300 transition">
@@ -1863,7 +1893,7 @@ function HomePage() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Highly rated across the web</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
             <p className="text-slate-400 max-w-xl mx-auto">
-              Don't take our word for it — read what guests from all over the world have to say about their day at sea with us.
+              Don't take our word for it, read what guests from all over the world have to say about their day at sea with us.
             </p>
           </div>
 
@@ -2205,8 +2235,189 @@ function SharedFooter() {
         <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
         <p className="text-slate-500 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
         <p className="text-slate-700 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+
+        {/* info aziendali — d.lgs 70/2003 */}
+        <div className="mt-6 pt-6 border-t border-slate-800/50">
+          <p className="text-[10px] text-slate-600 tracking-wider leading-relaxed">
+            M B di Bulgheresi Marco · Via Buonviaggio 152/A, La Spezia · P.IVA IT 01096850118
+          </p>
+          <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-slate-600 tracking-widest">
+            <Link to="/privacy" className="hover:text-amber-400 transition">PRIVACY POLICY</Link>
+          </div>
+        </div>
       </div>
     </footer>
+  );
+}
+
+
+// ============ PRIVACY POLICY PAGE (route /privacy) ============
+function PrivacyPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
+      <SharedNav />
+
+      <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
+        <h1 className="text-3xl sm:text-4xl mb-3">Privacy Policy</h1>
+        <p className="text-slate-500 text-sm mb-10">Last updated: April 2026</p>
+
+        <div className="space-y-8 text-slate-300 leading-relaxed">
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">1. Data Controller</h2>
+            <p className="mb-3">The data controller responsible for processing your personal data is:</p>
+            <div className="bg-slate-900 border border-slate-800 p-4 text-sm">
+              <p><strong className="text-white">Sea Runner</strong></p>
+              <p>Operated by: Bulgheresi Marco (M B di Bulgheresi Marco)</p>
+              <p>VAT number: IT 01096850118</p>
+              <p>Registered address: Via Buonviaggio 152/A, La Spezia, Italy</p>
+              <p className="mt-2">Operational email: <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:underline">searunnerprenotazioni@gmail.com</a></p>
+              <p>Phone: <a href="tel:+393488289438" className="text-amber-400 hover:underline">+39 348 828 9438</a></p>
+              <p className="mt-2 text-slate-400">For formal requests regarding your GDPR rights, you may also contact the certified email: <span className="text-amber-400">marco.bulgheresi@pec.it</span></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">2. Data We Collect</h2>
+            <p className="mb-3">When you submit a booking request through our website, we collect the following personal data:</p>
+            <ul className="list-disc pl-6 space-y-1 text-sm">
+              <li><strong className="text-white">Identification data</strong>: full name</li>
+              <li><strong className="text-white">Contact data</strong>: email address, phone number</li>
+              <li><strong className="text-white">Preference data</strong>: preferred language, tour selection, date, number of guests, meeting point, special requests</li>
+              <li><strong className="text-white">Health data (optional)</strong>: food allergies and reduced mobility information, provided only if you voluntarily declare them to ensure your safety on board</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">3. Purposes and Legal Basis</h2>
+            <p className="mb-3">We process your data for the following purposes:</p>
+            <ul className="list-disc pl-6 space-y-2 text-sm">
+              <li><strong className="text-white">Booking management</strong> — to process your request, confirm availability, prepare your tour, and communicate with you about the booking. <span className="text-slate-400 italic">Legal basis: performance of a contract (GDPR art. 6.1.b).</span></li>
+              <li><strong className="text-white">On-board safety</strong> — if you share health information (allergies, reduced mobility), we use it exclusively to ensure your safety and comfort during the tour. <span className="text-slate-400 italic">Legal basis: your explicit consent (GDPR art. 9.2.a).</span></li>
+              <li><strong className="text-white">Legal obligations</strong> — to comply with Italian law regarding commercial transactions, tax, and maritime regulations. <span className="text-slate-400 italic">Legal basis: legal obligation (GDPR art. 6.1.c).</span></li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">4. Third Parties and Data Transfers</h2>
+            <p className="mb-3">We use the following third-party services to operate our booking system:</p>
+            <ul className="list-disc pl-6 space-y-2 text-sm">
+              <li><strong className="text-white">Web3Forms</strong> (based in the United States) — used to deliver booking request emails from our website to our inbox. Data transferred: all booking form fields. Safeguards: standard contractual clauses (SCC) for extra-EU data transfer.</li>
+              <li><strong className="text-white">Google Calendar</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used to manage tour availability. No personal customer data is transferred to Google Calendar; only internal scheduling information is stored. Safeguards: EU-US Data Privacy Framework.</li>
+              <li><strong className="text-white">Vercel Inc.</strong> (based in the United States) — used to host our website. May collect standard server log data (IP address, browser type, access timestamps) for operational purposes. Safeguards: EU-US Data Privacy Framework.</li>
+            </ul>
+            <p className="mt-3 text-sm">We do not sell, rent, or share your personal data with any party beyond what is strictly required to provide our service.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">5. Data Retention</h2>
+            <ul className="list-disc pl-6 space-y-1 text-sm">
+              <li><strong className="text-white">Booking requests not converted into a confirmed tour</strong>: retained for up to 12 months, then deleted.</li>
+              <li><strong className="text-white">Confirmed bookings</strong>: retained for up to 10 years, as required by Italian tax and accounting law.</li>
+              <li><strong className="text-white">Health data (allergies, mobility)</strong>: deleted immediately after the tour takes place, unless needed to manage follow-up communications.</li>
+              <li><strong className="text-white">Server and access logs</strong>: retained by Vercel according to their standard policy.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">6. Your Rights (GDPR)</h2>
+            <p className="mb-3">Under the General Data Protection Regulation (GDPR), you have the right to:</p>
+            <ul className="list-disc pl-6 space-y-1 text-sm">
+              <li><strong className="text-white">Access</strong> your personal data (art. 15)</li>
+              <li><strong className="text-white">Rectify</strong> inaccurate or incomplete data (art. 16)</li>
+              <li><strong className="text-white">Erase</strong> your data ("right to be forgotten", art. 17)</li>
+              <li><strong className="text-white">Restrict</strong> the processing of your data (art. 18)</li>
+              <li><strong className="text-white">Receive</strong> your data in a portable format (art. 20)</li>
+              <li><strong className="text-white">Object</strong> to processing (art. 21)</li>
+              <li><strong className="text-white">Withdraw consent</strong> at any time, for health data processing, without affecting prior processing</li>
+            </ul>
+            <p className="mt-3 text-sm">To exercise any of these rights, contact us at <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:underline">searunnerprenotazioni@gmail.com</a>. We will respond within 30 days.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">7. Cookies</h2>
+            <p className="text-sm">
+              This website uses only technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices. It does not use profiling cookies or third-party tracking cookies without your consent. You can manage your preferences at any time by clearing your browser's local storage.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">8. Supervisory Authority</h2>
+            <p className="text-sm">If you believe your data is being processed unlawfully, you have the right to lodge a complaint with the Italian Data Protection Authority (<em>Garante per la protezione dei dati personali</em>):</p>
+            <div className="bg-slate-900 border border-slate-800 p-4 mt-3 text-sm">
+              <p>Garante per la Protezione dei Dati Personali</p>
+              <p>Piazza Venezia 11, 00187 Roma, Italy</p>
+              <p>Website: <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">www.garanteprivacy.it</a></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">9. Applicable Law and Jurisdiction</h2>
+            <p className="text-sm">
+              This privacy policy is governed by Italian law and by the European GDPR regulation (EU 2016/679). The competent court for any dispute is the Court of La Spezia, Italy.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl sm:text-2xl text-white mb-3">10. Changes to This Policy</h2>
+            <p className="text-sm">
+              We may update this privacy policy from time to time. The date of the last revision is shown at the top of this page. Material changes will be communicated through our website.
+            </p>
+          </section>
+
+        </div>
+      </section>
+
+      <SharedFooter />
+    </div>
+  );
+}
+
+
+// ============ COOKIE BANNER ============
+// banner provvisorio conforme al minimo sindacale del garante italiano.
+// compare in basso, non intrusivo, salva la scelta in localStorage.
+// NOTA: una volta attivato iubenda questo va sostituito con il loro widget ufficiale.
+function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    // mostra solo se l'utente non ha ancora scelto
+    try {
+      const choice = localStorage.getItem('sr-cookie-consent');
+      if (!choice) setVisible(true);
+    } catch {
+      // se localStorage bloccato (safari privato ecc), mostriamo comunque
+      setVisible(true);
+    }
+  }, []);
+
+  const save = (value) => {
+    try { localStorage.setItem('sr-cookie-consent', value); } catch {}
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 backdrop-blur"
+      style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+        <p className="text-slate-300 text-xs sm:text-sm leading-relaxed flex-1">
+          This website uses technical cookies strictly necessary for its functioning. No profiling or tracking cookies are used without your consent. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.
+        </p>
+        <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
+          <button onClick={() => save('declined')}
+            className="flex-1 sm:flex-initial px-4 py-2 text-xs tracking-widest text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition">
+            DECLINE
+          </button>
+          <button onClick={() => save('accepted')}
+            className="flex-1 sm:flex-initial px-5 py-2 text-xs tracking-widest bg-amber-400 text-slate-950 hover:bg-amber-300 transition">
+            ACCEPT
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -2231,9 +2442,12 @@ export default function SeaRunnerApp() {
         <Route path="/" element={<HomePage />} />
         <Route path="/boat" element={<BoatPage />} />
         <Route path="/booking" element={<BookingApp />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         {/* fallback: rotte non esistenti riportano a home */}
         <Route path="*" element={<HomePage />} />
       </Routes>
+      {/* cookie banner visibile fino a scelta esplicita */}
+      <CookieBanner />
     </BrowserRouter>
   );
 }
