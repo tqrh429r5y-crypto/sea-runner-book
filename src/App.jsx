@@ -1804,21 +1804,21 @@ function HomePage() {
           background: 'linear-gradient(180deg, rgba(10,37,64,0.75) 0%, rgba(30,95,168,0.55) 50%, rgba(11,61,126,0.85) 100%)'
         }}></div>
 
-        <div className="relative max-w-5xl mx-auto px-4 py-24 md:py-32 text-center">
-          <p className="text-amber-400 text-xs tracking-[0.5em] mb-6">LA SPEZIA · ITALIAN RIVIERA</p>
-          <h1 className="text-5xl md:text-7xl mb-6 leading-tight">
+        <div className="relative max-w-5xl mx-auto px-4 py-20 sm:py-24 md:py-32 text-center">
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] sm:tracking-[0.5em] mb-4 sm:mb-6">LA SPEZIA · ITALIAN RIVIERA</p>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl mb-5 sm:mb-6 leading-tight">
             Private boat tours along the<br/>
             <span style={{ fontFamily: '"Brush Script MT", "Lucida Handwriting", cursive', color: '#fbbf24', fontSize: '1.2em' }}>italian riviera</span>
           </h1>
-          <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
-          <p className="text-slate-200 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+          <div className="w-20 sm:w-24 h-px bg-amber-400 mx-auto mb-5 sm:mb-6"></div>
+          <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2">
             Cinque Terre, Gulf of Poets, Portofino. Exclusive day trips with Captain Marco and Paola.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/booking" className="bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
+            <Link to="/booking" className="bg-amber-400 text-slate-950 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-300 transition">
               BOOK YOUR TOUR
             </Link>
-            <Link to="/boat" className="border border-amber-400 text-amber-400 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-400 hover:text-slate-950 transition">
+            <Link to="/boat" className="border border-amber-400 text-amber-400 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-400 hover:text-slate-950 transition">
               DISCOVER THE BOAT
             </Link>
           </div>
@@ -1826,9 +1826,9 @@ function HomePage() {
       </section>
 
       {/* INTRO */}
-      <section className="max-w-4xl mx-auto px-4 py-20 text-center">
+      <section className="max-w-4xl mx-auto px-4 py-14 sm:py-20 text-center">
         <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">OUR STORY</p>
-        <h2 className="text-3xl md:text-4xl mb-6">A different way to see Liguria</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6">A different way to see Liguria</h2>
         <div className="w-16 h-px bg-amber-400 mx-auto mb-8"></div>
         <p className="text-slate-300 text-lg leading-relaxed mb-6">
           Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you and those you love, with the coastline unfolding at your own pace.
@@ -1839,14 +1839,14 @@ function HomePage() {
       </section>
 
       {/* REVIEWS & RATINGS */}
-      <section className="border-t border-slate-800 py-20 bg-slate-900/30">
+      <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-1 mb-4">
               {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />)}
             </div>
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LOVED BY OUR GUESTS</p>
-            <h2 className="text-3xl md:text-4xl mb-4">Highly rated across the web</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Highly rated across the web</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
             <p className="text-slate-400 max-w-xl mx-auto">
               Don't take our word for it — read what guests from all over the world have to say about their day at sea with us.
@@ -1873,11 +1873,11 @@ function HomePage() {
       </section>
 
       {/* TOURS PREVIEW */}
-      <section className="border-t border-slate-800 py-20">
+      <section className="border-t border-slate-800 py-14 sm:py-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">EXCLUSIVE EXPERIENCES</p>
-            <h2 className="text-3xl md:text-4xl mb-4">Choose your tour</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Choose your tour</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto"></div>
           </div>
 
@@ -1911,18 +1911,17 @@ function HomePage() {
       </section>
 
       {/* BOAT TEASER */}
-      <section className="border-t border-slate-800 py-20 bg-slate-900/30">
+      <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <div className="aspect-[4/3] bg-slate-800 flex items-center justify-center overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
-            {/* placeholder per foto barca - sostituire con foto reale */}
-            <Anchor className="w-24 h-24 text-amber-400/30" />
-            <div className="absolute bottom-4 left-4 right-4 text-center">
-              <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTO COMING SOON</p>
-            </div>
+          <div className="aspect-[4/3] bg-slate-800 overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
+            <img src="/boat-1.jpg" alt="Sea Runner at the Tino lighthouse"
+              className="w-full h-full"
+              style={{ objectFit: 'cover', objectPosition: 'center' }}
+              loading="lazy" />
           </div>
           <div>
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
-            <h2 className="text-3xl md:text-4xl mb-4">Cap Camarat 9.0 WA</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Cap Camarat 9.0 WA</h2>
             <p className="text-slate-400 italic text-sm mb-6">Best Boat of the Year · multiple awards</p>
             <div className="w-16 h-px bg-amber-400 mb-6"></div>
             <p className="text-slate-300 leading-relaxed mb-6">
@@ -1957,7 +1956,6 @@ function HomePage() {
       </section>
 
       <SharedFooter />
-      <WhatsAppFloatingButton message="Hi! I would like to know more about Sea Runner tours." />
     </div>
   );
 }
@@ -2001,12 +1999,13 @@ function BoatPhotoGallery() {
   return (
     <div className="mb-12">
       {/* container senza aspect ratio fisso: si adatta alla foto.
-          max-height limita le foto verticali perché non diventino troppo alte su desktop */}
+          max-height scala in base al device per evitare che foto verticali diventino giganti su mobile */}
       <div className="bg-slate-900 border border-slate-800 relative overflow-hidden flex items-center justify-center"
-        style={{ maxHeight: '75vh', minHeight: '300px' }}>
+        style={{ maxHeight: 'min(60vh, 550px)', minHeight: '240px' }}>
         <img src={photos[index].src} alt={photos[index].caption || `Boat photo ${index + 1}`}
           className="block w-auto h-auto max-w-full"
-          style={{ maxHeight: '75vh' }}
+          style={{ maxHeight: 'min(60vh, 550px)' }}
+          loading="lazy"
           onError={(e) => { e.target.style.display = 'none'; }} />
 
         {photos[index].caption && (
@@ -2085,13 +2084,13 @@ function BoatPage() {
       <SharedNav />
 
       {/* HERO con titolo e nome modello */}
-      <section className="max-w-5xl mx-auto px-4 pt-16 pb-10">
-        <div className="text-center mb-10">
-          <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
-          <h1 className="text-4xl md:text-5xl mb-3">Cap Camarat 9.0 WA</h1>
-          <p className="text-slate-400 italic text-sm mb-5">Best Boat of the Year · multiple awards</p>
-          <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
-          <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
+      <section className="max-w-5xl mx-auto px-4 pt-10 sm:pt-16 pb-8 sm:pb-10">
+        <div className="text-center mb-8 sm:mb-10">
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">THE BOAT</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl mb-3">Cap Camarat 9.0 WA</h1>
+          <p className="text-slate-400 italic text-xs sm:text-sm mb-4 sm:mb-5">Best Boat of the Year · multiple awards</p>
+          <div className="w-20 sm:w-24 h-px bg-amber-400 mx-auto mb-5 sm:mb-6"></div>
+          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed px-2">
             An award-winning vessel, chosen for one reason only: it lets you feel the sea at its best.
           </p>
         </div>
@@ -2203,7 +2202,6 @@ function BoatPage() {
       </section>
 
       <SharedFooter />
-      <WhatsAppFloatingButton message="Hi! I have a question about the boat." />
     </div>
   );
 }
