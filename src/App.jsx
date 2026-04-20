@@ -302,8 +302,7 @@ const initialTours = [
       { place: 'Cinque Terre', note: 'Sunset cruise along the coast' }
     ],
     itineraryFootnote: 'Approx. 10 hours • Restaurant lunch not included',
-    includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment'],
-    notIncluded: 'Restaurant lunch in Portofino at own expense'
+    includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
     id: 'half-day-choice', name: 'Half day', subtitle: 'Cinque Terre or Gulf of Poets',
