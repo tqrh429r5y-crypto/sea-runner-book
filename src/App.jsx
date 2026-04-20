@@ -1960,12 +1960,9 @@ function HomePage() {
 // gallery scorribile della barca. quando avremo le foto reali basta sostituire
 // l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.jpg')
 const BOAT_PHOTOS = [
-  { src: '/boat-1.jpg', caption: 'Anchored at Palmaria lighthouse' },
-  { src: '/boat-2.jpg', caption: 'Main deck from above' },
-  { src: '/boat-3.jpg', caption: 'Cruising the Gulf of Poets' },
-  { src: '/bathroom.jpg', caption: 'Bathroom on board' },
-  { src: '/fridge.jpg', caption: 'Fresh drinks, always cold' },
-  { src: '/sunset-table.jpg', caption: 'Sunset aperitivo' },
+  // { src: '/boat-1.jpg', caption: 'Main deck' },
+  // { src: '/boat-2.jpg', caption: 'Sunbathing area' },
+  // { src: '/boat-3.jpg', caption: 'Bathroom' },
 ];
 
 function BoatPhotoGallery() {
@@ -1982,11 +1979,24 @@ function BoatPhotoGallery() {
       <div className="aspect-[16/9] bg-slate-900 border border-slate-800 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
         {hasPhotos ? (
           <>
+            {/* background sfocato della stessa foto per riempire i lati senza tagliare */}
+            <div className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${photos[index].src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'blur(25px) brightness(0.5)',
+                transform: 'scale(1.1)' /* evita bordi visibili del blur */
+              }} />
+            {/* overlay scuro leggero per uniformare */}
+            <div className="absolute inset-0 bg-slate-950/30"></div>
+            {/* foto centrata intera, senza tagli */}
             <img src={photos[index].src} alt={photos[index].caption || `Boat photo ${index + 1}`}
-              className="w-full h-full" style={{ objectFit: 'cover' }}
+              className="relative w-full h-full mx-auto"
+              style={{ objectFit: 'contain' }}
               onError={(e) => { e.target.style.display = 'none'; }} />
             {photos[index].caption && (
-              <div className="absolute bottom-4 left-4 bg-slate-950/70 px-3 py-2">
+              <div className="absolute bottom-4 left-4 bg-slate-950/70 px-3 py-2 z-10">
                 <p className="text-white text-xs tracking-wider">{photos[index].caption}</p>
               </div>
             )}
@@ -2004,17 +2014,17 @@ function BoatPhotoGallery() {
         {total > 1 && (
           <>
             <button onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition z-10"
               aria-label="Previous photo">
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition z-10"
               aria-label="Next photo">
               <ChevronRight className="w-5 h-5" />
             </button>
             {/* dots indicatore */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {photos.map((_, i) => (
                 <button key={i} onClick={() => setIndex(i)}
                   className={`w-2 h-2 rounded-full transition ${i === index ? 'bg-amber-400 w-6' : 'bg-white/40 hover:bg-white/70'}`}
@@ -2154,7 +2164,7 @@ function BoatPage() {
         </div>
         <div className="bg-white p-6 md:p-10">
           {/* planimetria: placeholder finché non carichi l'immagine. il path /boat-layout.png è pronto da sostituire */}
-          <img src="/boat-layout.png" alt="Cap Camarat 9.0 WA layout"
+          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA layout"
             className="w-full h-auto"
             onError={(e) => {
               // se l'immagine non c'è mostriamo un placeholder pulito
