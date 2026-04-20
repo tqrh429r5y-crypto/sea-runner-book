@@ -655,11 +655,10 @@ Language: ${customerData.language}
 
 TOUR
 ${selectedTour.name} - ${selectedTour.subtitle}${itineraryText ? `\nItinerary: ${itineraryText}` : ''}
-Add-ons: ${addOnsText}
 Meeting point: ${getFinalMeetingPoint()}
 
 PRICE
-€${selectedTour.basePrice.toLocaleString()}${selectedAddOns.length > 0 ? ' + add-ons (on request)' : ''}
+€${selectedTour.basePrice.toLocaleString()}
 Estimate - final quote to confirm
 
 HEALTH & ACCESSIBILITY
@@ -1475,31 +1474,6 @@ ${customerData.notes || 'No special requests'}
             )}
           </div>
 
-          {/* ADD-ONS */}
-          <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
-            <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
-              <p className="text-amber-400 text-[10px] tracking-[0.3em] flex items-center gap-2"><Sparkles className="w-3 h-3" /> ELEVATE YOUR EXPERIENCE <span className="text-slate-500 normal-case">(optional)</span></p>
-              <div className="flex items-center gap-2 text-[10px] text-amber-400/70 bg-amber-400/10 px-3 py-1 border border-amber-400/20">
-                <Info className="w-3 h-3" /> NOT INCLUDED • PRICE ON REQUEST
-              </div>
-            </div>
-            <div className="grid md:grid-cols-3 gap-3">
-              {addOns.map(addon => {
-                const Icon = addon.icon;
-                const selected = selectedAddOns.includes(addon.id);
-                return (
-                  <button key={addon.id} onClick={() => toggleAddOn(addon.id)}
-                    className={`text-left p-4 border transition ${selected ? 'border-amber-400 bg-amber-400/5' : 'border-slate-700 hover:border-slate-600'}`}>
-                    <Icon className={`w-6 h-6 mb-2 ${selected ? 'text-amber-400' : 'text-slate-500'}`} />
-                    <p className={`text-sm mb-1 ${selected ? 'text-white' : 'text-slate-300'}`}>{addon.name}</p>
-                    <p className="text-[11px] text-slate-500 leading-tight mb-2">{addon.desc}</p>
-                    <p className="text-[10px] text-amber-400/70 italic">Price on request</p>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           <button onClick={() => {
               if (!selectedDate) return;
               if (selectedTour.slotType === 'half-day-choice' && (!halfDayChoiceItinerary || !halfDayChoiceTime)) return;
@@ -1631,15 +1605,9 @@ ${customerData.notes || 'No special requests'}
                     <span className="text-slate-400">Tour base</span>
                     <span className="text-white">€{selectedTour?.basePrice.toLocaleString()}</span>
                   </div>
-                  {selectedAddOns.length > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">+ price of add-ons</span>
-                      <span className="text-amber-400/80 italic text-xs">on request</span>
-                    </div>
-                  )}
                   <div className="flex justify-between pt-2 border-t border-slate-700/50">
                     <span className="text-slate-300">Estimated total</span>
-                    <span className="text-white text-lg">€{selectedTour?.basePrice.toLocaleString()}{selectedAddOns.length > 0 && ' + add-ons'}</span>
+                    <span className="text-white text-lg">€{selectedTour?.basePrice.toLocaleString()}</span>
                   </div>
                   <div className="mt-3 p-3 bg-amber-400/10 border border-amber-400/20">
                     <p className="text-[11px] text-amber-400 leading-relaxed flex items-start gap-2">
@@ -1659,9 +1627,16 @@ ${customerData.notes || 'No special requests'}
                 <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-red-300 font-semibold text-sm mb-2">Unable to submit your request</p>
-                  <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                    Please contact us directly — we'd love to hear from you:
-                  </p>
+                  {/* messaggio specifico se la causa è il filtro antispam */}
+                  {submitError.message && submitError.message.toLowerCase().includes('spam') ? (
+                    <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                      Our system could not validate your request. Please double-check your <span className="text-amber-400">name</span>, <span className="text-amber-400">email</span>, and <span className="text-amber-400">phone number</span> are complete and correct, then try again. If the problem persists, contact us directly:
+                    </p>
+                  ) : (
+                    <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                      Please contact us directly — we'd love to hear from you:
+                    </p>
+                  )}
                   <div className="flex flex-col sm:flex-row gap-2 mb-4">
                     <a href={whatsappLink(`Hi! I tried to submit a booking request for ${selectedTour?.name} on ${selectedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} but something went wrong. Can you help?`)}
                       target="_blank" rel="noopener noreferrer"
@@ -1690,13 +1665,17 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
           )}
 
           <button onClick={handleSubmit} disabled={
-              !customerData.name || !customerData.email || !customerData.phone ||
+              !customerData.name || customerData.name.trim().length < 2 ||
+              !customerData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerData.email) ||
+              !customerData.phone || customerData.phone.replace(/\D/g, '').length < 8 ||
               (customerData.hasAllergies && !customerData.allergiesDetails.trim()) ||
               (customerData.reducedMobility && !customerData.mobilityDetails.trim()) ||
               (selectedTour?.isCustom && !customerData.notes)
             }
             className={`w-full py-4 tracking-[0.3em] text-sm transition ${
-              customerData.name && customerData.email && customerData.phone &&
+              customerData.name && customerData.name.trim().length >= 2 &&
+              customerData.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerData.email) &&
+              customerData.phone && customerData.phone.replace(/\D/g, '').length >= 8 &&
               (!customerData.hasAllergies || customerData.allergiesDetails.trim()) &&
               (!customerData.reducedMobility || customerData.mobilityDetails.trim()) &&
               (!selectedTour?.isCustom || customerData.notes)
