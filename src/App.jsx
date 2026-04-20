@@ -1793,7 +1793,7 @@ function HomePage() {
         {/* background: foto sfocata della barca + gradiente blu per leggibilità */}
         <div className="absolute inset-0"
           style={{
-            backgroundImage: 'url(/esterno2.jpeg)',
+            backgroundImage: 'url(/boat-2.jpg)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             filter: 'blur(8px) brightness(0.6)',
@@ -1969,12 +1969,12 @@ function HomePage() {
 // ordine pensato: apro con le 2 esterne più spettacolari (faro + vista dall'alto),
 // poi dettagli interni, poi chiudo con la foto "esperienza" del tavolo al tramonto
 const BOAT_PHOTOS = [
-  { src: '/esterno1.jpeg', caption: 'Anchored at the Tino lighthouse' },
-  { src: '/esterno2.jpeg', caption: 'Cruising the Ligurian coast' },
-  { src: '/esterno3.jpeg', caption: 'Twin Yamaha 225 HP — smooth and powerful' },
-  { src: '/bagno.jpeg', caption: 'Bathroom on board' },
-  { src: '/frigo.jpeg', caption: 'Fresh drinks, always cold' },
-  { src: '/tavolo.jpeg', caption: 'Sunset aperitivo on board' },
+  { src: '/boat-1.jpg', caption: 'Anchored at the Tino lighthouse' },
+  { src: '/boat-2.jpg', caption: 'Cruising the Ligurian coast' },
+  { src: '/boat-3.jpg', caption: 'Twin Yamaha 225 HP — smooth and powerful' },
+  { src: '/bathroom.jpg', caption: 'Bathroom on board' },
+  { src: '/fridge.jpg', caption: 'Fresh drinks, always cold' },
+  { src: '/sunset-table.jpg', caption: 'Sunset aperitivo on board' },
 ];
 
 function BoatPhotoGallery() {
@@ -2045,6 +2045,35 @@ function BoatPhotoGallery() {
         <p className="text-center text-[10px] text-slate-500 tracking-widest mt-3">{index + 1} / {total}</p>
       )}
     </div>
+  );
+}
+
+
+// ============ PLANIMETRIA SECTION ============
+// componente separato perché gestisce lo stato di errore in caricamento immagine
+// (quando /plani.jpg manca, mostriamo un placeholder pulito senza crash)
+function BoatLayoutSection() {
+  const [imgError, setImgError] = useState(false);
+  return (
+    <section className="max-w-4xl mx-auto px-4 mb-16">
+      <div className="text-center mb-8">
+        <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">BOAT LAYOUT</p>
+        <h3 className="text-2xl mb-2">How the boat is organized</h3>
+        <div className="w-16 h-px bg-amber-400/50 mx-auto"></div>
+      </div>
+      <div className="bg-white p-6 md:p-10">
+        {imgError ? (
+          <div style={{ aspectRatio: '16/9' }} className="flex items-center justify-center bg-slate-100 text-slate-500 text-xs tracking-widest">
+            BOAT LAYOUT COMING SOON
+          </div>
+        ) : (
+          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA layout"
+            className="w-full h-auto"
+            onError={() => setImgError(true)} />
+        )}
+      </div>
+      <p className="text-center text-[10px] text-slate-500 italic mt-3 tracking-wider">Official layout from Jeanneau</p>
+    </section>
   );
 }
 
@@ -2161,23 +2190,7 @@ function BoatPage() {
       </section>
 
       {/* PLANIMETRIA — layout della barca dal sito jeanneau */}
-      <section className="max-w-4xl mx-auto px-4 mb-16">
-        <div className="text-center mb-8">
-          <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">BOAT LAYOUT</p>
-          <h3 className="text-2xl mb-2">How the boat is organized</h3>
-          <div className="w-16 h-px bg-amber-400/50 mx-auto"></div>
-        </div>
-        <div className="bg-white p-6 md:p-10">
-          {/* planimetria: placeholder finché non carichi l'immagine. il path /boat-layout.png è pronto da sostituire */}
-          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA layout"
-            className="w-full h-auto"
-            onError={(e) => {
-              // se l'immagine non c'è mostriamo un placeholder pulito
-              e.target.outerHTML = `<div style="aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #64748b; font-size: 12px; letter-spacing: 0.2em;">BOAT LAYOUT COMING SOON</div>`;
-            }} />
-        </div>
-        <p className="text-center text-[10px] text-slate-500 italic mt-3 tracking-wider">Official layout from Jeanneau</p>
-      </section>
+      <BoatLayoutSection />
 
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-4 mb-16">
