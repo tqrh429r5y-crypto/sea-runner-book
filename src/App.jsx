@@ -1790,12 +1790,19 @@ function HomePage() {
 
       {/* HERO */}
       <section className="relative overflow-hidden" style={{ minHeight: '75vh' }}>
-        {/* background gradient + foto placeholder */}
+        {/* background: foto sfocata della barca + gradiente blu per leggibilità */}
+        <div className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/esterno2.jpeg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(8px) brightness(0.6)',
+            transform: 'scale(1.1)'
+          }}></div>
+        {/* overlay blu per far risaltare il testo e dare il mood "italian riviera" */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, #0a2540 0%, #1e5fa8 50%, #0b3d7e 100%)'
+          background: 'linear-gradient(180deg, rgba(10,37,64,0.75) 0%, rgba(30,95,168,0.55) 50%, rgba(11,61,126,0.85) 100%)'
         }}></div>
-        {/* overlay scuro leggero per leggibilità */}
-        <div className="absolute inset-0 bg-slate-950/30"></div>
 
         <div className="relative max-w-5xl mx-auto px-4 py-24 md:py-32 text-center">
           <p className="text-amber-400 text-xs tracking-[0.5em] mb-6">LA SPEZIA · ITALIAN RIVIERA</p>
@@ -1959,10 +1966,15 @@ function HomePage() {
 // ============ BOAT PHOTO GALLERY ============
 // gallery scorribile della barca. quando avremo le foto reali basta sostituire
 // l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.jpg')
+// ordine pensato: apro con le 2 esterne più spettacolari (faro + vista dall'alto),
+// poi dettagli interni, poi chiudo con la foto "esperienza" del tavolo al tramonto
 const BOAT_PHOTOS = [
-  // { src: '/boat-1.jpg', caption: 'Main deck' },
-  // { src: '/boat-2.jpg', caption: 'Sunbathing area' },
-  // { src: '/boat-3.jpg', caption: 'Bathroom' },
+  { src: '/esterno1.jpeg', caption: 'Anchored at the Tino lighthouse' },
+  { src: '/esterno2.jpeg', caption: 'Cruising the Ligurian coast' },
+  { src: '/esterno3.jpeg', caption: 'Twin Yamaha 225 HP — smooth and powerful' },
+  { src: '/bagno.jpeg', caption: 'Bathroom on board' },
+  { src: '/frigo.jpeg', caption: 'Fresh drinks, always cold' },
+  { src: '/tavolo.jpeg', caption: 'Sunset aperitivo on board' },
 ];
 
 function BoatPhotoGallery() {
@@ -1974,39 +1986,32 @@ function BoatPhotoGallery() {
   const prev = () => setIndex((index - 1 + total) % total);
   const next = () => setIndex((index + 1) % total);
 
+  // se non ci sono foto, mostriamo placeholder con aspect 16:9
+  if (!hasPhotos) {
+    return (
+      <div className="mb-12 aspect-[16/9] bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
+        <Anchor className="w-32 h-32 text-amber-400/20" />
+        <div className="absolute bottom-4 left-4 right-4 text-center">
+          <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTOS COMING SOON</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mb-12">
-      <div className="aspect-[16/9] bg-slate-900 border border-slate-800 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
-        {hasPhotos ? (
-          <>
-            {/* background sfocato della stessa foto per riempire i lati senza tagliare */}
-            <div className="absolute inset-0"
-              style={{
-                backgroundImage: `url(${photos[index].src})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(25px) brightness(0.5)',
-                transform: 'scale(1.1)' /* evita bordi visibili del blur */
-              }} />
-            {/* overlay scuro leggero per uniformare */}
-            <div className="absolute inset-0 bg-slate-950/30"></div>
-            {/* foto centrata intera, senza tagli */}
-            <img src={photos[index].src} alt={photos[index].caption || `Boat photo ${index + 1}`}
-              className="relative w-full h-full mx-auto"
-              style={{ objectFit: 'contain' }}
-              onError={(e) => { e.target.style.display = 'none'; }} />
-            {photos[index].caption && (
-              <div className="absolute bottom-4 left-4 bg-slate-950/70 px-3 py-2 z-10">
-                <p className="text-white text-xs tracking-wider">{photos[index].caption}</p>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Anchor className="w-32 h-32 text-amber-400/20" />
-            <div className="absolute bottom-4 left-4 right-4 text-center">
-              <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTOS COMING SOON</p>
-            </div>
+      {/* container senza aspect ratio fisso: si adatta alla foto.
+          max-height limita le foto verticali perché non diventino troppo alte su desktop */}
+      <div className="bg-slate-900 border border-slate-800 relative overflow-hidden flex items-center justify-center"
+        style={{ maxHeight: '75vh', minHeight: '300px' }}>
+        <img src={photos[index].src} alt={photos[index].caption || `Boat photo ${index + 1}`}
+          className="block w-auto h-auto max-w-full"
+          style={{ maxHeight: '75vh' }}
+          onError={(e) => { e.target.style.display = 'none'; }} />
+
+        {photos[index].caption && (
+          <div className="absolute bottom-4 left-4 bg-slate-950/70 px-3 py-2 z-10">
+            <p className="text-white text-xs tracking-wider">{photos[index].caption}</p>
           </div>
         )}
 
