@@ -1953,7 +1953,7 @@ function HomePage() {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">GET IN TOUCH</p>
           <h2 className="text-2xl sm:text-3xl mb-4 sm:mb-6">Questions before booking?</h2>
-          <p className="text-slate-400 text-sm sm:text-base mb-6 sm:mb-8">Marco and Paola reply personally, usually within a few hours.</p>
+          <p className="text-slate-400 text-sm sm:text-base mb-6 sm:mb-8">Marco and Paola reply personally, as soon as possible.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-sm sm:max-w-none mx-auto">
             <a href={whatsappLink('Hi! I would like to know more about Sea Runner tours.')} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-5 sm:px-6 py-3 text-xs tracking-[0.2em] sm:tracking-[0.3em] transition">
@@ -1981,12 +1981,12 @@ function HomePage() {
 // ordine pensato: apro con le 2 esterne più spettacolari (faro + vista dall'alto),
 // poi dettagli interni, poi chiudo con la foto "esperienza" del tavolo al tramonto
 const BOAT_PHOTOS = [
-  { src: '/boat-1.jpg', caption: 'Anchored at the Tino lighthouse' },
-  { src: '/boat-2.jpg', caption: 'Cruising the Ligurian coast' },
-  { src: '/boat-3.jpg', caption: 'Twin Yamaha 225 HP — smooth and powerful' },
-  { src: '/bathroom.jpg', caption: 'Bathroom on board' },
-  { src: '/fridge.jpg', caption: 'Fresh drinks, always cold' },
-  { src: '/sunset-table.jpg', caption: 'Sunset aperitivo on board' },
+  { src: '/boat-1.jpg' },
+  { src: '/boat-2.jpg' },
+  { src: '/boat-3.jpg' },
+  { src: '/bathroom.jpg' },
+  { src: '/fridge.jpg' },
+  { src: '/sunset-table.jpg' },
 ];
 
 function BoatPhotoGallery() {
