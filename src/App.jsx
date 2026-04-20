@@ -1960,9 +1960,12 @@ function HomePage() {
 // gallery scorribile della barca. quando avremo le foto reali basta sostituire
 // l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.jpg')
 const BOAT_PHOTOS = [
-  // { src: '/boat-1.jpg', caption: 'Main deck' },
-  // { src: '/boat-2.jpg', caption: 'Sunbathing area' },
-  // { src: '/boat-3.jpg', caption: 'Bathroom' },
+  { src: '/boat-1.jpg', caption: 'Anchored at Palmaria lighthouse' },
+  { src: '/boat-2.jpg', caption: 'Main deck from above' },
+  { src: '/boat-3.jpg', caption: 'Cruising the Gulf of Poets' },
+  { src: '/bathroom.jpg', caption: 'Bathroom on board' },
+  { src: '/fridge.jpg', caption: 'Fresh drinks, always cold' },
+  { src: '/sunset-table.jpg', caption: 'Sunset aperitivo' },
 ];
 
 function BoatPhotoGallery() {
