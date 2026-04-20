@@ -163,6 +163,39 @@ function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about
   );
 }
 
+// ============ ITINERARY TIMELINE ============
+// replica lo stile della brochure ufficiale: timeline verticale tratteggiata
+// con pallini colorati, nome tappa in serif, sottotitolo piccolo in grigio
+function ItineraryTimeline({ itinerary, accentColor = '#d4a355', footnote = '' }) {
+  if (!itinerary || itinerary.length === 0) return null;
+  return (
+    <div className="py-2">
+      <div className="border-t mb-6" style={{ borderColor: accentColor, opacity: 0.5 }}></div>
+      <p className="text-center tracking-[0.4em] text-xs mb-8" style={{ color: accentColor }}>ITINERARY</p>
+      <div className="relative pl-14 pr-4 max-w-md mx-auto">
+        {itinerary.map((stop, i) => {
+          const isLast = i === itinerary.length - 1;
+          return (
+            <div key={i} className="relative pb-6 last:pb-0">
+              {!isLast && (
+                <div className="absolute top-5 bottom-0 border-l-2 border-dashed" style={{ left: '-30px', borderColor: accentColor, opacity: 0.5 }}></div>
+              )}
+              <div className="absolute w-4 h-4 rounded-full" style={{ left: '-38px', top: '4px', backgroundColor: accentColor }}></div>
+              <div>
+                <h4 className="text-white text-base leading-tight" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{stop.place}</h4>
+                {stop.note && <p className="text-slate-400 text-xs mt-1">{stop.note}</p>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {footnote && (
+        <p className="text-center text-xs italic mt-6 px-4" style={{ color: accentColor, opacity: 0.7 }}>{footnote}</p>
+      )}
+    </div>
+  );
+}
+
 // ============ TOUR CARD IMAGE ============
 function TourCardImage({ tour }) {
   // se il tour ha un'immagine reale, la mostriamo in formato 3:2
@@ -215,27 +248,61 @@ const initialTours = [
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1500, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
     cardImage: '/cinque-terre-v2.png',
-    shortDesc: 'All five villages by sea — swim, snorkel, Italian lunch on board.',
+    itineraryAccent: '#d4a355',
+    shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
-    includes: ['Light Italian lunch', 'Open bar', 'Snorkeling guide', 'Multilingual hostess', 'Private parking', 'Towels & equipment']
+    itinerary: [
+      { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+      { place: 'Portovenere', note: 'Scenic cruise past the village' },
+      { place: 'Monasteroli — Campiglia', note: 'Hidden coastline & swim stop' },
+      { place: 'Riomaggiore', note: 'First of the Five Lands' },
+      { place: 'Manarola', note: 'Snorkeling in crystal waters' },
+      { place: 'Corniglia', note: 'The clifftop village from the sea' },
+      { place: 'Vernazza', note: 'Lunch stop • Time ashore' },
+      { place: 'Monterosso', note: 'Time ashore • Final stop' }
+    ],
+    itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
+    includes: ['Light Italian lunch', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Multilingual hostess', 'Private parking', 'Towels & equipment']
   },
   {
     id: 'golfo-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1400, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
     cardImage: '/golfo-poeti-v2.png',
-    shortDesc: "Byron's gulf — Portovenere, Palmaria island, Lerici and hidden Tellaro.",
-    longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro — with swim stops and a light lunch on board.',
-    includes: ['Light Italian lunch', 'Open bar', 'Snorkeling guide', 'Multilingual hostess', 'Private parking', 'Towels & equipment']
+    itineraryAccent: '#d4a355',
+    shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
+    longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
+    itinerary: [
+      { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+      { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
+      { place: 'Palmaria', note: 'Blue Grotto • Snorkeling' },
+      { place: 'Tino', note: 'Ancient monastery island' },
+      { place: 'Tinetto', note: 'Scenic cruise around the islet' },
+      { place: 'San Terenzo', note: 'Charming seaside village' },
+      { place: 'Lerici', note: 'Lunch stop • Castle views' },
+      { place: 'Tellaro', note: 'Hidden gem of the Gulf' }
+    ],
+    itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
+    includes: ['Light Italian lunch', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Multilingual hostess', 'Private parking', 'Towels & equipment']
   },
   {
     id: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
     basePrice: 2350, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
     cardImage: '/portofino-v2.png',
-    shortDesc: 'The full Riviera — Portofino, San Fruttuoso abbey, Cinque Terre on return.',
+    itineraryAccent: '#2dd4bf',
+    shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on return.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
-    includes: ['Light lunch on board', 'Open bar', 'Snorkeling guide', 'Private parking', 'Towels & equipment'],
+    itinerary: [
+      { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+      { place: 'Ligurian Coast', note: 'Scenic cruise along the riviera' },
+      { place: 'San Fruttuoso', note: 'Stop • Explore the abbey & swim' },
+      { place: 'Portofino', note: 'Stop • Free time & lunch at restaurant' },
+      { place: 'Marine Reserve', note: 'Snorkeling in crystal clear waters' },
+      { place: 'Cinque Terre', note: 'Sunset cruise along the coast' }
+    ],
+    itineraryFootnote: 'Approx. 10 hours • Restaurant lunch not included',
+    includes: ['Light lunch on board', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Private parking', 'Towels & equipment'],
     notIncluded: 'Restaurant lunch in Portofino at own expense'
   },
   {
@@ -243,40 +310,79 @@ const initialTours = [
     duration: '4 hours', slotType: 'half-day-choice',
     basePrice: 1000, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
     cardImage: '/half-day-v2.png',
-    shortDesc: 'Pick your coastline, pick your moment — morning, afternoon or evening.',
+    itineraryAccent: '#d4a355',
+    shortDesc: 'Pick your coastline, pick your moment. Morning, afternoon or evening.',
     longDesc: 'A shorter escape with the same magic. Choose between the Cinque Terre route or the Gulf of Poets, then pick the light you prefer: fresh morning, sunny afternoon, or evening golden hour.',
     itineraryOptions: [
-      { id: 'cinque', name: 'Cinque Terre', desc: 'Portovenere → Riomaggiore → Manarola → Vernazza' },
-      { id: 'golfo', name: 'Gulf of Poets', desc: 'Portovenere → Palmaria → Lerici → Tellaro' }
+      { id: 'cinque', name: 'Cinque Terre', desc: 'Portovenere → Riomaggiore → Manarola → Vernazza',
+        itinerary: [
+          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Portovenere', note: 'Scenic cruise past the village' },
+          { place: 'Riomaggiore', note: 'First of the Five Lands' },
+          { place: 'Manarola', note: 'Snorkeling in crystal waters' },
+          { place: 'Vernazza', note: 'Time ashore • Final stop' }
+        ]
+      },
+      { id: 'golfo', name: 'Gulf of Poets', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
+        itinerary: [
+          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
+          { place: 'Palmaria', note: 'Blue Grotto • Snorkeling' },
+          { place: 'Lerici', note: 'Castle views • Time ashore' },
+          { place: 'Tellaro', note: 'Hidden gem • Final stop' }
+        ]
+      }
     ],
+    itineraryFootnote: 'Approx. 4 hours • Flexible schedule',
     timeOfDay: [
       { id: 'morning', label: 'Morning', time: '9:30 – 13:30', icon: 'sun' },
       { id: 'afternoon', label: 'Afternoon', time: '14:00 – 18:00', icon: 'sun' },
       { id: 'evening', label: 'Evening', time: '17:00 – 21:00', icon: 'sunset' }
     ],
-    includes: ['Italian aperitivo', 'Open bar', 'Snorkeling guide', 'Private parking', 'Towels']
+    includes: ['Italian aperitivo', 'Open bar', 'Snorkeling guide', 'Hostess on board', 'Private parking', 'Towels']
   },
   {
     id: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
     duration: '3.5 hours', fixedTime: '17:30 – 21:00', slotType: 'sunset',
     basePrice: 800, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
     cardImage: '/sunset-v2.png',
+    itineraryAccent: '#fdba74',
     shortDesc: 'Aperitivo at sea while the coast turns amber and rose.',
     longDesc: 'The most romantic way to end the day. Sail the Gulf of Poets as the sun melts behind Palmaria, sip a Ligurian aperitivo with local wines, and let the colours do the rest.',
-    includes: ['Italian aperitivo', 'Open bar with local wines', 'Private parking', 'Towels']
+    // sunset ora ha 2 varianti come l'half-day
+    itineraryOptions: [
+      { id: 'cinque', name: 'Cinque Terre at sunset', desc: 'Portovenere → Riomaggiore → Manarola',
+        itinerary: [
+          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Portovenere', note: 'First glimpse of golden hour' },
+          { place: 'Riomaggiore', note: 'Sunset over the cliffs' },
+          { place: 'Manarola', note: 'Aperitivo • Final stop' }
+        ]
+      },
+      { id: 'golfo', name: 'Gulf of Poets at sunset', desc: 'Portovenere → Palmaria → Lerici',
+        itinerary: [
+          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Portovenere', note: 'Medieval waterfront at dusk' },
+          { place: 'Palmaria', note: 'Sun melting behind the island' },
+          { place: 'Lerici', note: 'Aperitivo with castle views' }
+        ]
+      }
+    ],
+    itineraryFootnote: 'Approx. 3.5 hours • Flexible schedule',
+    includes: ['Italian aperitivo', 'Open bar with local wines', 'Hostess on board', 'Private parking', 'Towels']
   },
   {
     id: 'custom', name: 'Tailored', subtitle: 'Your day, your way',
     duration: 'Flexible', slotType: 'custom',
     basePrice: 0, maxPeople: 8, brandColor: '#1e293b', accent: '#fbbf24',
-    shortDesc: 'Your own itinerary — Marco and Paola craft the perfect day at sea.',
+    shortDesc: 'Your own itinerary. Marco and Paola craft the perfect day at sea.',
     longDesc: 'Choose destinations, duration and activities. Captain Marco and Paola will craft the perfect day based on your preferences.',
     includes: ['Everything tailored to you'], isCustom: true
   }
 ];
 
 const addOns = [
-  { id: 'restaurant', name: 'Seaside Restaurant Reservation', desc: 'Waterfront restaurants in Portofino, Vernazza, Monterosso or Portovenere', icon: Utensils },
+  { id: 'restaurant', name: 'Seaside Restaurant', desc: 'Waterfront restaurants in Portofino, Vernazza, Monterosso or Portovenere', icon: Utensils },
   { id: 'wine', name: 'Wine Tasting Experience', desc: 'Exclusive Cinque Terre DOC tasting with local winemaker', icon: Wine },
   { id: 'cooking', name: 'Ligurian Cooking Class', desc: 'Traditional Italian cuisine with local chef', icon: Sparkles }
 ];
@@ -528,7 +634,7 @@ export default function SeaRunnerApp() {
     const addOnsText = selectedAddOns.length > 0 ? selectedAddOns.map(id => addOns.find(a => a.id === id)?.name).join(', ') : 'None';
     const allergiesText = customerData.hasAllergies ? (customerData.allergiesDetails || 'Yes (details to discuss)') : 'None';
     const mobilityText = customerData.reducedMobility ? (customerData.mobilityDetails || 'Yes (details to discuss)') : 'None';
-    const itineraryText = selectedTour.slotType === 'half-day-choice' && halfDayChoiceItinerary
+    const itineraryText = selectedTour.itineraryOptions && halfDayChoiceItinerary
       ? selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary)?.name : '';
     const dateFormatted = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -1243,11 +1349,37 @@ ${customerData.notes || 'No special requests'}
                   <span className="flex items-center gap-1 text-amber-400">from €{selectedTour.basePrice.toLocaleString()}</span>
                 )}
               </div>
+
+              {/* TIMELINE ITINERARIO */}
+              {(() => {
+                // se il tour ha varianti (half-day-choice, sunset), mostro quella selezionata se presente
+                let activeItinerary = selectedTour.itinerary;
+                if (selectedTour.itineraryOptions && halfDayChoiceItinerary) {
+                  const opt = selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary);
+                  if (opt?.itinerary) activeItinerary = opt.itinerary;
+                }
+                if (!activeItinerary) return null;
+                return (
+                  <>
+                    <div className="mt-8">
+                      <ItineraryTimeline
+                        itinerary={activeItinerary}
+                        accentColor={selectedTour.itineraryAccent || '#d4a355'}
+                        footnote={selectedTour.itineraryFootnote}
+                      />
+                    </div>
+                    <div className="mt-4 p-3 bg-slate-800/50 border border-slate-700 text-xs text-slate-400 italic leading-relaxed flex items-start gap-2">
+                      <Info className="w-3 h-3 mt-0.5 flex-shrink-0 text-amber-400/70" />
+                      <span>This is the standard itinerary. It may vary depending on guest preferences or weather conditions.</span>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
 
-          {/* ITINERARY CHOICE (solo half-day-choice) */}
-          {selectedTour.slotType === 'half-day-choice' && (
+          {/* ITINERARY CHOICE — half-day-choice e sunset hanno entrambi itineraryOptions */}
+          {selectedTour.itineraryOptions && selectedTour.itineraryOptions.length > 0 && (
             <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
               <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> CHOOSE YOUR ITINERARY</p>
               <div className="grid md:grid-cols-2 gap-3">
@@ -1307,13 +1439,13 @@ ${customerData.notes || 'No special requests'}
                   {gcalStatus === 'syncing' && (
                     <>
                       <RefreshCw className="w-3 h-3 text-slate-500 animate-spin" />
-                      <p className="text-[10px] text-slate-500 tracking-wider">SYNCING CALENDAR...</p>
+                      <p className="text-[10px] text-slate-500 tracking-wider">UPDATING AVAILABILITY...</p>
                     </>
                   )}
                   {gcalStatus === 'synced' && (
                     <>
                       <Check className="w-3 h-3 text-emerald-500" />
-                      <p className="text-[10px] text-emerald-500/80 tracking-wider">CALENDAR SYNCED ({gcalEvents.length} events)</p>
+                      <p className="text-[10px] text-emerald-500/80 tracking-wider">AVAILABILITY UP TO DATE</p>
                     </>
                   )}
                   {gcalStatus === 'error' && (
@@ -1451,17 +1583,21 @@ ${customerData.notes || 'No special requests'}
           <button onClick={() => {
               if (!selectedDate) return;
               if (selectedTour.slotType === 'half-day-choice' && (!halfDayChoiceItinerary || !halfDayChoiceTime)) return;
+              // sunset: richiede la scelta dell'itinerario (no orario, è fisso)
+              if (selectedTour.slotType === 'sunset' && selectedTour.itineraryOptions && !halfDayChoiceItinerary) return;
               if (meetingPoint === 'Other' && !customMeetingPoint.trim()) return;
               setCurrentStep(3); window.scrollTo({ top: 0, behavior: 'smooth' });
             }} 
             disabled={
               !selectedDate ||
               (selectedTour.slotType === 'half-day-choice' && (!halfDayChoiceItinerary || !halfDayChoiceTime)) ||
+              (selectedTour.slotType === 'sunset' && selectedTour.itineraryOptions && !halfDayChoiceItinerary) ||
               (meetingPoint === 'Other' && !customMeetingPoint.trim())
             }
             className={`w-full py-4 tracking-[0.3em] text-sm transition ${
               selectedDate &&
               !(selectedTour.slotType === 'half-day-choice' && (!halfDayChoiceItinerary || !halfDayChoiceTime)) &&
+              !(selectedTour.slotType === 'sunset' && selectedTour.itineraryOptions && !halfDayChoiceItinerary) &&
               !(meetingPoint === 'Other' && !customMeetingPoint.trim())
                 ? 'bg-amber-400 text-slate-950 hover:bg-amber-300' 
                 : 'bg-slate-800 text-slate-600 cursor-not-allowed'
@@ -1561,7 +1697,7 @@ ${customerData.notes || 'No special requests'}
             <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">BOOKING SUMMARY</p>
             <div className="space-y-2 text-sm text-slate-300">
               <div className="flex justify-between"><span>Tour</span><span className="text-white">{selectedTour?.name}</span></div>
-              {selectedTour?.slotType === 'half-day-choice' && halfDayChoiceItinerary && (
+              {selectedTour?.itineraryOptions && halfDayChoiceItinerary && (
                 <div className="flex justify-between"><span>Itinerary</span><span className="text-white">{selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary)?.name}</span></div>
               )}
               <div className="flex justify-between"><span>Date</span><span className="text-white">{selectedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
