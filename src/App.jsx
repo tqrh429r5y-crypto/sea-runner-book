@@ -1378,6 +1378,27 @@ ${customerData.notes || 'No special requests'}
             </div>
           </div>
 
+          {/* WHAT'S INCLUDED */}
+          {selectedTour.includes && selectedTour.includes.length > 0 && (
+            <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
+              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Check className="w-3 h-3" /> WHAT'S INCLUDED</p>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2">
+                {selectedTour.includes.map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                    <Check className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              {selectedTour.notIncluded && (
+                <div className="mt-4 pt-4 border-t border-slate-800 flex items-start gap-2 text-xs text-slate-400">
+                  <Info className="w-3 h-3 mt-0.5 flex-shrink-0 text-slate-500" />
+                  <span><span className="tracking-wider text-slate-500">NOT INCLUDED:</span> {selectedTour.notIncluded}</span>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* ITINERARY CHOICE — half-day-choice e sunset hanno entrambi itineraryOptions */}
           {selectedTour.itineraryOptions && selectedTour.itineraryOptions.length > 0 && (
             <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
