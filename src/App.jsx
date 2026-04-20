@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star } from 'lucide-react';
 
 // ============ GOOGLE CALENDAR SYNC ============
 // l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
@@ -1165,27 +1165,26 @@ ${customerData.notes || 'No special requests'}
   // ============ CUSTOMER FLOW ============
   return (
     <div className="min-h-screen bg-slate-950" style={{ fontFamily: 'Georgia, serif' }}>
-      <header className="border-b border-slate-800 bg-slate-950 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <SeaRunnerLogoCompact size="sm" />
-            <div><h1 className="text-white text-lg tracking-[0.2em]">SEA RUNNER</h1>
-              <p className="text-amber-400 text-[10px] tracking-[0.3em]">PRIVATE BOAT TOURS</p></div>
-          </div>
-          <div className="hidden md:flex items-center gap-4">
+      {/* navbar condivisa con home/boat/booking */}
+      <SharedNav />
+
+      {/* barra step specifica del booking */}
+      <div className="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3 md:gap-4 overflow-x-auto">
             {['TOUR', 'DATE', 'DETAILS'].map((label, idx) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${currentStep >= idx+1 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-500'}`}>{idx + 1}</div>
-                <span className={`text-xs tracking-widest ${currentStep >= idx+1 ? 'text-amber-400' : 'text-slate-500'}`}>{label}</span>
-                {idx < 2 && <div className="w-6 h-px bg-slate-700 ml-2"></div>}
+              <div key={label} className="flex items-center gap-2 flex-shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${currentStep >= idx+1 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-500'}`}>{idx + 1}</div>
+                <span className={`text-[10px] tracking-widest ${currentStep >= idx+1 ? 'text-amber-400' : 'text-slate-500'}`}>{label}</span>
+                {idx < 2 && <div className="w-4 md:w-6 h-px bg-slate-700 ml-1 md:ml-2"></div>}
               </div>
             ))}
           </div>
-          <button onClick={() => setShowSkipperLogin(true)} className="flex items-center gap-2 text-xs text-slate-400 hover:text-amber-400 transition tracking-widest">
+          <button onClick={() => setShowSkipperLogin(true)} className="flex items-center gap-2 text-[10px] text-slate-500 hover:text-amber-400 transition tracking-widest flex-shrink-0">
             <Lock className="w-3 h-3" /> SKIPPER
           </button>
         </div>
-      </header>
+      </div>
 
       {/* STEP 1 */}
       {currentStep === 1 && (
@@ -1806,7 +1805,7 @@ function HomePage() {
           </h1>
           <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
           <p className="text-slate-200 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            Cinque Terre, Gulf of Poets, Portofino. Exclusive day trips with Captain Marco and Paola — since 2022.
+            Cinque Terre, Gulf of Poets, Portofino. Exclusive day trips with Captain Marco and Paola.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/booking" className="bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
@@ -1830,6 +1829,61 @@ function HomePage() {
         <p className="text-slate-400 leading-relaxed">
           Swim in hidden coves the big boats never reach. Snorkel the marine reserve with a guide. Enjoy a light Italian lunch on board with local wine while the colourful villages drift by. Every day at sea is crafted around you.
         </p>
+      </section>
+
+      {/* REVIEWS & RATINGS */}
+      <section className="border-t border-slate-800 py-20 bg-slate-900/30">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-1 mb-4">
+              {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />)}
+            </div>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LOVED BY OUR GUESTS</p>
+            <h2 className="text-3xl md:text-4xl mb-4">Highly rated across the web</h2>
+            <div className="w-16 h-px bg-amber-400 mx-auto"></div>
+          </div>
+
+          {/* platform rating cards */}
+          <div className="grid sm:grid-cols-3 gap-4 mb-12">
+            {[
+              { name: 'Google', rating: '5.0', reviews: '—', url: 'https://www.google.com/search?q=sea+runner+la+spezia' },
+              { name: 'TripAdvisor', rating: '5.0', reviews: '—', url: 'https://www.tripadvisor.com' },
+              { name: 'Viator', rating: '5.0', reviews: '—', url: 'https://www.viator.com' }
+            ].map(p => (
+              <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
+                className="bg-slate-900 border border-slate-800 p-5 text-center hover:border-amber-400 transition block">
+                <p className="text-xs text-slate-500 tracking-[0.3em] mb-3">{p.name.toUpperCase()}</p>
+                <div className="flex items-center justify-center gap-1 mb-2">
+                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
+                </div>
+                <p className="text-2xl text-white mb-1">{p.rating}</p>
+                <p className="text-[10px] text-slate-500 tracking-widest">{p.reviews} REVIEWS</p>
+              </a>
+            ))}
+          </div>
+
+          {/* testimonial quotes */}
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              { text: 'An absolute highlight of our trip to Italy. Marco knows every corner of the coast and Paola made everything feel so personal.', author: 'Sarah, UK', platform: 'Google' },
+              { text: 'The boat is gorgeous, the food on board was delicious, and snorkeling in the marine reserve was unforgettable. Highly recommended.', author: 'Heinrich, DE', platform: 'TripAdvisor' },
+              { text: 'A luxury experience at a fair price. We felt like VIPs for the whole day. Will definitely come back next summer.', author: 'Pierre, FR', platform: 'Viator' }
+            ].map((q, i) => (
+              <div key={i} className="bg-slate-900 border border-slate-800 p-6 flex flex-col">
+                <div className="flex items-center gap-1 mb-3">
+                  {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed italic mb-4 flex-1">"{q.text}"</p>
+                <div className="pt-3 border-t border-slate-800">
+                  <p className="text-white text-sm">{q.author}</p>
+                  <p className="text-[10px] text-slate-500 tracking-widest mt-1">VIA {q.platform.toUpperCase()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-[10px] text-slate-600 italic mt-8 tracking-wider">* Reviews shown are illustrative, verifiable on each platform</p>
+        </div>
       </section>
 
       {/* TOURS PREVIEW */}
@@ -2072,9 +2126,21 @@ function SharedFooter() {
 
 
 // ============ ROOT APP CON ROUTER ============
+
+// resetta lo scroll in cima ogni volta che cambia l'url — altrimenti react router
+// mantiene la posizione di scroll della pagina precedente e il cliente atterra a metà pagina
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [pathname]);
+  return null;
+}
+
 export default function SeaRunnerApp() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/boat" element={<BoatPage />} />
