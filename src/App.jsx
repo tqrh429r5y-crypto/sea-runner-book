@@ -1234,6 +1234,14 @@ ${customerData.notes || 'No special requests'}
               </div>
             ))}
           </div>
+
+          {/* link FAQ per rassicurare chi ha dubbi prima di scegliere */}
+          <div className="text-center mt-14 sm:mt-16 pt-8 border-t border-slate-800">
+            <p className="text-slate-400 text-sm mb-3">Have questions before booking?</p>
+            <Link to="/#faq" className="inline-block text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
+              READ OUR FAQ →
+            </Link>
+          </div>
         </div>
       )}
 
@@ -1753,7 +1761,8 @@ function SharedNav() {
   const links = [
     { to: '/', label: 'Home' },
     { to: '/boat', label: 'The boat' },
-    { to: '/booking', label: 'Book a tour' }
+    { to: '/booking', label: 'Book a tour' },
+    { to: '/#faq', label: 'FAQ' }
   ];
 
   const go = (to) => {
@@ -1808,6 +1817,96 @@ function SharedNav() {
         </div>
       )}
     </header>
+  );
+}
+
+
+// ============ FAQ SECTION ============
+// accordion espandibile con le domande più frequenti, riutilizzabile in home e booking
+const FAQ_ITEMS = [
+  {
+    q: 'Is food and drinks included on board?',
+    a: `Yes. Every tour includes an open bar and a light Italian aperitivo. On full day tours (Cinque Terre, Golfo dei Poeti, Portofino) we also serve a light Italian lunch on board. If you have allergies or dietary preferences, just let us know in advance and we'll adapt everything for you.`
+  },
+  {
+    q: 'What happens if the weather is bad?',
+    a: `Your safety always comes first. Captain Marco monitors the weather forecast very carefully and makes the final call on conditions. If the sea is not safe for the tour, we will either reschedule to another date at your convenience or fully refund you. No penalty, no stress.`
+  },
+  {
+    q: 'Can children and seniors come on board?',
+    a: `Absolutely. Our boat is family-friendly, safe and comfortable. Children's life jackets are on board, the swim platform makes it easy to get in and out of the water, and we provide shaded areas for the hottest hours of the day.`
+  },
+  {
+    q: 'Is the tour really private? Will other guests join?',
+    a: `Yes, it is 100% private. Only you and the people you choose to bring with you will be on board — never strangers, never shared tours. It's your own day at sea, your own pace.`
+  },
+  {
+    q: 'Can we customize the itinerary?',
+    a: `Yes. While each tour has a standard route, Captain Marco adapts it to the sea conditions and your preferences. Want to spend more time swimming in a certain cove? Stop longer at a village? Skip a stop? Just tell us — we build the day around you.`
+  },
+  {
+    q: 'Do we need any sailing experience to join?',
+    a: `Not at all. Our tours are suitable for everyone, from first-time sailors to experienced sea lovers. Captain Marco has held his nautical license for over 30 years and handles every situation professionally, making sure you can relax and enjoy the day with complete peace of mind.`
+  },
+  {
+    q: 'Are you authorized to enter the Cinque Terre marine park? Is the boat fully equipped for safety?',
+    a: `Yes and yes. We hold all the official authorizations required to navigate and anchor within the Cinque Terre Marine Protected Area. The boat is fully equipped with professional safety gear: AIS (real-time tracking system), distress signalling, life jackets for all guests, first aid kit, and all mandatory equipment — regularly inspected and up to date.`
+  },
+  {
+    q: 'Can we bring our own food and drinks on board?',
+    a: `Yes, in addition to what we serve on board, you are welcome to bring your own bottle of wine, champagne, a birthday cake or anything you'd like to make the day feel truly yours. Just let us know in advance so we can prepare everything properly.`
+  },
+  {
+    q: 'Can you organize the day for a special occasion?',
+    a: `Absolutely. Many guests choose us for marriage proposals, honeymoons, anniversaries and birthdays — a day at sea is the perfect stage for unforgettable moments. Let us know what you have in mind and we'll take care of the details: flowers, decorations, a cake, music, or a private moment at sunset.`
+  },
+  {
+    q: 'Is there a minimum number of guests?',
+    a: `No minimum. The tour is fully private whether you are 2 or 8 guests. For couples, a private boat is one of the most intimate ways to discover the coast — just the two of you, the sea, and the Italian Riviera.`
+  },
+  {
+    q: 'Can we bring our dog on board?',
+    a: `Yes, dogs are very welcome on board. If you're traveling with your four-legged companion, just let us know in advance so we can make sure everything is set up for their comfort too.`
+  }
+];
+
+function FAQSection({ id = 'faq' }) {
+  const [openIndex, setOpenIndex] = useState(null);
+  return (
+    <section id={id} className="border-t border-slate-800 py-14 sm:py-20">
+      <div className="max-w-3xl mx-auto px-4">
+        <div className="text-center mb-10 sm:mb-12">
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">GOOD TO KNOW</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Frequently asked questions</h2>
+          <div className="w-16 h-px bg-amber-400 mx-auto"></div>
+        </div>
+
+        <div className="divide-y divide-slate-800 border-t border-b border-slate-800">
+          {FAQ_ITEMS.map((item, i) => {
+            const open = openIndex === i;
+            return (
+              <div key={i}>
+                <button onClick={() => setOpenIndex(open ? null : i)}
+                  className="w-full flex items-center justify-between gap-4 py-4 sm:py-5 text-left group">
+                  <span className={`text-sm sm:text-base pr-2 transition-colors ${open ? 'text-amber-400' : 'text-white group-hover:text-amber-400'}`}>
+                    {item.q}
+                  </span>
+                  <span className={`flex-shrink-0 text-amber-400 text-xl leading-none transition-transform ${open ? 'rotate-45' : ''}`}
+                    style={{ transformOrigin: 'center' }}>
+                    +
+                  </span>
+                </button>
+                {open && (
+                  <div className="pb-5 pr-8 text-slate-300 text-sm leading-relaxed">
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1977,6 +2076,9 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ — prima del contact, così chi scorre le trova prima di uscire */}
+      <FAQSection />
 
       {/* CONTACT STRIP */}
       <section className="border-t border-slate-800 py-12 sm:py-16">
@@ -2425,12 +2527,22 @@ function CookieBanner() {
 // ============ ROOT APP CON ROUTER ============
 
 // resetta lo scroll in cima ogni volta che cambia l'url — altrimenti react router
-// mantiene la posizione di scroll della pagina precedente e il cliente atterra a metà pagina
+// mantiene la posizione di scroll della pagina precedente e il cliente atterra a metà pagina.
+// se c'è un hash (#faq) invece, scrolla all'elemento corrispondente.
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [pathname]);
+    if (hash) {
+      // aspetta che il DOM si aggiorni poi scrolla all'elemento
+      setTimeout(() => {
+        const el = document.getElementById(hash.replace('#', ''));
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        else window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 50);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [pathname, hash]);
   return null;
 }
 
