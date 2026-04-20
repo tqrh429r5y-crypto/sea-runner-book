@@ -637,167 +637,35 @@ export default function SeaRunnerApp() {
       ? selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary)?.name : '';
     const dateFormatted = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    // ordine richiesto: data, pax, nome, telefono, email, tipo tour, meeting point, prezzo, allergie, restrizioni
-    // versione plain text (fallback)
-    const emailBody = `NEW BOOKING REQUEST
+    // email pulita, solo plain text. ordine: quando → chi → cosa → quanto → salute → note.
+    const emailBody = `NEW BOOKING REQUEST — ${selectedTour.name}
 
-QUICK INDEX
-1. Date & Time
-2. Guests
-3. Customer
-4. Contact
-5. Tour
-6. Meeting point
-7. Price estimate
-8. Allergies
-9. Mobility / restrictions
-10. Additional notes
-
-=============================
-1. DATE & TIME
-=============================
 ${dateFormatted}
-${getFinalTimeSlot()}
-Duration: ${selectedTour.duration}
-
-=============================
-2. GUESTS
-=============================
+${getFinalTimeSlot()} (${selectedTour.duration})
 ${numPeople} ${numPeople === 1 ? 'guest' : 'guests'}
 
-=============================
-3. CUSTOMER
-=============================
+CUSTOMER
 ${customerData.name}
-Preferred language: ${customerData.language}
-
-=============================
-4. CONTACT
-=============================
 Phone: ${customerData.phone}
 Email: ${customerData.email}
+Language: ${customerData.language}
 
-=============================
-5. TOUR
-=============================
-${selectedTour.name} — ${selectedTour.subtitle}
-${itineraryText ? `Itinerary: ${itineraryText}` : ''}
-${selectedAddOns.length > 0 ? `Add-ons: ${addOnsText}` : 'Add-ons: none'}
+TOUR
+${selectedTour.name} — ${selectedTour.subtitle}${itineraryText ? `\nItinerary: ${itineraryText}` : ''}
+Add-ons: ${addOnsText}
+Meeting point: ${getFinalMeetingPoint()}
 
-=============================
-6. MEETING POINT
-=============================
-${getFinalMeetingPoint()}
+PRICE
+€${selectedTour.basePrice.toLocaleString()}${selectedAddOns.length > 0 ? ' + add-ons (on request)' : ''}
+Estimate — final quote to confirm
 
-=============================
-7. PRICE ESTIMATE
-=============================
-Base: EUR ${selectedTour.basePrice}${selectedAddOns.length > 0 ? ' + add-ons (price on request)' : ''}
-(estimate — final quote from skipper)
+HEALTH & ACCESSIBILITY
+Allergies: ${allergiesText}
+Mobility: ${mobilityText}
 
-=============================
-8. ALLERGIES
-=============================
-${allergiesText}
-
-=============================
-9. MOBILITY / RESTRICTIONS
-=============================
-${mobilityText}
-
-=============================
-10. ADDITIONAL NOTES
-=============================
+NOTES
 ${customerData.notes || 'No special requests'}
-
 `.trim();
-
-    // versione HTML con indice cliccabile e sezioni ancorate
-    const emailHtml = `
-<div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #1e293b; background: #f8fafc; padding: 24px;">
-  <div style="background: #0a2540; color: white; padding: 20px; margin-bottom: 20px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0; font-size: 10px; letter-spacing: 3px; color: #fbbf24;">SEA RUNNER</p>
-    <h2 style="margin: 4px 0 0 0; font-size: 22px;">New Booking Request</h2>
-    <p style="margin: 8px 0 0 0; font-size: 14px; color: #cbd5e1;">${dateFormatted} — ${numPeople} ${numPeople === 1 ? 'guest' : 'guests'}</p>
-  </div>
-
-  <div style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-    <p style="margin: 0 0 10px 0; font-size: 10px; letter-spacing: 2px; color: #0a2540; font-weight: bold;">QUICK INDEX</p>
-    <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
-      <li><a href="#s1" style="color: #0a2540; text-decoration: none;">Date &amp; Time</a></li>
-      <li><a href="#s2" style="color: #0a2540; text-decoration: none;">Guests</a></li>
-      <li><a href="#s3" style="color: #0a2540; text-decoration: none;">Customer</a></li>
-      <li><a href="#s4" style="color: #0a2540; text-decoration: none;">Contact</a></li>
-      <li><a href="#s5" style="color: #0a2540; text-decoration: none;">Tour</a></li>
-      <li><a href="#s6" style="color: #0a2540; text-decoration: none;">Meeting point</a></li>
-      <li><a href="#s7" style="color: #0a2540; text-decoration: none;">Price estimate</a></li>
-      <li><a href="#s8" style="color: #0a2540; text-decoration: none;">Allergies</a></li>
-      <li><a href="#s9" style="color: #0a2540; text-decoration: none;">Mobility / restrictions</a></li>
-      <li><a href="#s10" style="color: #0a2540; text-decoration: none;">Additional notes</a></li>
-    </ol>
-  </div>
-
-  <div id="s1" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">1 — DATE &amp; TIME</p>
-    <p style="margin: 0; font-size: 18px; color: #0a2540;"><strong>${dateFormatted}</strong></p>
-    <p style="margin: 4px 0 0 0; font-size: 14px; color: #475569;">${getFinalTimeSlot()} · Duration: ${selectedTour.duration}</p>
-  </div>
-
-  <div id="s2" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">2 — GUESTS</p>
-    <p style="margin: 0; font-size: 20px; color: #0a2540;"><strong>${numPeople}</strong> ${numPeople === 1 ? 'guest' : 'guests'}</p>
-  </div>
-
-  <div id="s3" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">3 — CUSTOMER</p>
-    <p style="margin: 0; font-size: 18px; color: #0a2540;"><strong>${customerData.name}</strong></p>
-    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Preferred language: ${customerData.language}</p>
-  </div>
-
-  <div id="s4" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">4 — CONTACT</p>
-    <p style="margin: 0; font-size: 15px;"><strong>Phone:</strong> <a href="tel:${customerData.phone}" style="color: #0a2540;">${customerData.phone}</a></p>
-    <p style="margin: 4px 0 0 0; font-size: 15px;"><strong>Email:</strong> <a href="mailto:${customerData.email}" style="color: #0a2540;">${customerData.email}</a></p>
-  </div>
-
-  <div id="s5" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">5 — TOUR</p>
-    <p style="margin: 0; font-size: 18px; color: #0a2540;"><strong>${selectedTour.name}</strong></p>
-    <p style="margin: 4px 0 0 0; font-size: 14px; color: #475569;">${selectedTour.subtitle}</p>
-    ${itineraryText ? `<p style="margin: 8px 0 0 0; font-size: 13px; color: #475569;">Itinerary: <strong>${itineraryText}</strong></p>` : ''}
-    <p style="margin: 8px 0 0 0; font-size: 13px; color: #475569;">Add-ons: ${selectedAddOns.length > 0 ? addOnsText : 'none'}</p>
-  </div>
-
-  <div id="s6" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">6 — MEETING POINT</p>
-    <p style="margin: 0; font-size: 16px; color: #0a2540;"><strong>${getFinalMeetingPoint()}</strong></p>
-  </div>
-
-  <div id="s7" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">7 — PRICE ESTIMATE</p>
-    <p style="margin: 0; font-size: 22px; color: #0a2540;"><strong>€${selectedTour.basePrice.toLocaleString()}</strong>${selectedAddOns.length > 0 ? ' <span style="font-size: 13px; color: #64748b;">+ add-ons (price on request)</span>' : ''}</p>
-    <p style="margin: 6px 0 0 0; font-size: 12px; font-style: italic; color: #64748b;">Estimate — final quote to be confirmed by skipper</p>
-  </div>
-
-  <div id="s8" style="background: ${customerData.hasAllergies ? '#fef3c7' : 'white'}; padding: 20px; margin-bottom: 12px; border-left: 4px solid ${customerData.hasAllergies ? '#f59e0b' : '#fbbf24'};">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">8 — ALLERGIES</p>
-    <p style="margin: 0; font-size: 15px; color: #0a2540;">${allergiesText}</p>
-  </div>
-
-  <div id="s9" style="background: ${customerData.reducedMobility ? '#fef3c7' : 'white'}; padding: 20px; margin-bottom: 12px; border-left: 4px solid ${customerData.reducedMobility ? '#f59e0b' : '#fbbf24'};">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">9 — MOBILITY / RESTRICTIONS</p>
-    <p style="margin: 0; font-size: 15px; color: #0a2540;">${mobilityText}</p>
-  </div>
-
-  <div id="s10" style="background: white; padding: 20px; margin-bottom: 12px; border-left: 4px solid #fbbf24;">
-    <p style="margin: 0 0 6px 0; font-size: 10px; letter-spacing: 2px; color: #94a3b8;">10 — ADDITIONAL NOTES</p>
-    <p style="margin: 0; font-size: 14px; color: #475569; font-style: ${customerData.notes ? 'normal' : 'italic'};">${customerData.notes || 'No special requests'}</p>
-  </div>
-
-  <div style="margin-top: 20px; padding: 16px; background: #0a2540; color: white; text-align: center; font-size: 12px; letter-spacing: 2px;">
-    SEA RUNNER · PRIVATE BOAT TOURS · LA SPEZIA
-  </div>
-</div>`.trim();
 
     if (WEB3FORMS_KEY && WEB3FORMS_KEY !== 'YOUR_ACCESS_KEY_HERE') {
       try {
@@ -808,9 +676,7 @@ ${customerData.notes || 'No special requests'}
             subject: `New Booking: ${selectedTour.name} — ${customerData.name} (${dateFormatted})`,
             from_name: `Sea Runner — ${customerData.name}`,
             email: customerData.email,
-            message: emailBody,
-            // web3forms supporta html_message per il rendering ricco
-            html_message: emailHtml
+            message: emailBody
           })
         });
       } catch (error) { console.error('Email send error:', error); }
