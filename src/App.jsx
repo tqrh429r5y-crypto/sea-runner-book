@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
 // ============ GOOGLE CALENDAR SYNC ============
 // l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
@@ -1733,12 +1733,12 @@ function SharedNav() {
 
   return (
     <header className="border-b border-slate-800 bg-slate-950 sticky top-0 z-40" style={{ fontFamily: 'Georgia, serif' }}>
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <SeaRunnerLogoCompact size="sm" />
-          <div>
-            <h1 className="text-white text-lg tracking-[0.2em]">SEA RUNNER</h1>
-            <p className="text-amber-400 text-[10px] tracking-[0.3em]">PRIVATE BOAT TOURS</p>
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex-shrink-0"><SeaRunnerLogoCompact size="sm" /></div>
+          <div className="min-w-0">
+            <h1 className="text-white text-sm sm:text-lg tracking-[0.15em] sm:tracking-[0.2em] truncate">SEA RUNNER</h1>
+            <p className="text-amber-400 text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em] truncate">PRIVATE BOAT TOURS</p>
           </div>
         </Link>
 
@@ -1788,8 +1788,8 @@ function HomePage() {
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <SharedNav />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden" style={{ minHeight: '75vh' }}>
+      {/* HERO — più bassa su mobile per lasciare intravedere la sezione sotto */}
+      <section className="relative overflow-hidden" style={{ minHeight: '65vh' }}>
         {/* background: foto sfocata della barca + gradiente blu per leggibilità */}
         <div className="absolute inset-0"
           style={{
@@ -1823,17 +1823,31 @@ function HomePage() {
             </Link>
           </div>
         </div>
+
+        {/* indicatore scroll — una freccia discreta che "respira" per segnalare che c'è altro sotto */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-amber-400/70"
+          style={{ animation: 'scrollBounce 2s ease-in-out infinite' }}>
+          <span className="text-[9px] tracking-[0.3em]">SCROLL</span>
+          <ChevronDown className="w-4 h-4" />
+        </div>
+        {/* keyframes inline per il bounce — così non serve toccare il css globale */}
+        <style>{`
+          @keyframes scrollBounce {
+            0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
+            50% { transform: translate(-50%, 6px); opacity: 1; }
+          }
+        `}</style>
       </section>
 
       {/* INTRO */}
       <section className="max-w-4xl mx-auto px-4 py-14 sm:py-20 text-center">
-        <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">OUR STORY</p>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6">A different way to see Liguria</h2>
-        <div className="w-16 h-px bg-amber-400 mx-auto mb-8"></div>
-        <p className="text-slate-300 text-lg leading-relaxed mb-6">
+        <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">OUR STORY</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-5 sm:mb-6">A different way to see Liguria</h2>
+        <div className="w-16 h-px bg-amber-400 mx-auto mb-6 sm:mb-8"></div>
+        <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-5 sm:mb-6">
           Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you and those you love, with the coastline unfolding at your own pace.
         </p>
-        <p className="text-slate-400 leading-relaxed">
+        <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
           Swim in hidden coves the big boats never reach. Snorkel the marine reserve with a guide. Enjoy a light Italian lunch on board with local wine while the colourful villages drift by. Every day at sea is crafted around you.
         </p>
       </section>
@@ -1881,12 +1895,12 @@ function HomePage() {
             <div className="w-16 h-px bg-amber-400 mx-auto"></div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {initialTours.slice(0, 3).map(tour => (
               <Link key={tour.id} to="/booking"
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
-                <div className="p-6">
+                <div className="p-5 sm:p-6">
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
                   <div className="flex items-center justify-between">
                     <div>
@@ -1935,20 +1949,20 @@ function HomePage() {
       </section>
 
       {/* CONTACT STRIP */}
-      <section className="border-t border-slate-800 py-16">
+      <section className="border-t border-slate-800 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">GET IN TOUCH</p>
-          <h2 className="text-3xl mb-6">Questions before booking?</h2>
-          <p className="text-slate-400 mb-8">Marco and Paola reply personally. In Italian, English, French or German.</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">GET IN TOUCH</p>
+          <h2 className="text-2xl sm:text-3xl mb-4 sm:mb-6">Questions before booking?</h2>
+          <p className="text-slate-400 text-sm sm:text-base mb-6 sm:mb-8">Marco and Paola reply personally, usually within a few hours.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-sm sm:max-w-none mx-auto">
             <a href={whatsappLink('Hi! I would like to know more about Sea Runner tours.')} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 text-xs tracking-[0.3em] transition">
+              className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-5 sm:px-6 py-3 text-xs tracking-[0.2em] sm:tracking-[0.3em] transition">
               <WhatsAppIcon className="w-4 h-4" /> WHATSAPP
             </a>
-            <a href="tel:+393488289438" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] transition">
+            <a href="tel:+393488289438" className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 px-5 sm:px-6 py-3 text-xs tracking-[0.2em] sm:tracking-[0.3em] transition">
               <Phone className="w-4 h-4" /> +39 348 828 9438
             </a>
-            <a href="mailto:searunnerprenotazioni@gmail.com" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] transition">
+            <a href="mailto:searunnerprenotazioni@gmail.com" className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 px-5 sm:px-6 py-3 text-xs tracking-[0.2em] sm:tracking-[0.3em] transition">
               <Mail className="w-4 h-4" /> EMAIL
             </a>
           </div>
@@ -2099,91 +2113,65 @@ function BoatPage() {
         <BoatPhotoGallery />
       </section>
 
-      {/* 3 SPEC CARD */}
-      <section className="max-w-5xl mx-auto px-4 mb-16">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-slate-900 border border-slate-800 p-6 text-center">
-            <Users className="w-6 h-6 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl mb-1">up to 8</p>
-            <p className="text-xs text-slate-500 tracking-widest">GUESTS</p>
-            <p className="text-[10px] text-slate-600 tracking-wider mt-2">+ skipper & hostess</p>
+      {/* 3 SPEC CARD — sempre su 3 colonne anche mobile, in formato compatto */}
+      <section className="max-w-5xl mx-auto px-4 mb-12 sm:mb-16">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
+            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
+            <p className="text-lg sm:text-2xl mb-1 leading-tight">up to 8</p>
+            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">GUESTS</p>
+            <p className="text-[8px] sm:text-[10px] text-slate-600 tracking-wider mt-1 sm:mt-2">+ crew</p>
           </div>
-          <div className="bg-slate-900 border border-slate-800 p-6 text-center">
-            <Droplets className="w-6 h-6 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl mb-1">Bathroom</p>
-            <p className="text-xs text-slate-500 tracking-widest">ON BOARD</p>
+          <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
+            <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
+            <p className="text-lg sm:text-2xl mb-1 leading-tight">Bathroom</p>
+            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">ON BOARD</p>
           </div>
-          <div className="bg-slate-900 border border-slate-800 p-6 text-center">
-            <Sun className="w-6 h-6 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl mb-1">Extendable</p>
-            <p className="text-xs text-slate-500 tracking-widest">BIMINI SHADE</p>
+          <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
+            <Sun className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
+            <p className="text-lg sm:text-2xl mb-1 leading-tight">Extendable</p>
+            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">BIMINI</p>
           </div>
         </div>
       </section>
 
       {/* BLOCCHI ESPERIENZIALI: ogni feature è un beneficio sentito a bordo */}
-      <section className="max-w-4xl mx-auto px-4 mb-16">
-        <div className="space-y-10">
+      <section className="max-w-4xl mx-auto px-4 mb-12 sm:mb-16">
+        <div className="space-y-7 sm:space-y-10">
           {/* silenzio */}
           <div>
             <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SILENCE AT ANCHOR</p>
-            <h3 className="text-2xl mb-3">Only the sound of the sea</h3>
+            <h3 className="text-xl sm:text-2xl mb-3">Only the sound of the sea</h3>
             <p className="text-slate-300 leading-relaxed">
               Solar panels keep our two fridges running all day long — even at anchor, with no generator noise and zero emissions. When the engines are off, the only soundtrack is the water.
             </p>
           </div>
 
           {/* comfort navigazione */}
-          <div className="pt-10 border-t border-slate-800">
+          <div className="pt-7 sm:pt-10 border-t border-slate-800">
             <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SMOOTH CRUISING</p>
-            <h3 className="text-2xl mb-3">Steady on every wave</h3>
+            <h3 className="text-xl sm:text-2xl mb-3">Steady on every wave</h3>
             <p className="text-slate-300 leading-relaxed">
               An intelligent flap system adjusts the trim in real time, softening every movement. Twin Yamaha 225 HP engines deliver power when you need it, without ever feeling rushed.
             </p>
           </div>
 
           {/* ombra */}
-          <div className="pt-10 border-t border-slate-800">
+          <div className="pt-7 sm:pt-10 border-t border-slate-800">
             <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SHADE WHEN YOU WANT IT</p>
-            <h3 className="text-2xl mb-3">Sun or shade, you decide</h3>
+            <h3 className="text-xl sm:text-2xl mb-3">Sun or shade, you decide</h3>
             <p className="text-slate-300 leading-relaxed">
               An extendable bimini covers the entire rear deck when the sun is at its strongest, and retracts in seconds when you want to feel the breeze and the light on your skin.
             </p>
           </div>
 
           {/* comfort bordo */}
-          <div className="pt-10 border-t border-slate-800">
+          <div className="pt-7 sm:pt-10 border-t border-slate-800">
             <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">EVERYTHING YOU NEED</p>
-            <h3 className="text-2xl mb-3">A proper home at sea</h3>
+            <h3 className="text-xl sm:text-2xl mb-3">A proper home at sea</h3>
             <p className="text-slate-300 leading-relaxed">
               Private bathroom on board, fresh water shower, Fusion bluetooth stereo to set the mood, generous swim platform, fridges always stocked. Nothing is missing for a full day of pleasure.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* MICRO-SPECS per chi vuole i dettagli tecnici */}
-      <section className="max-w-4xl mx-auto px-4 mb-16">
-        <div className="bg-slate-900/50 border border-slate-800 p-6">
-          <p className="text-[10px] text-slate-500 tracking-[0.3em] mb-4">TECHNICAL DETAILS</p>
-          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-            {[
-              ['Model', 'Cap Camarat 9.0 WA'],
-              ['Awards', 'Best Boat of the Year (multiple)'],
-              ['Length', '9 metres'],
-              ['Capacity', 'up to 8 guests + crew (skipper + hostess)'],
-              ['Engines', '2 × Yamaha 225 HP'],
-              ['Power source', 'Solar panels'],
-              ['Stabilization', 'Electronic flap system'],
-              ['Sound', 'Fusion bluetooth stereo'],
-              ['Shade', 'Extendable bimini'],
-              ['On board', 'Bathroom + fresh water shower']
-            ].map(([k, v]) => (
-              <div key={k} className="flex justify-between py-2 border-b border-slate-800/50 last:border-b-0">
-                <span className="text-slate-500">{k}</span>
-                <span className="text-slate-300 text-right">{v}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>
