@@ -2060,6 +2060,7 @@ function BoatPage() {
             <Users className="w-6 h-6 text-amber-400 mx-auto mb-3" />
             <p className="text-2xl mb-1">up to 8</p>
             <p className="text-xs text-slate-500 tracking-widest">GUESTS</p>
+            <p className="text-[10px] text-slate-600 tracking-wider mt-2">+ skipper & hostess</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
             <Droplets className="w-6 h-6 text-amber-400 mx-auto mb-3" />
@@ -2067,7 +2068,7 @@ function BoatPage() {
             <p className="text-xs text-slate-500 tracking-widest">ON BOARD</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
-            <Umbrella className="w-6 h-6 text-amber-400 mx-auto mb-3" />
+            <Sun className="w-6 h-6 text-amber-400 mx-auto mb-3" />
             <p className="text-2xl mb-1">Extendable</p>
             <p className="text-xs text-slate-500 tracking-widest">BIMINI SHADE</p>
           </div>
@@ -2124,7 +2125,7 @@ function BoatPage() {
               ['Model', 'Cap Camarat 9.0 WA'],
               ['Awards', 'Best Boat of the Year (multiple)'],
               ['Length', '9 metres'],
-              ['Capacity', 'up to 8 guests'],
+              ['Capacity', 'up to 8 guests + crew (skipper + hostess)'],
               ['Engines', '2 × Yamaha 225 HP'],
               ['Power source', 'Solar panels'],
               ['Stabilization', 'Electronic flap system'],
