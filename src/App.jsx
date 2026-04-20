@@ -1882,10 +1882,11 @@ function HomePage() {
           </div>
           <div>
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
-            <h2 className="text-3xl md:text-4xl mb-6">Our home at sea</h2>
+            <h2 className="text-3xl md:text-4xl mb-4">Cap Camarat 9.0 WA</h2>
+            <p className="text-slate-400 italic text-sm mb-6">Best Boat of the Year · multiple awards</p>
             <div className="w-16 h-px bg-amber-400 mb-6"></div>
             <p className="text-slate-300 leading-relaxed mb-6">
-              Comfortable, private, and built for the Ligurian coast. Up to 8 guests, with shaded areas, fresh water shower, bathroom and all the equipment you need for a perfect day at sea.
+              Solar-powered silence at anchor. Smooth cruising thanks to an intelligent flap system. Extendable shade, bathroom on board, and everything you need for a full day of pleasure.
             </p>
             <Link to="/boat" className="inline-block border border-amber-400 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] hover:bg-amber-400 hover:text-slate-950 transition">
               DISCOVER THE BOAT →
@@ -1928,26 +1929,30 @@ function BoatPage() {
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <SharedNav />
 
-      <section className="max-w-5xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
+      {/* HERO con titolo e nome modello */}
+      <section className="max-w-5xl mx-auto px-4 pt-16 pb-10">
+        <div className="text-center mb-10">
           <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
-          <h1 className="text-4xl md:text-5xl mb-4">Our home at sea</h1>
+          <h1 className="text-4xl md:text-5xl mb-3">Cap Camarat 9.0 WA</h1>
+          <p className="text-slate-400 italic text-sm mb-5">Best Boat of the Year · multiple awards</p>
           <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
           <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Comfortable, private, and built to let you enjoy every moment of the Ligurian coast.
+            An award-winning vessel, chosen for one reason only: it lets you feel the sea at its best.
           </p>
         </div>
 
-        {/* main photo placeholder */}
-        <div className="aspect-[16/9] bg-slate-900 border border-slate-800 flex items-center justify-center mb-10 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
+        {/* foto principale placeholder */}
+        <div className="aspect-[16/9] bg-slate-900 border border-slate-800 flex items-center justify-center mb-12 relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
           <Anchor className="w-32 h-32 text-amber-400/20" />
           <div className="absolute bottom-4 left-4 right-4 text-center">
             <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTO COMING SOON</p>
           </div>
         </div>
+      </section>
 
-        {/* specs */}
-        <div className="grid md:grid-cols-3 gap-4 mb-12">
+      {/* 3 SPEC CARD */}
+      <section className="max-w-5xl mx-auto px-4 mb-16">
+        <div className="grid md:grid-cols-3 gap-4">
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
             <Users className="w-6 h-6 text-amber-400 mx-auto mb-3" />
             <p className="text-2xl mb-1">up to 8</p>
@@ -1955,7 +1960,7 @@ function BoatPage() {
           </div>
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
             <Anchor className="w-6 h-6 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl mb-1">10 m</p>
+            <p className="text-2xl mb-1">9 m</p>
             <p className="text-xs text-slate-500 tracking-widest">LENGTH</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-6 text-center">
@@ -1964,34 +1969,77 @@ function BoatPage() {
             <p className="text-xs text-slate-500 tracking-widest">LA SPEZIA</p>
           </div>
         </div>
+      </section>
 
-        {/* description */}
-        <div className="bg-slate-900 border border-slate-800 p-8 mb-8">
-          <p className="text-amber-400 text-xs tracking-[0.3em] mb-4">ON BOARD</p>
-          <p className="text-slate-300 leading-relaxed mb-6">
-            Designed for comfort and intimacy. Shaded areas for the hottest hours, open deck for sunbathing, comfortable seating for meals on board, and a generous swim platform for easy access to the sea.
-          </p>
-          <p className="text-slate-400 leading-relaxed">
-            Fresh water shower, bathroom with toilet, bluetooth audio system, fridge, snorkeling equipment and towels included. Everything you need for a perfect day at sea, without compromises.
-          </p>
+      {/* BLOCCHI ESPERIENZIALI: ogni feature è un beneficio sentito a bordo */}
+      <section className="max-w-4xl mx-auto px-4 mb-16">
+        <div className="space-y-10">
+          {/* silenzio */}
+          <div>
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SILENCE AT ANCHOR</p>
+            <h3 className="text-2xl mb-3">Only the sound of the sea</h3>
+            <p className="text-slate-300 leading-relaxed">
+              Solar panels keep our two fridges running all day long — even at anchor, with no generator noise and zero emissions. When the engines are off, the only soundtrack is the water.
+            </p>
+          </div>
+
+          {/* comfort navigazione */}
+          <div className="pt-10 border-t border-slate-800">
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SMOOTH CRUISING</p>
+            <h3 className="text-2xl mb-3">Steady on every wave</h3>
+            <p className="text-slate-300 leading-relaxed">
+              An intelligent flap system adjusts the trim in real time, softening every movement. Twin Yamaha 225 HP engines deliver power when you need it, without ever feeling rushed.
+            </p>
+          </div>
+
+          {/* ombra */}
+          <div className="pt-10 border-t border-slate-800">
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SHADE WHEN YOU WANT IT</p>
+            <h3 className="text-2xl mb-3">Sun or shade, you decide</h3>
+            <p className="text-slate-300 leading-relaxed">
+              An extendable bimini covers the entire rear deck when the sun is at its strongest, and retracts in seconds when you want to feel the breeze and the light on your skin.
+            </p>
+          </div>
+
+          {/* comfort bordo */}
+          <div className="pt-10 border-t border-slate-800">
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">EVERYTHING YOU NEED</p>
+            <h3 className="text-2xl mb-3">A proper home at sea</h3>
+            <p className="text-slate-300 leading-relaxed">
+              Private bathroom on board, fresh water shower, Fusion bluetooth stereo to set the mood, generous swim platform, fridges always stocked. Nothing is missing for a full day of pleasure.
+            </p>
+          </div>
         </div>
+      </section>
 
-        {/* facilities grid */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-12">
-          {[
-            'Shaded areas', 'Open sunbathing deck', 'Comfortable seating',
-            'Swim platform', 'Fresh water shower', 'Bathroom on board',
-            'Bluetooth sound system', 'Fridge & cooler', 'Snorkeling equipment',
-            'Towels & blankets', 'Private parking (La Spezia)', 'Full safety equipment'
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm text-slate-300 bg-slate-900/50 p-3 border border-slate-800">
-              <Check className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <span>{item}</span>
-            </div>
-          ))}
+      {/* MICRO-SPECS per chi vuole i dettagli tecnici */}
+      <section className="max-w-4xl mx-auto px-4 mb-16">
+        <div className="bg-slate-900/50 border border-slate-800 p-6">
+          <p className="text-[10px] text-slate-500 tracking-[0.3em] mb-4">TECHNICAL DETAILS</p>
+          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+            {[
+              ['Model', 'Cap Camarat 9.0 WA'],
+              ['Awards', 'Best Boat of the Year (multiple)'],
+              ['Length', '9 metres'],
+              ['Capacity', 'up to 8 guests'],
+              ['Engines', '2 × Yamaha 225 HP'],
+              ['Power source', 'Solar panels'],
+              ['Stabilization', 'Electronic flap system'],
+              ['Sound', 'Fusion bluetooth stereo'],
+              ['Shade', 'Extendable bimini'],
+              ['On board', 'Bathroom + fresh water shower']
+            ].map(([k, v]) => (
+              <div key={k} className="flex justify-between py-2 border-b border-slate-800/50 last:border-b-0">
+                <span className="text-slate-500">{k}</span>
+                <span className="text-slate-300 text-right">{v}</span>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* CTA */}
+      {/* CTA */}
+      <section className="max-w-4xl mx-auto px-4 mb-16">
         <div className="text-center border-t border-slate-800 pt-12">
           <p className="text-slate-400 mb-6">Ready to plan your day at sea?</p>
           <Link to="/booking" className="inline-block bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
