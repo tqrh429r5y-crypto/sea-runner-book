@@ -485,6 +485,19 @@ function BookingApp() {
   // helpers calendario skipper
   const dateToKey = (date) => date.toISOString().split('T')[0];
 
+  // prezzo effettivo per un tour su una data:
+  // se per quella data c'è un prezzo custom impostato dallo skipper, usa quello;
+  // altrimenti usa il prezzo base del tour.
+  const getEffectivePrice = (tour, date) => {
+    if (!tour || !date) return tour?.basePrice ?? 0;
+    const key = dateToKey(date);
+    const override = dateOverrides[key];
+    if (override?.tourPrices && override.tourPrices[tour.id] != null) {
+      return override.tourPrices[tour.id];
+    }
+    return tour.basePrice;
+  };
+
   const getDateInfo = (date) => {
     const key = dateToKey(date);
     const override = dateOverrides[key] || {};
@@ -496,6 +509,7 @@ function BookingApp() {
       note: override.note || '',
       pendingBookings: internalBookings.filter(b => b.status === 'pending'),
       confirmedBookings: internalBookings.filter(b => b.status === 'confirmed'),
+      declinedBookings: internalBookings.filter(b => b.status === 'declined'),
       gcalEvents: gcalOnDate,
       hasAny: internalBookings.length > 0 || gcalOnDate.length > 0,
       hasCustomPrices: override.tourPrices && Object.keys(override.tourPrices).length > 0
@@ -748,9 +762,25 @@ function BookingApp() {
     setMode('customer');
     setCurrentStep(1);
   };
-  const handleBookingAction = (id, action, finalPrice = null) => {
-    setBookings(bookings.map(b => b.id === id ? { ...b, status: action, finalPrice: finalPrice || b.basePrice } : b));
+  // cambia lo status di una booking (confirmed / declined / pending).
+  // update ottimistico + sync supabase. se il db fallisce, ricarica lo stato vero.
+  const handleBookingAction = async (id, action, finalPrice = null) => {
+    const prev = bookings;
+    setBookings(bookings.map(b => b.id === id ? { ...b, status: action, finalPrice: finalPrice ?? b.finalPrice } : b));
     setEditingPriceId(null);
+    try {
+      const payload = { status: action };
+      if (finalPrice != null) payload.final_price = finalPrice;
+      const { error } = await supabase.from('bookings').update(payload).eq('id', id);
+      if (error) {
+        console.error('[sea-runner] booking status update error:', error);
+        alert('Could not update booking status. Please try again.\n\n' + (error.message || ''));
+        setBookings(prev); // rollback
+      }
+    } catch (e) {
+      console.error('[sea-runner] booking status update exception:', e);
+      setBookings(prev);
+    }
   };
   const handleSavePrice = (id) => {
     const price = parseFloat(tempPrice);
@@ -793,12 +823,14 @@ function BookingApp() {
         slotType: b.slotType,
         part: b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' : 
               b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
-              b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null
+              b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null,
+        // pending = non conferma ancora, la data rimane prenotabile come "needs confirmation"
+        isPending: b.status === 'pending'
       }));
 
     const gcalSlots = gcalEvents
       .filter(e => e.date.toDateString() === date.toDateString())
-      .map(e => ({ slotType: e.slotType, part: e.part }));
+      .map(e => ({ slotType: e.slotType, part: e.part, isPending: false }));
 
     return [...internalSlots, ...gcalSlots];
   };
@@ -810,31 +842,56 @@ function BookingApp() {
 
     const booked = getBookedSlotsOnDate(date);
     if (booked.length === 0) return { available: true };
-    const hasExtended = booked.some(b => b.slotType === 'full-day-extended');
-    const hasFullDay = booked.some(b => b.slotType === 'full-day');
-    const hasSunset = booked.some(b => b.slotType === 'sunset');
-    const hasHalfMorning = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
-    const hasHalfAfternoon = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
-    const hasHalfEvening = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
+
+    // analizziamo gli slot occupati distinguendo pending (prenotabili con needs-confirmation)
+    // da confirmed/gcal (che bloccano veramente la data)
+    const confirmedOnly = booked.filter(b => !b.isPending);
+    const anyExtended = booked.some(b => b.slotType === 'full-day-extended');
+    const anyFullDay = booked.some(b => b.slotType === 'full-day');
+    const anySunset = booked.some(b => b.slotType === 'sunset');
+    const anyHalfMorning = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
+    const anyHalfAfternoon = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
+    const anyHalfEvening = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
+    const hasConfirmedExtended = confirmedOnly.some(b => b.slotType === 'full-day-extended');
+    const hasConfirmedFullDay = confirmedOnly.some(b => b.slotType === 'full-day');
+    const hasConfirmedSunset = confirmedOnly.some(b => b.slotType === 'sunset');
+    const hasConfirmedHalfMorning = confirmedOnly.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
+    const hasConfirmedHalfAfternoon = confirmedOnly.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
+    const hasConfirmedHalfEvening = confirmedOnly.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
+
+    // helper: se ci sono conflitti SOLO da pending → available con needsConfirmation
+    const pendingConflictReason = 'Another request is pending for this date — skipper will confirm';
 
     if (tour.slotType === 'full-day-extended') {
-      if (hasExtended || hasFullDay || hasHalfMorning || hasHalfAfternoon) return { available: false };
-      if (hasSunset) return { available: true, needsConfirmation: true, reason: 'Sunset already booked — skipper will confirm' };
+      if (hasConfirmedExtended || hasConfirmedFullDay || hasConfirmedHalfMorning || hasConfirmedHalfAfternoon) return { available: false };
+      if (anyExtended || anyFullDay || anyHalfMorning || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      if (hasConfirmedSunset || anySunset) return { available: true, needsConfirmation: true, reason: 'Sunset already booked — skipper will confirm' };
       return { available: true };
     }
     if (tour.slotType === 'full-day') {
-      if (hasExtended || hasFullDay || hasHalfMorning || hasHalfAfternoon) return { available: false };
+      if (hasConfirmedExtended || hasConfirmedFullDay || hasConfirmedHalfMorning || hasConfirmedHalfAfternoon) return { available: false };
+      if (anyExtended || anyFullDay || anyHalfMorning || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
       return { available: true };
     }
     if (tour.slotType === 'sunset') {
-      if (hasSunset || hasHalfEvening) return { available: false };
-      if (hasExtended) return { available: true, needsConfirmation: true, reason: 'Portofino tour booked — skipper will confirm' };
-      if (hasHalfAfternoon) return { available: true, needsConfirmation: true, reason: 'Afternoon half day booked — skipper will confirm' };
+      if (hasConfirmedSunset || hasConfirmedHalfEvening) return { available: false };
+      if (anySunset || anyHalfEvening) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      if (hasConfirmedExtended || anyExtended) return { available: true, needsConfirmation: true, reason: 'Portofino tour booked — skipper will confirm' };
+      if (hasConfirmedHalfAfternoon || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: 'Afternoon half day booked — skipper will confirm' };
       return { available: true };
     }
     if (tour.slotType === 'half-day-choice') {
-      if (hasExtended || hasFullDay) return { available: false };
-      return { available: true, bookedParts: { morning: hasHalfMorning, afternoon: hasHalfAfternoon, evening: hasHalfEvening || hasSunset } };
+      if (hasConfirmedExtended || hasConfirmedFullDay) return { available: false };
+      if (anyExtended || anyFullDay) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      return { available: true, bookedParts: {
+        morning: hasConfirmedHalfMorning,
+        afternoon: hasConfirmedHalfAfternoon,
+        evening: hasConfirmedHalfEvening || hasConfirmedSunset
+      }, pendingParts: {
+        morning: anyHalfMorning && !hasConfirmedHalfMorning,
+        afternoon: anyHalfAfternoon && !hasConfirmedHalfAfternoon,
+        evening: (anyHalfEvening || anySunset) && !(hasConfirmedHalfEvening || hasConfirmedSunset)
+      }};
     }
     return { available: true };
   };
@@ -863,6 +920,12 @@ function BookingApp() {
     const dateFormatted = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
     // email pulita, solo plain text. ordine: quando → chi → cosa → quanto → salute → note.
+    // prezzo effettivo (base o custom della data) + nota se diverso dal base
+    const effectivePrice = getEffectivePrice(selectedTour, selectedDate);
+    const priceLine = effectivePrice !== selectedTour.basePrice
+      ? `€${effectivePrice.toLocaleString()} (custom price for this date, base was €${selectedTour.basePrice.toLocaleString()})`
+      : `€${selectedTour.basePrice.toLocaleString()}`;
+
     const emailBody = `NEW BOOKING REQUEST - ${selectedTour.name}
 
 ${dateFormatted}
@@ -880,7 +943,7 @@ ${selectedTour.name} - ${selectedTour.subtitle}${itineraryText ? `\nItinerary: $
 Meeting point: ${getFinalMeetingPoint()}
 
 PRICE
-€${selectedTour.basePrice.toLocaleString()}
+${priceLine}
 Estimate - final quote to confirm
 
 HEALTH & ACCESSIBILITY
@@ -967,7 +1030,7 @@ ${customerData.notes || 'No special requests'}
         notes: customerData.notes || null,
         allergies: customerData.hasAllergies ? (customerData.allergiesDetails || 'Yes') : null,
         mobility: customerData.reducedMobility ? (customerData.mobilityDetails || 'Yes') : null,
-        base_price: selectedTour.basePrice,
+        base_price: effectivePrice,
         status: 'pending'
       });
       if (dbError) console.error('[sea-runner] booking DB save error:', dbError);
@@ -1270,13 +1333,46 @@ ${customerData.notes || 'No special requests'}
                           <div className="border-t pt-4">
                             <p className="text-[10px] text-slate-500 tracking-widest mb-3">EVENTS ON THIS DATE</p>
                             <div className="space-y-2">
-                              {[...info.pendingBookings, ...info.confirmedBookings].map(b => (
-                                <div key={b.id} className="flex items-center justify-between p-3 bg-slate-50 text-sm">
-                                  <div>
-                                    <p className="text-slate-900">{b.customerName}</p>
-                                    <p className="text-xs text-slate-500">{b.tourName} • {b.people} guests • {b.timeSlot}</p>
+                              {[...info.pendingBookings, ...info.confirmedBookings, ...info.declinedBookings].map(b => (
+                                <div key={b.id} className="p-3 bg-slate-50 text-sm">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-slate-900 truncate">{b.customerName}</p>
+                                      <p className="text-xs text-slate-500 truncate">{b.tourName} • {b.people} guests • {b.timeSlot}</p>
+                                      {(b.email || b.phone) && (
+                                        <p className="text-[10px] text-slate-400 mt-0.5 truncate">
+                                          {b.phone && <a href={`tel:${b.phone}`} className="hover:text-slate-700">{b.phone}</a>}
+                                          {b.phone && b.email && <span> · </span>}
+                                          {b.email && <a href={`mailto:${b.email}`} className="hover:text-slate-700">{b.email}</a>}
+                                        </p>
+                                      )}
+                                    </div>
+                                    <span className={`text-[10px] px-2 py-1 tracking-wider ml-2 flex-shrink-0 ${
+                                      b.status === 'pending' ? 'bg-amber-100 text-amber-800' :
+                                      b.status === 'declined' ? 'bg-red-100 text-red-800' :
+                                      'bg-emerald-100 text-emerald-800'
+                                    }`}>{b.status.toUpperCase()}</span>
                                   </div>
-                                  <span className={`text-xs px-2 py-1 tracking-wider ${b.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>{b.status.toUpperCase()}</span>
+                                  {/* azioni rapide: confirm o reject se pending, reset se già chiusa */}
+                                  {b.status === 'pending' ? (
+                                    <div className="flex gap-2 mt-2">
+                                      <button onClick={() => handleBookingAction(b.id, 'confirmed')}
+                                        className="flex-1 px-3 py-1.5 bg-emerald-600 text-white text-[11px] tracking-wider hover:bg-emerald-700 transition flex items-center justify-center gap-1">
+                                        <CheckCircle className="w-3 h-3" /> CONFIRM
+                                      </button>
+                                      <button onClick={() => {
+                                          if (confirm(`Reject the booking from ${b.customerName}?`)) handleBookingAction(b.id, 'declined');
+                                        }}
+                                        className="flex-1 px-3 py-1.5 bg-slate-200 text-slate-700 text-[11px] tracking-wider hover:bg-red-100 hover:text-red-700 transition flex items-center justify-center gap-1">
+                                        <XCircle className="w-3 h-3" /> DECLINE
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button onClick={() => handleBookingAction(b.id, 'pending')}
+                                      className="w-full mt-1 text-[10px] text-slate-500 hover:text-slate-700 tracking-wider">
+                                      ↺ RESET TO PENDING
+                                    </button>
+                                  )}
                                 </div>
                               ))}
                               {info.gcalEvents.map((e, i) => (
@@ -1908,20 +2004,42 @@ ${customerData.notes || 'No special requests'}
               <div className="flex justify-between"><span>Guests</span><span className="text-white">{numPeople}</span></div>
               <div className="flex justify-between"><span>Meeting point</span><span className="text-white text-right">{getFinalMeetingPoint()}</span></div>
 
-              {!selectedTour?.isCustom && (
-                <div className="pt-4 mt-4 border-t border-slate-700 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Tour base</span>
-                    <span className="text-white">€{selectedTour?.basePrice.toLocaleString()}</span>
+              {!selectedTour?.isCustom && (() => {
+                const effectivePrice = getEffectivePrice(selectedTour, selectedDate);
+                const isCustomPrice = effectivePrice !== selectedTour.basePrice;
+                return (
+                  <div className="pt-4 mt-4 border-t border-slate-700 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Tour base</span>
+                      <span className={isCustomPrice ? 'text-slate-500 line-through' : 'text-white'}>
+                        €{selectedTour.basePrice.toLocaleString()}
+                      </span>
+                    </div>
+                    {isCustomPrice && (
+                      <div className="flex justify-between">
+                        <span className="text-amber-400">Price for this date</span>
+                        <span className="text-amber-400">€{effectivePrice.toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between pt-2 border-t border-slate-700/50">
+                      <span className="text-slate-300">Estimated total</span>
+                      <span className="text-white text-lg">€{effectivePrice.toLocaleString()}</span>
+                    </div>
+                    <div className="mt-3 p-3 bg-amber-400/10 border border-amber-400/20">
+                      <p className="text-[11px] text-amber-400 leading-relaxed flex items-start gap-2">
+                        <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                        <span>This is an estimate. The final price will be confirmed by the skipper based on date, group size and requests — you will be contacted as soon as possible.</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-slate-700/50">
-                    <span className="text-slate-300">Estimated total</span>
-                    <span className="text-white text-lg">€{selectedTour?.basePrice.toLocaleString()}</span>
-                  </div>
-                  <div className="mt-3 p-3 bg-amber-400/10 border border-amber-400/20">
+                );
+              })()}
+              {selectedTour?.isCustom && (
+                <div className="pt-4 mt-4 border-t border-slate-700">
+                  <div className="p-3 bg-amber-400/10 border border-amber-400/20">
                     <p className="text-[11px] text-amber-400 leading-relaxed flex items-start gap-2">
                       <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                      <span>This is an estimate. The final price will be confirmed by the skipper based on date, group size and requests — you will be contacted as soon as possible.</span>
+                      <span>For Tailored tours, the final price is confirmed by the skipper based on your requests.</span>
                     </p>
                   </div>
                 </div>
