@@ -410,6 +410,11 @@ const initialBookings = [
 function BookingApp() {
   const bookingLocation = useLocation();
   const [tours, setTours] = useState(initialTours);
+  // flag di caricamento iniziale dei dati da supabase:
+  // true = stiamo recuperando dati freschi, false = siamo pronti.
+  // mentre toursLoading è true la UI mostra gli stessi initialTours come fallback
+  // così il sito non appare vuoto se supabase è lento.
+  const [toursLoading, setToursLoading] = useState(true);
   const [mode, setMode] = useState('customer');
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTour, setSelectedTour] = useState(null);
@@ -511,23 +516,79 @@ function BookingApp() {
     return grid;
   };
 
-  const toggleDateClosed = (date) => {
-    const key = dateToKey(date);
-    const current = dateOverrides[key] || {};
-    setDateOverrides({ ...dateOverrides, [key]: { ...current, closed: !current.closed } });
+  // === date overrides ===
+  // ogni modifica segue il pattern "update ottimistico + sync su supabase":
+  // la UI risponde immediatamente, poi salviamo. se il salvataggio fallisce
+  // ricarichiamo dal db per tornare allo stato vero.
+  const reloadDateOverrides = async () => {
+    try {
+      const { data, error } = await supabase.from('date_overrides').select('*');
+      if (error) { console.error('[sea-runner] overrides load error:', error); return; }
+      const map = {};
+      (data || []).forEach(row => {
+        map[row.date_key] = {
+          closed: !!row.closed,
+          tourPrices: row.tour_prices || {},
+          note: row.note || ''
+        };
+      });
+      setDateOverrides(map);
+    } catch (e) {
+      console.error('[sea-runner] overrides load exception:', e);
+    }
   };
 
-  const setDateTourPrices = (date, tourPrices, note = '') => {
+  const toggleDateClosed = async (date) => {
     const key = dateToKey(date);
-    const current = dateOverrides[key] || {};
+    const current = dateOverrides[key] || { closed: false, tourPrices: {}, note: '' };
+    const newClosed = !current.closed;
+    // update ottimistico
+    setDateOverrides({ ...dateOverrides, [key]: { ...current, closed: newClosed } });
+    // upsert su db
+    const { error } = await supabase.from('date_overrides').upsert({
+      date_key: key,
+      closed: newClosed,
+      tour_prices: current.tourPrices || {},
+      note: current.note || '',
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'date_key' });
+    if (error) {
+      console.error('[sea-runner] toggleDateClosed error:', error);
+      alert('Could not save date status. Please try again.');
+      reloadDateOverrides();
+    }
+  };
+
+  const setDateTourPrices = async (date, tourPrices, note = '') => {
+    const key = dateToKey(date);
+    const current = dateOverrides[key] || { closed: false };
     setDateOverrides({ ...dateOverrides, [key]: { ...current, tourPrices, note } });
+    const { error } = await supabase.from('date_overrides').upsert({
+      date_key: key,
+      closed: current.closed || false,
+      tour_prices: tourPrices,
+      note: note,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'date_key' });
+    if (error) {
+      console.error('[sea-runner] setDateTourPrices error:', error);
+      alert('Could not save custom prices. Please try again.');
+      reloadDateOverrides();
+    }
   };
 
-  const clearDateOverride = (date) => {
+  const clearDateOverride = async (date) => {
     const key = dateToKey(date);
+    // update ottimistico: rimuovo la chiave
     const newOverrides = { ...dateOverrides };
     delete newOverrides[key];
     setDateOverrides(newOverrides);
+    const { error } = await supabase.from('date_overrides').delete().eq('date_key', key);
+    if (error) {
+      console.error('[sea-runner] clearDateOverride error:', error);
+      alert('Could not reset date. Please try again.');
+      reloadDateOverrides();
+    }
   };
 
   const changeSkipperMonth = (delta) => {
@@ -549,6 +610,30 @@ function BookingApp() {
     }
   };
 
+  // === caricamento prezzi tour dal database ===
+  // mergiamo i prezzi freschi da supabase con i metadati ricchi hardcoded
+  // (immagini, itinerari, includes, ecc). il database contiene solo quello che cambia: prezzo base.
+  const reloadTours = async () => {
+    try {
+      const { data, error } = await supabase.from('tours').select('id, base_price');
+      if (error) {
+        console.error('[sea-runner] tours load error:', error);
+        return;
+      }
+      if (data && data.length > 0) {
+        const priceById = Object.fromEntries(data.map(r => [r.id, r.base_price]));
+        // rispettiamo l'ordine di initialTours per non stravolgere la UI
+        setTours(initialTours.map(t => priceById[t.id] != null ? { ...t, basePrice: priceById[t.id] } : t));
+      }
+    } catch (e) {
+      console.error('[sea-runner] tours load exception:', e);
+    } finally {
+      setToursLoading(false);
+    }
+  };
+
+  useEffect(() => { reloadTours(); }, []);
+  useEffect(() => { reloadDateOverrides(); }, []);
   useEffect(() => { syncGoogleCalendar(); }, []);
   useEffect(() => { if (currentStep === 2) syncGoogleCalendar(); }, [currentStep]);
   // scroll in cima ogni volta che cambia lo step (l'animazione smooth parte dopo il render)
@@ -577,6 +662,7 @@ function BookingApp() {
       if (data.session?.user) {
         setSkipperUser(data.session.user);
         setMode('skipper');
+        reloadBookings();
       }
       setSkipperAuthLoading(false);
     });
@@ -610,11 +696,49 @@ function BookingApp() {
         setMode('skipper');
         setPassword('');
         setLoginEmail('');
+        // appena loggato carichiamo le prenotazioni vere dal db
+        reloadBookings();
       }
     } catch (e) {
       setLoginError('Connection error. Check your internet and try again.');
     } finally {
       setLoginSubmitting(false);
+    }
+  };
+
+  // carica le prenotazioni dal database (solo per skipper autenticato, policy RLS lo richiede)
+  const reloadBookings = async () => {
+    try {
+      const { data, error } = await supabase.from('bookings')
+        .select('*').order('created_at', { ascending: false }).limit(500);
+      if (error) { console.error('[sea-runner] bookings load error:', error); return; }
+      if (data && data.length > 0) {
+        // mappa campi db → campi usati in UI (UI si aspetta camelCase e Date object)
+        const mapped = data.map(r => ({
+          id: r.id,
+          tourId: r.tour_id,
+          tourName: r.tour_name,
+          customerName: r.customer_name,
+          email: r.email,
+          phone: r.phone,
+          language: r.language || 'EN',
+          date: r.date ? new Date(r.date + 'T00:00:00') : null,
+          timeSlot: r.time_slot,
+          slotType: r.slot_type,
+          people: r.people,
+          meetingPoint: r.meeting_point,
+          notes: r.notes || '',
+          allergies: r.allergies || 'None',
+          mobility: r.mobility || 'None',
+          addOns: [],
+          basePrice: r.base_price,
+          finalPrice: r.final_price,
+          status: r.status || 'pending'
+        }));
+        setBookings(mapped);
+      }
+    } catch (e) {
+      console.error('[sea-runner] bookings load exception:', e);
     }
   };
 
@@ -633,10 +757,24 @@ function BookingApp() {
     if (!isNaN(price)) setBookings(bookings.map(b => b.id === id ? { ...b, finalPrice: price } : b));
     setEditingPriceId(null); setTempPrice('');
   };
-  const handleSaveTourPrice = (tourId) => {
+  const handleSaveTourPrice = async (tourId) => {
     const price = parseFloat(tempTourPrice);
-    if (!isNaN(price) && price > 0) setTours(tours.map(t => t.id === tourId ? { ...t, basePrice: price } : t));
+    if (isNaN(price) || price <= 0) {
+      setEditingTourPrice(null); setTempTourPrice('');
+      return;
+    }
+    // update ottimistico: aggiorno la UI subito, così marco non aspetta
+    setTours(tours.map(t => t.id === tourId ? { ...t, basePrice: price } : t));
     setEditingTourPrice(null); setTempTourPrice('');
+    // poi salvo su supabase; se fallisce, ricarichiamo per tornare allo stato consistente
+    const { error } = await supabase.from('tours')
+      .update({ base_price: price, updated_at: new Date().toISOString() })
+      .eq('id', tourId);
+    if (error) {
+      console.error('[sea-runner] save tour price error:', error);
+      alert('Price could not be saved. Please try again.\n\n' + (error.message || ''));
+      reloadTours();
+    }
   };
 
   const handleTourSelect = (tour) => { 
@@ -808,6 +946,34 @@ ${customerData.notes || 'No special requests'}
       finalPrice: null, language: customerData.language, allergies: allergiesText, mobility: mobilityText
     };
     setBookings([newBooking, ...bookings]);
+    // salviamo la prenotazione anche su supabase.
+    // qui la politica è: se l'email del form è stata consegnata a marco via web3forms (emailDelivered=true),
+    // la prenotazione è comunque arrivata — il salvataggio su db è un "nice to have" per la dashboard.
+    // quindi non blocchiamo il submit se il db fallisce: logghiamo soltanto.
+    try {
+      const { error: dbError } = await supabase.from('bookings').insert({
+        tour_id: selectedTour.id,
+        tour_name: selectedTour.name,
+        customer_name: customerData.name,
+        email: customerData.email,
+        phone: customerData.phone,
+        language: customerData.language,
+        date: selectedDate.toISOString().split('T')[0],
+        time_slot: getFinalTimeSlot(),
+        slot_type: selectedTour.slotType,
+        people: numPeople,
+        meeting_point: getFinalMeetingPoint(),
+        itinerary_choice: itineraryText || null,
+        notes: customerData.notes || null,
+        allergies: customerData.hasAllergies ? (customerData.allergiesDetails || 'Yes') : null,
+        mobility: customerData.reducedMobility ? (customerData.mobilityDetails || 'Yes') : null,
+        base_price: selectedTour.basePrice,
+        status: 'pending'
+      });
+      if (dbError) console.error('[sea-runner] booking DB save error:', dbError);
+    } catch (e) {
+      console.error('[sea-runner] booking DB save exception:', e);
+    }
     setSubmitted(true);
   };
 
