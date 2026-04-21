@@ -1566,18 +1566,16 @@ ${customerData.notes || 'No special requests'}
                   </div>
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
                   <div className="flex items-center justify-between gap-3">
-                    <div>
-                      {!tour.isCustom ? (
-                        <p className="text-2xl sm:text-3xl text-white whitespace-nowrap">€{tour.basePrice.toLocaleString()}</p>
-                      ) : (
-                        <>
-                          <p className="text-[10px] text-slate-500 tracking-widest">PRICE</p>
-                          <p className="text-lg text-amber-400">On request</p>
-                        </>
-                      )}
-                    </div>
+                    {tour.isCustom ? (
+                      <div>
+                        <p className="text-[10px] text-slate-500 tracking-widest">PRICE</p>
+                        <p className="text-lg text-amber-400">On request</p>
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-slate-500 tracking-widest">Private · Flexible itinerary</span>
+                    )}
                     <div className="border border-amber-400 text-amber-400 px-3 sm:px-4 py-2 text-[10px] sm:text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition whitespace-nowrap">
-                      VIEW DATES →
+                      CHECK PRICE →
                     </div>
                   </div>
                 </div>
@@ -1607,9 +1605,6 @@ ${customerData.notes || 'No special requests'}
               <div className="flex flex-wrap gap-4 text-sm text-slate-300 pt-4 border-t border-slate-800">
                 <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {selectedTour.duration}{selectedTour.fixedTime && ` (~${selectedTour.fixedTime}, flexible)`}</span>
                 <span className="flex items-center gap-1"><Users className="w-4 h-4 text-amber-400" /> 1-{selectedTour.maxPeople} guests</span>
-                {!selectedTour.isCustom && (
-                  <span className="flex items-center gap-1 text-amber-400">from €{selectedTour.basePrice.toLocaleString()}</span>
-                )}
               </div>
 
               {/* TIMELINE ITINERARIO */}
@@ -1924,7 +1919,7 @@ ${customerData.notes || 'No special requests'}
                     <TourCardImage tour={t} />
                     <div className="p-4">
                       <p className="text-white text-sm mb-1" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{t.name}</p>
-                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{t.duration.toUpperCase()} · €{t.basePrice.toLocaleString()}</p>
+                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{t.duration.toUpperCase()}</p>
                       <div className="inline-flex items-center gap-1 text-amber-400 text-[10px] tracking-widest group-hover:text-amber-300">
                         VIEW TOUR →
                       </div>
@@ -2491,10 +2486,14 @@ function HomePage() {
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
+                  {/* riga info rapida (durata + guests) + CTA check price */}
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-2xl sm:text-3xl text-white whitespace-nowrap">€{tour.basePrice.toLocaleString()}</p>
+                    <div className="flex items-center gap-3 text-[10px] sm:text-xs text-slate-500 tracking-widest">
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {tour.duration.toUpperCase()}</span>
+                      <span className="flex items-center gap-1"><Users className="w-3 h-3" /> 1-{tour.maxPeople}</span>
+                    </div>
                     <div className="border border-amber-400 text-amber-400 px-3 sm:px-4 py-2 text-[10px] sm:text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition whitespace-nowrap">
-                      VIEW DATES →
+                      CHECK PRICE →
                     </div>
                   </div>
                 </div>
