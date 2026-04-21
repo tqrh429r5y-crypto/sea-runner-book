@@ -1072,6 +1072,10 @@ ${customerData.notes || 'No special requests'}
       const date = new Date(year, month, d);
       const isPast = date < today;
       const availInfo = selectedTour && !isPast ? isTourAvailableOnDate(selectedTour, date) : { available: !isPast };
+      // pallino verde SOLO per sconti: prezzo effettivo < prezzo base del tour.
+      // non segnaliamo i prezzi maggiorati (scelta editoriale: evitiamo ancoraggio negativo).
+      const effective = selectedTour && !isPast ? getEffectivePrice(selectedTour, date) : null;
+      const isDiscounted = !!(selectedTour && effective != null && effective < selectedTour.basePrice);
       dates.push({
         date,
         isPast,
@@ -1079,6 +1083,7 @@ ${customerData.notes || 'No special requests'}
         needsConfirmation: availInfo.needsConfirmation,
         reason: availInfo.reason,
         bookedParts: availInfo.bookedParts,
+        isDiscounted,
         dayNum: d
       });
     }
@@ -1140,7 +1145,7 @@ ${customerData.notes || 'No special requests'}
 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="mb-2">
-            <p className="text-amber-600 text-xs tracking-[0.3em] mb-1">WELCOME CAPTAIN MARCO</p>
+            <p className="text-amber-600 text-xs tracking-[0.3em] mb-1">BENVENUTA PAOLA!</p>
             <h2 className="text-3xl text-slate-900">Management Dashboard</h2>
           </div>
 
@@ -1700,22 +1705,57 @@ ${customerData.notes || 'No special requests'}
                   const isSelected = selectedDate?.toDateString() === day.date.toDateString();
                   return (
                     <button key={idx} onClick={() => day.available && setSelectedDate(day.date)} disabled={!day.available}
-                      className={`aspect-square flex items-center justify-center text-sm transition ${
+                      className={`relative aspect-square flex items-center justify-center text-sm transition ${
                         isSelected ? 'bg-amber-400 text-slate-950'
-                        : day.available && day.needsConfirmation ? 'bg-slate-800 text-amber-400 hover:bg-slate-700 border border-amber-400/30'
                         : day.available ? 'bg-slate-800 text-white hover:bg-slate-700'
                         : day.isPast ? 'bg-slate-900/50 text-slate-700 cursor-not-allowed'
                         : 'bg-slate-900 text-slate-700 cursor-not-allowed line-through'
                       }`}
-                      title={day.needsConfirmation ? day.reason : ''}>
+                      title={day.isDiscounted ? 'Special price available' : ''}>
                       {day.dayNum}
+                      {/* pallino verde in basso a destra: giorno con prezzo scontato */}
+                      {day.available && day.isDiscounted && (
+                        <span className={`absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full ${
+                          isSelected ? 'bg-emerald-700' : 'bg-emerald-400'
+                        }`}></span>
+                      )}
                     </button>
                   );
                 })}
               </div>
+
+              {/* riga dinamica sotto calendario: mostra il prezzo effettivo quando una data è selezionata */}
+              {selectedDate && selectedTour && !selectedTour.isCustom && (() => {
+                const eff = getEffectivePrice(selectedTour, selectedDate);
+                const base = selectedTour.basePrice;
+                const note = dateOverrides[dateToKey(selectedDate)]?.note || '';
+                const isDiscount = eff < base;
+                const isSurcharge = eff > base;
+                return (
+                  <div className="mt-3 p-3 bg-slate-800/50 border border-slate-700 flex items-center justify-between gap-3">
+                    <div className="text-[11px] text-slate-400 tracking-wider">
+                      {selectedDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase()}
+                    </div>
+                    <div className="flex items-center gap-2 text-right">
+                      {isDiscount && (
+                        <span className="text-[10px] text-slate-500 line-through">€{base.toLocaleString()}</span>
+                      )}
+                      <span className={`text-sm font-semibold ${isDiscount ? 'text-emerald-400' : isSurcharge ? 'text-white' : 'text-white'}`}>
+                        €{eff.toLocaleString()}
+                      </span>
+                      {note && isDiscount && (
+                        <span className="text-[10px] text-emerald-400/80 italic">· {note}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="mt-3 space-y-1">
                 <p className="text-[10px] text-slate-500 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
-                <p className="text-[10px] text-amber-400/70 tracking-wider">AMBER BORDER = SKIPPER WILL CONFIRM</p>
+                <p className="text-[10px] text-slate-500 tracking-wider flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> SPECIAL PRICE
+                </p>
                 {/* indicatore sincronizzazione google calendar */}
                 <div className="flex items-center gap-2 pt-2 mt-2 border-t border-slate-800">
                   {gcalStatus === 'syncing' && (
@@ -2007,6 +2047,7 @@ ${customerData.notes || 'No special requests'}
               {!selectedTour?.isCustom && (() => {
                 const effectivePrice = getEffectivePrice(selectedTour, selectedDate);
                 const isCustomPrice = effectivePrice !== selectedTour.basePrice;
+                const dateNote = selectedDate ? (dateOverrides[dateToKey(selectedDate)]?.note || '') : '';
                 return (
                   <div className="pt-4 mt-4 border-t border-slate-700 space-y-2">
                     <div className="flex justify-between">
@@ -2016,10 +2057,19 @@ ${customerData.notes || 'No special requests'}
                       </span>
                     </div>
                     {isCustomPrice && (
-                      <div className="flex justify-between">
-                        <span className="text-amber-400">Price for this date</span>
-                        <span className="text-amber-400">€{effectivePrice.toLocaleString()}</span>
-                      </div>
+                      <>
+                        <div className="flex justify-between items-baseline gap-3">
+                          <span className="text-amber-400 flex items-center gap-2 flex-wrap">
+                            Price for this date
+                            {dateNote && (
+                              <span className="text-[11px] text-amber-400/70 italic font-normal normal-case">
+                                — {dateNote}
+                              </span>
+                            )}
+                          </span>
+                          <span className="text-amber-400 flex-shrink-0">€{effectivePrice.toLocaleString()}</span>
+                        </div>
+                      </>
                     )}
                     <div className="flex justify-between pt-2 border-t border-slate-700/50">
                       <span className="text-slate-300">Estimated total</span>
