@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+
+// ============ SUPABASE CLIENT ============
+// connessione al nostro backend: autenticazione skipper + persistenza dati.
+// le chiavi qui sono pubbliche (anon key) e protette da Row Level Security lato supabase:
+// i visitatori possono solo leggere i dati pubblici e inserire prenotazioni;
+// solo utenti autenticati (skipper loggato) possono modificare prezzi e date.
+const SUPABASE_URL = 'https://pmumkqnozzplstyayoyg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============ GOOGLE CALENDAR SYNC ============
 // l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
@@ -423,9 +433,14 @@ function BookingApp() {
   // diagnostica invio email — visibile on-page se qualcosa va storto
   const [submitError, setSubmitError] = useState(null);
   const [showSkipperLogin, setShowSkipperLogin] = useState(false);
-  const [skipperAuth, setSkipperAuth] = useState(false);
+  // skipperUser: null = non loggato; oggetto utente = loggato.
+  // al mount controlliamo se c'è una sessione salvata e la ripristiniamo.
+  const [skipperUser, setSkipperUser] = useState(null);
+  const [skipperAuthLoading, setSkipperAuthLoading] = useState(true); // true all'avvio finché non abbiamo verificato la sessione
+  const [loginEmail, setLoginEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [loginSubmitting, setLoginSubmitting] = useState(false); // disabilita il form durante la chiamata auth
   const [bookings, setBookings] = useState(initialBookings);
   const [skipperTab, setSkipperTab] = useState('calendar');
   const [editingPriceId, setEditingPriceId] = useState(null);
@@ -552,15 +567,63 @@ function BookingApp() {
     }
   }, [bookingLocation.search]);
 
-  const SKIPPER_PASSWORD = 'Searunner646703';
+  // === autenticazione skipper via supabase ===
+  // al mount controlliamo se c'è già una sessione salvata (marco torna dopo giorni → resta loggato).
+  // inoltre ascoltiamo cambi di stato: logout, scadenza, refresh token, ecc.
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      if (data.session?.user) {
+        setSkipperUser(data.session.user);
+        setMode('skipper');
+      }
+      setSkipperAuthLoading(false);
+    });
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSkipperUser(session?.user ?? null);
+      if (!session?.user) setMode('customer');
+    });
+    return () => {
+      mounted = false;
+      authListener?.subscription?.unsubscribe();
+    };
+  }, []);
 
-  const handleSkipperLogin = () => {
-    if (password === SKIPPER_PASSWORD) {
-      setSkipperAuth(true); setShowSkipperLogin(false); setMode('skipper');
-      setLoginError(''); setPassword('');
-    } else setLoginError('Incorrect password');
+  const handleSkipperLogin = async () => {
+    if (loginSubmitting) return;
+    setLoginError('');
+    setLoginSubmitting(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEmail.trim(),
+        password: password
+      });
+      if (error) {
+        const msg = (error.message || '').toLowerCase();
+        if (msg.includes('invalid login')) setLoginError('Wrong email or password');
+        else if (msg.includes('email not confirmed')) setLoginError('Please confirm your email first');
+        else setLoginError(error.message || 'Login failed. Try again.');
+      } else {
+        setSkipperUser(data.user);
+        setShowSkipperLogin(false);
+        setMode('skipper');
+        setPassword('');
+        setLoginEmail('');
+      }
+    } catch (e) {
+      setLoginError('Connection error. Check your internet and try again.');
+    } finally {
+      setLoginSubmitting(false);
+    }
   };
-  const handleSkipperLogout = () => { setSkipperAuth(false); setMode('customer'); setCurrentStep(1); };
+
+  const handleSkipperLogout = async () => {
+    await supabase.auth.signOut();
+    setSkipperUser(null);
+    setMode('customer');
+    setCurrentStep(1);
+  };
   const handleBookingAction = (id, action, finalPrice = null) => {
     setBookings(bookings.map(b => b.id === id ? { ...b, status: action, finalPrice: finalPrice || b.basePrice } : b));
     setEditingPriceId(null);
@@ -806,15 +869,25 @@ ${customerData.notes || 'No special requests'}
               <div><h2 className="text-xl text-white tracking-[0.2em]">SEA RUNNER</h2>
                 <p className="text-[10px] text-amber-400 tracking-[0.3em]">SKIPPER ACCESS</p></div>
             </div>
-            <button onClick={() => { setShowSkipperLogin(false); setPassword(''); setLoginError(''); }} className="text-slate-400 hover:text-white"><X className="w-6 h-6" /></button>
+            <button onClick={() => { setShowSkipperLogin(false); setPassword(''); setLoginEmail(''); setLoginError(''); }} className="text-slate-400 hover:text-white"><X className="w-6 h-6" /></button>
           </div>
-          <p className="text-slate-400 text-sm mb-6">Enter your password to access the management dashboard</p>
+          <p className="text-slate-400 text-sm mb-6">Enter your credentials to access the management dashboard</p>
           <div className="space-y-4">
+            <input type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSkipperLogin()}
+              disabled={loginSubmitting}
+              className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:border-amber-400 focus:outline-none disabled:opacity-50"
+              placeholder="email" autoComplete="email" autoFocus />
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSkipperLogin()}
-              className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:border-amber-400 focus:outline-none" placeholder="password" autoFocus />
+              disabled={loginSubmitting}
+              className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:border-amber-400 focus:outline-none disabled:opacity-50"
+              placeholder="password" autoComplete="current-password" />
             {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
-            <button onClick={handleSkipperLogin} className="w-full py-3 bg-amber-400 text-slate-950 rounded font-semibold hover:bg-amber-300 transition tracking-wider">ACCESS DASHBOARD</button>
+            <button onClick={handleSkipperLogin} disabled={loginSubmitting || !loginEmail || !password}
+              className="w-full py-3 bg-amber-400 text-slate-950 rounded font-semibold hover:bg-amber-300 transition tracking-wider disabled:opacity-60 disabled:cursor-not-allowed">
+              {loginSubmitting ? 'SIGNING IN…' : 'ACCESS DASHBOARD'}
+            </button>
           </div>
         </div>
       </div>
@@ -822,7 +895,7 @@ ${customerData.notes || 'No special requests'}
   }
 
   // ============ SKIPPER DASHBOARD ============
-  if (mode === 'skipper' && skipperAuth) {
+  if (mode === 'skipper' && skipperUser) {
     return (
       <div className="min-h-screen bg-slate-100" style={{ fontFamily: 'Georgia, serif' }}>
         <div className="bg-slate-950 text-white border-b-2 border-amber-400">
