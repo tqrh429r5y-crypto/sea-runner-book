@@ -1773,16 +1773,7 @@ ${customerData.notes || 'No special requests'}
             </div>
 
             <div className="space-y-6">
-              {selectedTour.slotType === 'full-day' || selectedTour.slotType === 'full-day-extended' || selectedTour.slotType === 'sunset' ? (
-                <div className="bg-slate-900 border border-slate-800 p-6">
-                  <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> SCHEDULE</p>
-                  <div className="bg-slate-800 border border-amber-400/30 px-4 py-4 text-center">
-                    <p className="text-[10px] text-slate-500 tracking-wider mb-1">APPROX.</p>
-                    <p className="text-2xl text-amber-400">{selectedTour.fixedTime}</p>
-                    <p className="text-[10px] text-slate-500 tracking-wider mt-2 italic">flexible — customizable on request</p>
-                  </div>
-                </div>
-              ) : selectedTour.slotType === 'half-day-choice' ? (
+              {selectedTour.slotType === 'half-day-choice' ? (
                 <div className="bg-slate-900 border border-slate-800 p-6">
                   <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> TIME OF DAY</p>
                   <div className="space-y-2">
@@ -1821,12 +1812,12 @@ ${customerData.notes || 'No special requests'}
                     })}
                   </div>
                 </div>
-              ) : (
+              ) : selectedTour.isCustom ? (
                 <div className="bg-slate-900 border border-slate-800 p-6">
                   <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> SCHEDULE</p>
                   <p className="text-slate-300 text-sm italic">Time to be agreed with skipper</p>
                 </div>
-              )}
+              ) : null}
 
               <div className="bg-slate-900 border border-slate-800 p-6">
                 <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Users className="w-3 h-3" /> GUESTS</p>
