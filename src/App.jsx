@@ -1565,13 +1565,10 @@ ${customerData.notes || 'No special requests'}
                     <span className="flex items-center gap-1"><Users className="w-3 h-3" /> 1-{tour.maxPeople}</span>
                   </div>
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-3">
                     <div>
                       {!tour.isCustom ? (
-                        <>
-                          <p className="text-[10px] text-slate-500 tracking-widest">FROM</p>
-                          <p className="text-3xl text-white">€{tour.basePrice.toLocaleString()}</p>
-                        </>
+                        <p className="text-2xl sm:text-3xl text-white whitespace-nowrap">€{tour.basePrice.toLocaleString()}</p>
                       ) : (
                         <>
                           <p className="text-[10px] text-slate-500 tracking-widest">PRICE</p>
@@ -1579,9 +1576,8 @@ ${customerData.notes || 'No special requests'}
                         </>
                       )}
                     </div>
-                    {/* BOOK uniformato a color amber-400 per tutti */}
-                    <div className="border border-amber-400 text-amber-400 px-4 py-2 text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition">
-                      BOOK →
+                    <div className="border border-amber-400 text-amber-400 px-3 sm:px-4 py-2 text-[10px] sm:text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition whitespace-nowrap">
+                      VIEW DATES →
                     </div>
                   </div>
                 </div>
@@ -1713,11 +1709,11 @@ ${customerData.notes || 'No special requests'}
                       }`}
                       title={day.isDiscounted ? 'Special price available' : ''}>
                       {day.dayNum}
-                      {/* pallino verde in basso a destra: giorno con prezzo scontato */}
+                      {/* badge sconto in alto a destra: piccolo ma riconoscibile */}
                       {day.available && day.isDiscounted && (
-                        <span className={`absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full ${
-                          isSelected ? 'bg-emerald-700' : 'bg-emerald-400'
-                        }`}></span>
+                        <span className={`absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 text-[9px] font-bold leading-none rounded-full shadow ${
+                          isSelected ? 'bg-emerald-700 text-white' : 'bg-emerald-400 text-slate-950'
+                        }`}>%</span>
                       )}
                     </button>
                   );
@@ -1754,7 +1750,8 @@ ${customerData.notes || 'No special requests'}
               <div className="mt-3 space-y-1">
                 <p className="text-[10px] text-slate-500 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
                 <p className="text-[10px] text-slate-500 tracking-wider flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> SPECIAL PRICE
+                  <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-400 text-slate-950 text-[8px] font-bold leading-none">%</span>
+                  SPECIAL PRICE
                 </p>
                 {/* indicatore sincronizzazione google calendar */}
                 <div className="flex items-center gap-2 pt-2 mt-2 border-t border-slate-800">
@@ -1927,7 +1924,7 @@ ${customerData.notes || 'No special requests'}
                     <TourCardImage tour={t} />
                     <div className="p-4">
                       <p className="text-white text-sm mb-1" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{t.name}</p>
-                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{t.duration.toUpperCase()} · FROM €{t.basePrice.toLocaleString()}</p>
+                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{t.duration.toUpperCase()} · €{t.basePrice.toLocaleString()}</p>
                       <div className="inline-flex items-center gap-1 text-amber-400 text-[10px] tracking-widest group-hover:text-amber-300">
                         VIEW TOUR →
                       </div>
@@ -2494,13 +2491,10 @@ function HomePage() {
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] text-slate-500 tracking-widest">FROM</p>
-                      <p className="text-3xl text-white">€{tour.basePrice.toLocaleString()}</p>
-                    </div>
-                    <div className="border border-amber-400 text-amber-400 px-4 py-2 text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition">
-                      BOOK →
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-2xl sm:text-3xl text-white whitespace-nowrap">€{tour.basePrice.toLocaleString()}</p>
+                    <div className="border border-amber-400 text-amber-400 px-3 sm:px-4 py-2 text-[10px] sm:text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition whitespace-nowrap">
+                      VIEW DATES →
                     </div>
                   </div>
                 </div>
