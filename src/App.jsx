@@ -398,6 +398,7 @@ const initialBookings = [
 // ============ BOOKING APP (route /booking) ============
 // l'intero flusso a 3 step + dashboard skipper + schermata conferma
 function BookingApp() {
+  const bookingLocation = useLocation();
   const [tours, setTours] = useState(initialTours);
   const [mode, setMode] = useState('customer');
   const [currentStep, setCurrentStep] = useState(1);
@@ -537,6 +538,19 @@ function BookingApp() {
   useEffect(() => { if (currentStep === 2) syncGoogleCalendar(); }, [currentStep]);
   // scroll in cima ogni volta che cambia lo step (l'animazione smooth parte dopo il render)
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [currentStep]);
+
+  // deep link: se l'URL contiene ?tour=xyz, pre-seleziona il tour e salta allo step 2
+  useEffect(() => {
+    const params = new URLSearchParams(bookingLocation.search);
+    const tourParam = params.get('tour');
+    if (tourParam) {
+      const match = initialTours.find(t => t.id === tourParam);
+      if (match) {
+        setSelectedTour(match);
+        setCurrentStep(2);
+      }
+    }
+  }, [bookingLocation.search]);
 
   const SKIPPER_PASSWORD = 'Searunner646703';
 
@@ -1512,6 +1526,48 @@ ${customerData.notes || 'No special requests'}
             }`}>
             CONTINUE TO DETAILS →
           </button>
+
+          {/* sezione 'altri tour' — visibile solo se ci sono altri tour non-custom da mostrare */}
+          {tours.filter(t => t.id !== selectedTour.id && !t.isCustom).length > 0 && (
+            <div className="mt-14 sm:mt-20 pt-10 border-t border-slate-800">
+              <div className="text-center mb-8">
+                <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3">CHANGED YOUR MIND?</p>
+                <h3 className="text-xl sm:text-2xl text-white mb-2">Explore our other tours</h3>
+                <div className="w-12 h-px bg-amber-400/50 mx-auto"></div>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tours.filter(t => t.id !== selectedTour.id && !t.isCustom).map(t => (
+                  <button key={t.id}
+                    onClick={() => {
+                      // reset delle scelte del tour precedente e switch al nuovo
+                      setSelectedTour(t);
+                      setSelectedDate(null);
+                      setHalfDayChoiceItinerary(null);
+                      setHalfDayChoiceTime(null);
+                      setMeetingPoint('Porto Mirabello (La Spezia)');
+                      setCustomMeetingPoint('');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-left bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400 group">
+                    <TourCardImage tour={t} />
+                    <div className="p-4">
+                      <p className="text-white text-sm mb-1" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{t.name}</p>
+                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{t.duration.toUpperCase()} · FROM €{t.basePrice.toLocaleString()}</p>
+                      <div className="inline-flex items-center gap-1 text-amber-400 text-[10px] tracking-widest group-hover:text-amber-300">
+                        VIEW TOUR →
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div className="text-center mt-8">
+                <button onClick={() => { setCurrentStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
+                  ← BACK TO ALL TOURS
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -2026,7 +2082,7 @@ function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {initialTours.slice(0, 3).map(tour => (
-              <Link key={tour.id} to="/booking"
+              <Link key={tour.id} to={`/booking?tour=${tour.id}`}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
