@@ -1462,11 +1462,11 @@ ${customerData.notes || 'No special requests'}
           <div className="inline-flex items-center justify-center w-16 h-16 border-2 border-amber-400 rounded-full mb-6">
             <Check className="w-8 h-8 text-amber-400" />
           </div>
-          <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">REQUEST RECEIVED</p>
+          <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">QUOTE REQUEST RECEIVED</p>
           <h2 className="text-4xl mb-6">Thank you,<br/>{customerData.name.split(' ')[0]}</h2>
           <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
           <p className="text-slate-300 mb-6 leading-relaxed">
-            Captain Marco and Paola will review your request and contact you as soon as possible at <span className="text-amber-400">{customerData.email}</span>.
+            Your request has been sent. Captain Marco and Paola will reply within 24 hours at <span className="text-amber-400">{customerData.email}</span> with availability confirmation and your tailored quote. <span className="text-slate-400 text-sm">No payment is required at this stage.</span>
           </p>
           <p className="text-slate-400 text-xs tracking-widest mb-3">NEED TO REACH US DIRECTLY?</p>
           {/* contatti sea runner: email generica + telefono attività */}
@@ -1548,10 +1548,10 @@ ${customerData.notes || 'No special requests'}
       {currentStep === 1 && (
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center mb-12">
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">EXCLUSIVE EXPERIENCES</p>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">REQUEST A FREE QUOTE</p>
             <h2 className="text-5xl text-white mb-4">Choose Your Tour</h2>
             <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
-            <p className="text-slate-400 max-w-2xl mx-auto">Private boat tours along the Italian Riviera</p>
+            <p className="text-slate-400 max-w-2xl mx-auto">Private boat tours along the Italian Riviera — tell us your preferences and we'll reply with a tailored quote.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1597,6 +1597,14 @@ ${customerData.notes || 'No special requests'}
       {currentStep === 2 && selectedTour && (
         <div className="max-w-5xl mx-auto px-4 py-12">
           <button onClick={() => { setCurrentStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← CHANGE TOUR</button>
+
+          {/* box rassicurazione: il cliente sta solo richiedendo un preventivo, niente obblighi */}
+          <div className="mb-6 p-4 bg-amber-400/5 border border-amber-400/20 flex items-start gap-3">
+            <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <span className="text-amber-400">This is an availability request.</span> No payment is required. Captain Marco will get back to you within 24 hours to confirm and send a tailored quote.
+            </p>
+          </div>
 
           <div className="mb-8">
             <TourCardImage tour={selectedTour} />
@@ -1685,6 +1693,14 @@ ${customerData.notes || 'No special requests'}
               <p className="text-center text-white text-base mb-3">
                 {customerCalendarMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
               </p>
+              {/* striscia di stato caricamento: visibile solo finché gcal non ha finito.
+                  se 'synced' o 'error' (in error usiamo dati locali) la nascondiamo */}
+              {(gcalStatus === 'idle' || gcalStatus === 'syncing') && (
+                <div className="mb-3 p-2.5 bg-amber-400/10 border border-amber-400/30 flex items-center gap-2.5">
+                  <RefreshCw className="w-3.5 h-3.5 text-amber-400 animate-spin flex-shrink-0" />
+                  <p className="text-[11px] text-amber-400 leading-tight">Checking availability — please wait before selecting a date</p>
+                </div>
+              )}
               <div className="grid grid-cols-7 gap-1 mb-1">
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                   <div key={i} className="text-center text-[9px] tracking-widest text-slate-500 py-1">{d}</div>
@@ -1694,18 +1710,29 @@ ${customerData.notes || 'No special requests'}
                 {calendarDates.map((day, idx) => {
                   if (day.empty) return <div key={idx} className="aspect-square"></div>;
                   const isSelected = selectedDate?.toDateString() === day.date.toDateString();
+                  // durante la sync di google calendar: le date future appaiono "in attesa",
+                  // non cliccabili. evita che il cliente scelga una data che in realtà è già occupata.
+                  // le date passate restano passate (già barrate).
+                  const isAvailabilityLoading = !day.isPast && (gcalStatus === 'idle' || gcalStatus === 'syncing');
+                  const canClick = day.available && !isAvailabilityLoading;
                   return (
-                    <button key={idx} onClick={() => day.available && setSelectedDate(day.date)} disabled={!day.available}
+                    <button key={idx} onClick={() => canClick && setSelectedDate(day.date)} disabled={!canClick}
                       className={`relative aspect-square flex items-center justify-center text-sm transition ${
                         isSelected ? 'bg-amber-400 text-slate-950'
+                        : isAvailabilityLoading ? 'bg-slate-900/60 text-slate-600 cursor-wait'
                         : day.available ? 'bg-slate-800 text-white hover:bg-slate-700'
                         : day.isPast ? 'bg-slate-900/50 text-slate-700 cursor-not-allowed'
                         : 'bg-slate-900 text-slate-700 cursor-not-allowed line-through'
                       }`}
-                      title={day.isDiscounted ? 'Special price available' : ''}>
-                      {day.dayNum}
-                      {/* badge sconto in alto a destra: piccolo ma riconoscibile */}
-                      {day.available && day.isDiscounted && (
+                      title={isAvailabilityLoading ? 'Checking availability…' : (day.isDiscounted ? 'Special price available' : '')}>
+                      {/* durante la sync mostriamo un piccolo orologio al posto del numero, o entrambi in piccolo */}
+                      {isAvailabilityLoading ? (
+                        <span className="text-[11px] text-slate-600">{day.dayNum}</span>
+                      ) : (
+                        <>{day.dayNum}</>
+                      )}
+                      {/* badge sconto in alto a destra: piccolo ma riconoscibile. non lo mostriamo in loading */}
+                      {!isAvailabilityLoading && day.available && day.isDiscounted && (
                         <span className={`absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 text-[9px] font-bold leading-none rounded-full shadow ${
                           isSelected ? 'bg-emerald-700 text-white' : 'bg-emerald-400 text-slate-950'
                         }`}>%</span>
@@ -1935,9 +1962,10 @@ ${customerData.notes || 'No special requests'}
           <button onClick={() => { setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← BACK</button>
 
           <div className="text-center mb-8">
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">FINAL STEP</p>
-            <h2 className="text-4xl text-white">Your Details</h2>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LAST STEP — YOUR CONTACT INFO</p>
+            <h2 className="text-4xl text-white">Where should we reply?</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto mt-4"></div>
+            <p className="text-slate-400 text-sm mt-4 max-w-md mx-auto">Leave us your details and we'll send you a tailored quote within 24 hours. No payment required at this stage.</p>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 p-6 space-y-5">
@@ -2016,7 +2044,7 @@ ${customerData.notes || 'No special requests'}
 
           {/* RECAP con stima chiara e add-ons */}
           <div className="bg-slate-900 border border-amber-400/30 p-6 my-6">
-            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">BOOKING SUMMARY</p>
+            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">YOUR REQUEST</p>
             <div className="space-y-2 text-sm text-slate-300">
               <div className="flex justify-between"><span>Tour</span><span className="text-white">{selectedTour?.name}</span></div>
               {selectedTour?.itineraryOptions && halfDayChoiceItinerary && (
@@ -2055,7 +2083,7 @@ ${customerData.notes || 'No special requests'}
                       </>
                     )}
                     <div className="flex justify-between pt-2 border-t border-slate-700/50">
-                      <span className="text-slate-300">Estimated total</span>
+                      <span className="text-slate-300">Indicative price</span>
                       <span className="text-white text-lg">€{effectivePrice.toLocaleString()}</span>
                     </div>
                     <div className="mt-3 p-3 bg-amber-400/10 border border-amber-400/20">
@@ -2169,7 +2197,13 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
             }`}>
             REQUEST QUOTE
           </button>
-          <p className="text-center text-[10px] text-slate-500 tracking-widest mt-4">CAPTAIN MARCO WILL CONTACT YOU AS SOON AS POSSIBLE</p>
+          {/* microdisclaimer che abbassa l'ansia da impegno */}
+          <div className="mt-4 text-center space-y-1">
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              You're not booking or paying yet — we'll contact you within 24 hours to confirm availability and send your final quote.
+            </p>
+            <p className="text-[10px] text-slate-500 tracking-widest">CAPTAIN MARCO & PAOLA · LA SPEZIA</p>
+          </div>
         </div>
       )}
 
@@ -2207,7 +2241,7 @@ function SharedNav() {
   const links = [
     { to: '/', label: 'Home' },
     { to: '/boat', label: 'The boat' },
-    { to: '/booking', label: 'Book a tour' },
+    { to: '/booking', label: 'Request a quote' },
     { to: '/#faq', label: 'FAQ' }
   ];
 
@@ -2391,7 +2425,7 @@ function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/booking" className="bg-amber-400 text-slate-950 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-300 transition">
-              BOOK YOUR TOUR
+              REQUEST A QUOTE
             </Link>
             <Link to="/boat" className="border border-amber-400 text-amber-400 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-400 hover:text-slate-950 transition">
               DISCOVER THE BOAT
@@ -2761,9 +2795,9 @@ function BoatPage() {
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-4 mb-16">
         <div className="text-center border-t border-slate-800 pt-12">
-          <p className="text-slate-400 mb-6">Ready to plan your day at sea?</p>
+          <p className="text-slate-400 mb-6">Curious about prices and availability?</p>
           <Link to="/booking" className="inline-block bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
-            BOOK YOUR TOUR →
+            REQUEST A QUOTE →
           </Link>
         </div>
       </section>
