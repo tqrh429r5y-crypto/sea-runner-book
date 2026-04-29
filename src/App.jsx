@@ -19,7 +19,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // invisibile al cliente, fondamentale per google e per i preview di whatsapp/instagram/linkedin.
 //
 // dominio canonical: aggiornato al dominio finale acquistato.
-const SITE_URL = 'https://www.searunner.it';
+const SITE_URL = 'https://searunner.it';
 // immagine principale usata come anteprima social (Open Graph). deve essere assoluta (URL completa).
 const SITE_OG_IMAGE = `${SITE_URL}/boat-2.jpg`;
 const SITE_NAME = 'Sea Runner';
@@ -1575,6 +1575,37 @@ ${customerData.notes || 'No special requests'}
     ? `Request a free quote for the ${selectedTour.name} private boat tour. ${selectedTour.shortDesc} No payment required, reply within 24 hours from Captain Marco.`
     : 'Request a free quote for a fully private boat tour to Cinque Terre, Portofino or Golfo dei Poeti. Captain Marco replies within 24 hours — no payment required upfront.';
 
+  // schema.org TouristTrip se siamo dentro un tour specifico:
+  // dichiara a google "questa è un'esperienza turistica con prezzo da, durata, fornitore, location"
+  const tourTripSchema = selectedTour && !selectedTour.isCustom ? {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    "name": `${selectedTour.name} — Private Boat Tour`,
+    "description": selectedTour.longDesc,
+    "image": selectedTour.cardImage ? `${SITE_URL}${selectedTour.cardImage}` : SITE_OG_IMAGE,
+    "touristType": "Private boat tour",
+    "itinerary": selectedTour.itinerary ? selectedTour.itinerary.map((stop, i) => ({
+      "@type": "Place",
+      "name": stop.place,
+      "description": stop.note,
+      "position": i + 1
+    })) : undefined,
+    "provider": {
+      "@type": "TravelAgency",
+      "name": "Sea Runner",
+      "url": SITE_URL,
+      "telephone": "+39 348 828 9438"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": selectedTour.basePrice,
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "validFrom": new Date().toISOString().split('T')[0],
+      "url": `${SITE_URL}/booking?tour=${selectedTour.id}`
+    }
+  } : null;
+
   return (
     <div className="min-h-screen bg-slate-950" style={{ fontFamily: 'Georgia, serif' }}>
       <SEOMetadata
@@ -1582,6 +1613,14 @@ ${customerData.notes || 'No special requests'}
         description={seoDescription}
         path="/booking"
       />
+      {/* schema TouristTrip iniettato solo se c'è un tour selezionato (deep link) */}
+      {tourTripSchema && (
+        <Helmet>
+          <script type="application/ld+json">
+            {JSON.stringify(tourTripSchema)}
+          </script>
+        </Helmet>
+      )}
       {/* navbar condivisa con home/boat/booking */}
       <SharedNav />
 
@@ -2411,8 +2450,30 @@ const FAQ_ITEMS = [
 
 function FAQSection({ id = 'faq' }) {
   const [openIndex, setOpenIndex] = useState(null);
+
+  // schema FAQPage: google può usarlo per mostrare le domande direttamente nei risultati di ricerca.
+  // ricerche "frequently asked" come "is the cinque terre tour private?" possono attivare un rich snippet
+  // che cita la nostra risposta direttamente, con link diretto al sito.
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": FAQ_ITEMS.map(item => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  };
+
   return (
     <section id={id} className="border-t border-slate-800 py-14 sm:py-20">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(faqSchema)}
+        </script>
+      </Helmet>
       <div className="max-w-3xl mx-auto px-4">
         <div className="text-center mb-10 sm:mb-12">
           <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">GOOD TO KNOW</p>
@@ -2452,6 +2513,69 @@ function FAQSection({ id = 'faq' }) {
 
 // ============ HOMEPAGE (route /) ============
 function HomePage() {
+  // dati strutturati JSON-LD per Google: dichiarano "questa è un'attività turistica nautica
+  // con sede in italia, ecco prezzi/contatti/zona/recensioni". questi dati permettono a google
+  // di mostrare rich snippets (stelle, prezzo da, indirizzo) direttamente nei risultati di ricerca.
+  // alternateName: collega al nome ufficiale del google business profile,
+  // così google capisce che sito e profilo sono la stessa entità.
+  // address: SEDE OPERATIVA (porto mirabello, dove i clienti si imbarcano) — coerente con google business.
+  // la sede legale (via buonviaggio) resta solo nel footer per obblighi D.Lgs 70/2003 e in privacy.
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": ["TravelAgency", "TouristInformationCenter"],
+    "name": "Sea Runner",
+    "alternateName": "Sea Runner 5 Terre Boat Tours",
+    "description": "Private boat tours from La Spezia along the Italian Riviera. Discover Cinque Terre, Portofino, Portovenere and the Golfo dei Poeti aboard our award-winning Cap Camarat 9.0 WA with Captain Marco and Paola — fully private charter, never shared. Departures from Porto Mirabello.",
+    "url": SITE_URL,
+    "image": SITE_OG_IMAGE,
+    "logo": `${SITE_URL}/logo-v2.png`,
+    "telephone": "+39 348 828 9438",
+    "email": "searunnerprenotazioni@gmail.com",
+    "priceRange": "€€€",
+    "currenciesAccepted": "EUR",
+    "foundingDate": "2021-06",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Passeggiata Costantino Morin",
+      "addressLocality": "La Spezia",
+      "addressRegion": "Liguria",
+      "postalCode": "19121",
+      "addressCountry": "IT"
+    },
+    // coordinate aggiornate al porto mirabello (la spezia)
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 44.1003,
+      "longitude": 9.8237
+    },
+    "areaServed": [
+      { "@type": "Place", "name": "Cinque Terre" },
+      { "@type": "Place", "name": "Portofino" },
+      { "@type": "Place", "name": "Portovenere" },
+      { "@type": "Place", "name": "Golfo dei Poeti" },
+      { "@type": "Place", "name": "La Spezia" },
+      { "@type": "Place", "name": "Italian Riviera" }
+    ],
+    "availableLanguage": ["Italian", "English", "French"],
+    // aggregateRating: dichiara a google che abbiamo recensioni reali sul nostro profilo google.
+    // i numeri (68 recensioni, 5 stelle) sono onesti e verificabili sul google business profile.
+    // questa info può attivare le "stelline" sotto il titolo nei risultati di ricerca.
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "68",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    // sameAs: link a tutti i profili "esterni" della stessa azienda.
+    // questo aiuta google a confermare che sito + google business + tripadvisor + instagram sono la stessa entità.
+    "sameAs": [
+      "https://www.instagram.com/searunner_laspezia/",
+      "https://www.tripadvisor.it/AttractionProductReview-g187824-d25176464-Cinque_Terre_and_Portovenere_Private_Boat_Tour_from_La_Spezia-La_Spezia_Province_o.html",
+      "https://share.google/kXcd0FNDaHPgSmngG"
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <SEOMetadata
@@ -2459,6 +2583,11 @@ function HomePage() {
         description="Exclusive private boat tours along the Italian Riviera with Captain Marco and Paola. Cinque Terre, Portofino, Golfo dei Poeti — fully private, fully tailored. Departures from La Spezia."
         path="/"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(localBusinessSchema)}
+        </script>
+      </Helmet>
       <SharedNav />
 
       {/* HERO — più bassa su mobile per lasciare intravedere la sezione sotto */}
@@ -2602,7 +2731,7 @@ function HomePage() {
       <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="aspect-[4/3] bg-slate-800 overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
-            <img src="/boat-1.jpg" alt="Sea Runner at the Tino lighthouse"
+            <img src="/boat-1.jpg" alt="Sea Runner private boat at Tino island lighthouse — Cinque Terre coastline"
               className="w-full h-full"
               style={{ objectFit: 'cover', objectPosition: 'center' }}
               loading="lazy" />
@@ -2658,12 +2787,12 @@ function HomePage() {
 // ordine pensato: apro con le 2 esterne più spettacolari (faro + vista dall'alto),
 // poi dettagli interni, poi chiudo con la foto "esperienza" del tavolo al tramonto
 const BOAT_PHOTOS = [
-  { src: '/boat-1.jpg' },
-  { src: '/boat-2.jpg' },
-  { src: '/boat-3.jpg' },
-  { src: '/bathroom.jpg' },
-  { src: '/fridge.jpg' },
-  { src: '/sunset-table.jpg' },
+  { src: '/boat-1.jpg', alt: 'Sea Runner private boat at Tino island lighthouse, Cinque Terre' },
+  { src: '/boat-2.jpg', alt: 'Cap Camarat 9.0 WA Sea Runner cruising the Italian Riviera' },
+  { src: '/boat-3.jpg', alt: 'Sea Runner boat aerial view over the Golfo dei Poeti' },
+  { src: '/bathroom.jpg', alt: 'Bathroom on board Sea Runner Cap Camarat 9.0 WA' },
+  { src: '/fridge.jpg', alt: 'Solar-powered fridge on board Sea Runner private boat' },
+  { src: '/sunset-table.jpg', alt: 'Sunset aperitivo at the table on Sea Runner private boat tour' },
 ];
 
 function BoatPhotoGallery() {
@@ -2757,7 +2886,7 @@ function BoatLayoutSection() {
             BOAT LAYOUT COMING SOON
           </div>
         ) : (
-          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA layout"
+          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA Sea Runner — boat layout and floor plan"
             className="w-full h-auto"
             onError={() => setImgError(true)} />
         )}
@@ -2925,10 +3054,11 @@ function PrivacyPage() {
             <h2 className="text-xl sm:text-2xl text-white mb-3">1. Data Controller</h2>
             <p className="mb-3">The data controller responsible for processing your personal data is:</p>
             <div className="bg-slate-900 border border-slate-800 p-4 text-sm">
-              <p><strong className="text-white">Sea Runner</strong></p>
+              <p><strong className="text-white">Sea Runner</strong> (also known as Sea Runner 5 Terre Boat Tours)</p>
               <p>Operated by: Bulgheresi Marco (M B di Bulgheresi Marco)</p>
               <p>VAT number: IT 01096850118</p>
-              <p>Registered address: Via Buonviaggio 152/A, La Spezia, Italy</p>
+              <p>Registered (legal) address: Via Buonviaggio 152/A, La Spezia, Italy</p>
+              <p>Operational address (departures): Passeggiata Costantino Morin, Porto Mirabello, 19121 La Spezia, Italy</p>
               <p className="mt-2">Operational email: <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:underline">searunnerprenotazioni@gmail.com</a></p>
               <p>Phone: <a href="tel:+393488289438" className="text-amber-400 hover:underline">+39 348 828 9438</a></p>
               <p className="mt-2 text-slate-400">For formal requests regarding your GDPR rights, you may also contact the certified email: <span className="text-amber-400">marco.bulgheresi@pec.it</span></p>
