@@ -3235,6 +3235,11 @@ function ScrollToTop() {
 export default function SeaRunnerApp() {
   return (
     <HelmetProvider>
+      {/* meta tag globale per la verifica di Google Search Console.
+          presente su ogni pagina del dominio così google riesce sempre a verificare la proprietà. */}
+      <Helmet>
+        <meta name="google-site-verification" content="zpjKX-1DmcXTbp_XSXR0ilbmUl4t5G3SIlHYlPLoONQ" />
+      </Helmet>
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
