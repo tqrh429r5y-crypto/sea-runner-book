@@ -1,0 +1,10 @@
+# Robots.txt per searunner.it
+# permettiamo a tutti i crawler di indicizzare il sito
+User-agent: *
+Allow: /
+
+# escludiamo la pagina privacy dall'indicizzazione (non utile per SEO, sprecherebbe il "crawl budget")
+Disallow: /privacy
+
+# il file sitemap aiuta google a trovare tutte le pagine importanti
+Sitemap: https://searunner.it/sitemap.xml
