@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { createClient } from '@supabase/supabase-js';
 import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
@@ -11,6 +12,49 @@ import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X,
 const SUPABASE_URL = 'https://pmumkqnozzplstyayoyg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============ SEO METADATA ============
+// componente helper che gestisce title + meta tag per ogni pagina.
+// react-helmet-async inietta questi tag nell'<head> dell'HTML quando il componente viene montato.
+// invisibile al cliente, fondamentale per google e per i preview di whatsapp/instagram/linkedin.
+//
+// dominio canonical: aggiornato al dominio finale acquistato.
+const SITE_URL = 'https://www.searunner.it';
+// immagine principale usata come anteprima social (Open Graph). deve essere assoluta (URL completa).
+const SITE_OG_IMAGE = `${SITE_URL}/boat-2.jpg`;
+const SITE_NAME = 'Sea Runner';
+
+function SEOMetadata({ title, description, image, path = '/', type = 'website' }) {
+  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+  const fullUrl = `${SITE_URL}${path}`;
+  const ogImage = image || SITE_OG_IMAGE;
+  return (
+    <Helmet>
+      {/* meta base */}
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      <link rel="canonical" href={fullUrl} />
+      <html lang="en" />
+
+      {/* open graph (whatsapp, facebook, linkedin, instagram preview) */}
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:url" content={fullUrl} />
+      <meta property="og:type" content={type} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:locale" content="en_US" />
+
+      {/* twitter card */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImage} />
+    </Helmet>
+  );
+}
 
 // ============ GOOGLE CALENDAR SYNC ============
 // l'app legge il google calendar "Prenotazioni" di sea runner tramite proxy CORS.
@@ -1521,8 +1565,23 @@ ${customerData.notes || 'No special requests'}
   }
 
   // ============ CUSTOMER FLOW ============
+  // SEO dinamico: se il cliente è dentro un tour specifico (deep link ?tour=xxx),
+  // il title si adatta (es. "Cinque Terre Private Boat Tour — Request a Quote").
+  // se invece è nello step 1 generico, usiamo un title broad-keyword.
+  const seoTitle = selectedTour && currentStep > 1
+    ? `${selectedTour.name} Private Boat Tour — Request a Quote`
+    : 'Request a Free Quote — Private Boat Tours from La Spezia';
+  const seoDescription = selectedTour && currentStep > 1
+    ? `Request a free quote for the ${selectedTour.name} private boat tour. ${selectedTour.shortDesc} No payment required, reply within 24 hours from Captain Marco.`
+    : 'Request a free quote for a fully private boat tour to Cinque Terre, Portofino or Golfo dei Poeti. Captain Marco replies within 24 hours — no payment required upfront.';
+
   return (
     <div className="min-h-screen bg-slate-950" style={{ fontFamily: 'Georgia, serif' }}>
+      <SEOMetadata
+        title={seoTitle}
+        description={seoDescription}
+        path="/booking"
+      />
       {/* navbar condivisa con home/boat/booking */}
       <SharedNav />
 
@@ -2395,6 +2454,11 @@ function FAQSection({ id = 'faq' }) {
 function HomePage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
+      <SEOMetadata
+        title="Private Boat Tours Cinque Terre, Portofino & La Spezia"
+        description="Exclusive private boat tours along the Italian Riviera with Captain Marco and Paola. Cinque Terre, Portofino, Golfo dei Poeti — fully private, fully tailored. Departures from La Spezia."
+        path="/"
+      />
       <SharedNav />
 
       {/* HERO — più bassa su mobile per lasciare intravedere la sezione sotto */}
@@ -2708,6 +2772,11 @@ function BoatLayoutSection() {
 function BoatPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
+      <SEOMetadata
+        title="The Boat — Cap Camarat 9.0 WA, Award-Winning Yacht for Private Tours"
+        description="Discover Sea Runner's Cap Camarat 9.0 WA: silent solar power, smooth cruising, extendable bimini, bathroom on board. The award-winning vessel of our Cinque Terre and Portofino private tours."
+        path="/boat"
+      />
       <SharedNav />
 
       {/* HERO con titolo e nome modello */}
@@ -2838,6 +2907,12 @@ function SharedFooter() {
 function PrivacyPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
+      <Helmet>
+        <title>Privacy Policy | Sea Runner</title>
+        <meta name="description" content="Sea Runner privacy policy: how we handle your personal data in compliance with the GDPR." />
+        <meta name="robots" content="noindex, follow" />
+        <link rel="canonical" href={`${SITE_URL}/privacy`} />
+      </Helmet>
       <SharedNav />
 
       <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
@@ -3029,18 +3104,20 @@ function ScrollToTop() {
 
 export default function SeaRunnerApp() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/boat" element={<BoatPage />} />
-        <Route path="/booking" element={<BookingApp />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
-        {/* fallback: rotte non esistenti riportano a home */}
-        <Route path="*" element={<HomePage />} />
-      </Routes>
-      {/* cookie banner visibile fino a scelta esplicita */}
-      <CookieBanner />
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/boat" element={<BoatPage />} />
+          <Route path="/booking" element={<BookingApp />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          {/* fallback: rotte non esistenti riportano a home */}
+          <Route path="*" element={<HomePage />} />
+        </Routes>
+        {/* cookie banner visibile fino a scelta esplicita */}
+        <CookieBanner />
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
