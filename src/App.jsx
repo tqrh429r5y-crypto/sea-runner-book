@@ -209,7 +209,8 @@ function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about
     <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-lg hover:shadow-xl transition-all p-4 flex items-center justify-center group"
       style={{ boxShadow: '0 4px 20px rgba(37, 211, 102, 0.4)' }}
-      title="Chat with us on WhatsApp">
+      title="Chat with us on WhatsApp"
+      aria-label="Chat with Sea Runner on WhatsApp">
       <WhatsAppIcon className="w-6 h-6" />
       <span className="absolute right-full mr-3 px-3 py-2 bg-slate-900 text-white text-xs tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
         Chat with us
@@ -1606,6 +1607,18 @@ ${customerData.notes || 'No special requests'}
     }
   } : null;
 
+  // breadcrumb per il booking — appare solo se c'è un tour selezionato (deep link).
+  // mostra a google: Sea Runner › Tours › [Nome del tour selezionato]
+  const bookingBreadcrumbSchema = selectedTour && !selectedTour.isCustom ? {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Sea Runner", "item": SITE_URL },
+      { "@type": "ListItem", "position": 2, "name": "Tours", "item": `${SITE_URL}/booking` },
+      { "@type": "ListItem", "position": 3, "name": selectedTour.name, "item": `${SITE_URL}/booking?tour=${selectedTour.id}` }
+    ]
+  } : null;
+
   return (
     <div className="min-h-screen bg-slate-950" style={{ fontFamily: 'Georgia, serif' }}>
       <SEOMetadata
@@ -1613,11 +1626,18 @@ ${customerData.notes || 'No special requests'}
         description={seoDescription}
         path="/booking"
       />
-      {/* schema TouristTrip iniettato solo se c'è un tour selezionato (deep link) */}
+      {/* schema TouristTrip + breadcrumb iniettati solo se c'è un tour selezionato (deep link) */}
       {tourTripSchema && (
         <Helmet>
           <script type="application/ld+json">
             {JSON.stringify(tourTripSchema)}
+          </script>
+        </Helmet>
+      )}
+      {bookingBreadcrumbSchema && (
+        <Helmet>
+          <script type="application/ld+json">
+            {JSON.stringify(bookingBreadcrumbSchema)}
           </script>
         </Helmet>
       )}
@@ -2899,6 +2919,27 @@ function BoatLayoutSection() {
 
 // ============ BOATPAGE (route /boat) ============
 function BoatPage() {
+  // breadcrumb structured data: dice a google la gerarchia del sito.
+  // nei risultati di ricerca, l'URL viene sostituito dal percorso visivo "Sea Runner › The Boat".
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Sea Runner",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "The Boat",
+        "item": `${SITE_URL}/boat`
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <SEOMetadata
@@ -2906,6 +2947,11 @@ function BoatPage() {
         description="Discover Sea Runner's Cap Camarat 9.0 WA: silent solar power, smooth cruising, extendable bimini, bathroom on board. The award-winning vessel of our Cinque Terre and Portofino private tours."
         path="/boat"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      </Helmet>
       <SharedNav />
 
       {/* HERO con titolo e nome modello */}
