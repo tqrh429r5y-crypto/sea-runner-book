@@ -5,69 +5,141 @@
   <!-- HOME -->
   <url>
     <loc>https://searunner.it/</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://searunner.it/boat-2.jpg</image:loc>
       <image:title>Sea Runner private boat in the Italian Riviera</image:title>
+      <image:caption>Cap Camarat 9.0 WA Sea Runner cruising the Italian Riviera</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/boat-1.jpg</image:loc>
+      <image:title>Sea Runner private boat at Tino island lighthouse</image:title>
+      <image:caption>Sea Runner at Tino lighthouse, Cinque Terre coastline</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/cinque-terre-v2.png</image:loc>
+      <image:title>Cinque Terre private boat tour</image:title>
+      <image:caption>Cinque Terre private boat tour with Sea Runner</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/portofino-v2.png</image:loc>
+      <image:title>Portofino private boat tour</image:title>
+      <image:caption>Portofino, San Fruttuoso and Cinque Terre private boat tour</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/golfo-poeti-v2.png</image:loc>
+      <image:title>Golfo dei Poeti private boat tour</image:title>
+      <image:caption>Golfo dei Poeti private boat tour from La Spezia</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/sunset-v2.png</image:loc>
+      <image:title>Sunset boat tour Italian Riviera</image:title>
+      <image:caption>Golden hour sunset boat tour with aperitivo on board</image:caption>
     </image:image>
   </url>
 
   <!-- BOAT PAGE -->
   <url>
     <loc>https://searunner.it/boat</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://searunner.it/boat-1.jpg</image:loc>
       <image:title>Cap Camarat 9.0 WA — Sea Runner award-winning boat</image:title>
+      <image:caption>Cap Camarat 9.0 WA at Tino lighthouse, the Sea Runner boat</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/boat-3.jpg</image:loc>
+      <image:title>Sea Runner boat aerial view</image:title>
+      <image:caption>Sea Runner aerial view over the Golfo dei Poeti</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/bathroom.jpg</image:loc>
+      <image:title>Bathroom on board Sea Runner</image:title>
+      <image:caption>Private bathroom on board the Cap Camarat 9.0 WA</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/fridge.jpg</image:loc>
+      <image:title>Solar-powered fridge on board Sea Runner</image:title>
+      <image:caption>Solar-powered fridges keep drinks cold all day at anchor</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/sunset-table.jpg</image:loc>
+      <image:title>Sunset aperitivo on Sea Runner private boat</image:title>
+      <image:caption>Sunset aperitivo at the table on Sea Runner</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://searunner.it/plani.jpg</image:loc>
+      <image:title>Cap Camarat 9.0 WA layout plan</image:title>
+      <image:caption>Official Cap Camarat 9.0 WA boat layout from Jeanneau</image:caption>
     </image:image>
   </url>
 
   <!-- BOOKING / REQUEST QUOTE -->
   <url>
     <loc>https://searunner.it/booking</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- DEEP LINKS PER OGNI TOUR (utili per indicizzare le pagine specifiche) -->
+  <!-- DEEP LINKS PER OGNI TOUR -->
   <url>
     <loc>https://searunner.it/booking?tour=cinque-terre</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://searunner.it/cinque-terre-v2.png</image:loc>
+      <image:title>Cinque Terre private boat tour</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://searunner.it/booking?tour=golfo-poeti</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://searunner.it/golfo-poeti-v2.png</image:loc>
+      <image:title>Golfo dei Poeti private boat tour</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://searunner.it/booking?tour=portofino</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://searunner.it/portofino-v2.png</image:loc>
+      <image:title>Portofino private boat tour</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://searunner.it/booking?tour=half-day-choice</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://searunner.it/half-day-v2.png</image:loc>
+      <image:title>Half day private boat tour Cinque Terre or Golfo dei Poeti</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://searunner.it/booking?tour=sunset</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://searunner.it/sunset-v2.png</image:loc>
+      <image:title>Sunset private boat tour Italian Riviera</image:title>
+    </image:image>
   </url>
 
 </urlset>
