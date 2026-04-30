@@ -36,6 +36,9 @@ function SEOMetadata({ title, description, image, path = '/', type = 'website' }
       <link rel="canonical" href={fullUrl} />
       <html lang="en" />
 
+      {/* mobile UX: imposta colore della status bar del browser mobile (matches sito) */}
+      <meta name="theme-color" content="#0a2540" />
+
       {/* open graph (whatsapp, facebook, linkedin, instagram preview) */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
@@ -2842,7 +2845,7 @@ function BoatPhotoGallery() {
           max-height scala in base al device per evitare che foto verticali diventino giganti su mobile */}
       <div className="bg-slate-900 border border-slate-800 relative overflow-hidden flex items-center justify-center"
         style={{ maxHeight: 'min(60vh, 550px)', minHeight: '240px' }}>
-        <img src={photos[index].src} alt={photos[index].caption || `Boat photo ${index + 1}`}
+        <img src={photos[index].src} alt={photos[index].alt || photos[index].caption || `Sea Runner boat photo ${index + 1}`}
           className="block w-auto h-auto max-w-full"
           style={{ maxHeight: 'min(60vh, 550px)' }}
           loading="lazy"
