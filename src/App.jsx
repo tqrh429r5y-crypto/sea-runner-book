@@ -2581,12 +2581,12 @@ function HomePage() {
     ],
     "availableLanguage": ["Italian", "English", "French"],
     // aggregateRating: dichiara a google che abbiamo recensioni reali sul nostro profilo google.
-    // i numeri (68 recensioni, 5 stelle) sono onesti e verificabili sul google business profile.
+    // i numeri (71 recensioni, 5 stelle) sono onesti e verificabili sul google business profile.
     // questa info può attivare le "stelline" sotto il titolo nei risultati di ricerca.
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "5.0",
-      "reviewCount": "69",
+      "reviewCount": "71",
       "bestRating": "5",
       "worstRating": "1"
     },
