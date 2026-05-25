@@ -1,0 +1,23 @@
+name: Keep Supabase Alive
+
+# Questo file tiene "sveglio" il database di Sea Runner.
+# Gira automaticamente ogni martedi e venerdi e fa una piccola
+# richiesta al database, cosi Supabase non lo mette mai in pausa.
+# Non tocca il sito in nessun modo.
+
+on:
+  schedule:
+    # ogni martedi e venerdi alle 06:00 UTC (le 7 o 8 del mattino in Italia)
+    - cron: '0 6 * * 2,5'
+  # questo permette di farlo partire anche a mano dal sito di GitHub
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping del database Supabase
+        run: |
+          curl -s -o /dev/null -w "Risposta del server: %{http_code}\n" \
+            "https://pmumkqnozzplstyayoyg.supabase.co/rest/v1/tours?select=id&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg"
