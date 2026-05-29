@@ -1,23 +1,36 @@
 name: Keep Supabase Alive
 
-# Questo file tiene "sveglio" il database di Sea Runner.
-# Gira automaticamente ogni martedi e venerdi e fa una piccola
-# richiesta al database, cosi Supabase non lo mette mai in pausa.
-# Non tocca il sito in nessun modo.
+# Questo workflow tiene attivo il database Supabase di Sea Runner.
+# Fa una vera scrittura (insert) su una tabella di servizio dedicata,
+# cosi Supabase la conta come attivita reale e non mette in pausa il progetto.
+# La tabella keep_alive_log e' isolata e non c'entra con i dati del sito.
 
 on:
   schedule:
-    # ogni martedi e venerdi alle 06:00 UTC (le 7 o 8 del mattino in Italia)
-    - cron: '0 6 * * 2,5'
-  # questo permette di farlo partire anche a mano dal sito di GitHub
+    # ogni 2 giorni alle 06:00 UTC - margine ampio anche se GitHub ritarda
+    - cron: '0 6 */2 * *'
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping del database Supabase
+      - name: Scrittura keep-alive su Supabase
         run: |
-          curl -s -o /dev/null -w "Risposta del server: %{http_code}\n" \
-            "https://pmumkqnozzplstyayoyg.supabase.co/rest/v1/tours?select=id&limit=1" \
-            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg"
+          RESPONSE=$(curl -s -o /tmp/response.txt -w "%{http_code}" \
+            -X POST \
+            "https://pmumkqnozzplstyayoyg.supabase.co/rest/v1/keep_alive_log" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{}')
+          echo "Codice di risposta: $RESPONSE"
+          echo "Corpo risposta:"
+          cat /tmp/response.txt
+          echo ""
+          if [ "$RESPONSE" != "201" ] && [ "$RESPONSE" != "200" ]; then
+            echo "ERRORE: la scrittura non e' andata a buon fine"
+            exit 1
+          fi
+          echo "Scrittura riuscita correttamente"
