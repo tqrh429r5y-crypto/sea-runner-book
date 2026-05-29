@@ -1,8 +1,5 @@
 name: Keep Supabase Alive
 
-# Tiene attivo il database Supabase facendo una lettura ogni 2 giorni.
-# Cron frequente per avere margine se GitHub Actions ritarda o salta esecuzioni.
-
 on:
   schedule:
     - cron: '0 6 */2 * *'
@@ -14,6 +11,7 @@ jobs:
     steps:
       - name: Ping del database Supabase
         run: |
-          RESPONSE=$(curl -s -o /tmp/response.txt -w "%{http_code}" \
-            "https://pmumkqnozzplstyayoyg.supabase.co/rest/v1/tours?select=id&limit=1" \
-            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "https://pmumkqnozzplstyayoyg.supabase.co/rest/v1/tours?select=id&limit=1" -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg")
+          echo "Codice di risposta: $RESPONSE"
+          if [ "$RESPONSE" != "200" ]; then echo "ERRORE"; exit 1; fi
+          echo "Ping riuscito"
