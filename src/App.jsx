@@ -146,9 +146,14 @@ async function fetchGoogleCalendarEvents() {
       const endMatch = block.match(/DTEND[^:]*:([0-9TZ]+)/);
       if (!startMatch || !endMatch) continue;
 
-      const startUtc = parseIcsDate(startMatch[1]);
+     const startUtc = parseIcsDate(startMatch[1]);
       const endUtc = parseIcsDate(endMatch[1]);
       if (!startUtc || !endUtc) continue;
+
+      // ignoriamo gli eventi molto brevi (< 2 ore): sono "check"/promemoria interni,
+      // non prenotazioni reali. il tour piu' corto (sunset) dura 3,5 ore.
+      const eventDurationHours = (endUtc - startUtc) / (1000 * 60 * 60);
+      if (eventDurationHours < 2) continue;
 
       const slotType = classifyCalendarEvent(startUtc, endUtc);
       let part = null;
