@@ -67,7 +67,10 @@ const GOOGLE_CALENDAR_ICS_URL = 'https://calendar.google.com/calendar/ical/searu
 // proxy cors pubblici — proviamo in ordine: se il primo fallisce passiamo al secondo.
 // quando un proxy va giù (capita coi servizi gratis) l'altro solitamente funziona.
 const CORS_PROXIES = [
-  (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  // proxy proprio su vercel (/api/calendar) — affidabile, non dipende da servizi terzi.
+  // ignora l'url passato: la funzione serverless sa gia' quale calendario scaricare.
+  () => `/api/calendar`,
+  // fallback ai proxy pubblici, nel caso improbabile che il proxy vercel non risponda
   (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
 ];
