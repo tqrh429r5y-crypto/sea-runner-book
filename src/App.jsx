@@ -3323,7 +3323,10 @@ function ScrollToTop() {
   return null;
 }
 
-export default function SeaRunnerApp() {
+// contenuto interno dell'app, indipendente dal tipo di router.
+// così lo stesso blocco di route funziona sia col BrowserRouter (browser)
+// sia col StaticRouter (durante il prerender in fase di build).
+function AppRoutes() {
   return (
     <HelmetProvider>
       {/* meta tag globale per la verifica di Google Search Console.
@@ -3331,20 +3334,32 @@ export default function SeaRunnerApp() {
       <Helmet>
         <meta name="google-site-verification" content="zpjKX-1DmcXTbp_XSXR0ilbmUl4t5G3SIlHYlPLoONQ" />
       </Helmet>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/boat" element={<BoatPage />} />
-          <Route path="/booking" element={<BookingApp />} />
-          <Route path="/booking/:slug" element={<BookingApp />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          {/* fallback: rotte non esistenti riportano a home */}
-          <Route path="*" element={<HomePage />} />
-        </Routes>
-        {/* cookie banner visibile fino a scelta esplicita */}
-        <CookieBanner />
-      </BrowserRouter>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/boat" element={<BoatPage />} />
+        <Route path="/booking" element={<BookingApp />} />
+        <Route path="/booking/:slug" element={<BookingApp />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        {/* fallback: rotte non esistenti riportano a home */}
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+      {/* cookie banner visibile fino a scelta esplicita */}
+      <CookieBanner />
     </HelmetProvider>
   );
 }
+
+export default function SeaRunnerApp() {
+  // nel browser usiamo BrowserRouter; durante il prerender (nessun window)
+  // l'entry di build monterà invece lo StaticRouter, quindi qui ci basta il browser.
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
+
+// esportiamo i pezzi che servono all'entry di prerender (vedi src/main.jsx):
+// AppRoutes (l'app senza router) così l'entry di build può avvolgerla nello StaticRouter.
+export { AppRoutes };
