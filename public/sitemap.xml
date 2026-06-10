@@ -5,7 +5,7 @@
   <!-- HOME -->
   <url>
     <loc>https://searunner.it/</loc>
-    <lastmod>2026-04-30</lastmod>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -78,18 +78,18 @@
     </image:image>
   </url>
 
-  <!-- BOOKING / REQUEST QUOTE -->
+  <!-- BOOKING / REQUEST QUOTE (scelta tour) -->
   <url>
     <loc>https://searunner.it/booking</loc>
-    <lastmod>2026-04-30</lastmod>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- DEEP LINKS PER OGNI TOUR -->
+  <!-- PAGINE TOUR (URL puliti) -->
   <url>
-    <loc>https://searunner.it/booking?tour=cinque-terre</loc>
-    <lastmod>2026-04-30</lastmod>
+    <loc>https://searunner.it/booking/cinque-terre</loc>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -99,8 +99,8 @@
   </url>
 
   <url>
-    <loc>https://searunner.it/booking?tour=golfo-poeti</loc>
-    <lastmod>2026-04-30</lastmod>
+    <loc>https://searunner.it/booking/golfo-dei-poeti</loc>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -110,8 +110,8 @@
   </url>
 
   <url>
-    <loc>https://searunner.it/booking?tour=portofino</loc>
-    <lastmod>2026-04-30</lastmod>
+    <loc>https://searunner.it/booking/portofino</loc>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -121,8 +121,8 @@
   </url>
 
   <url>
-    <loc>https://searunner.it/booking?tour=half-day-choice</loc>
-    <lastmod>2026-04-30</lastmod>
+    <loc>https://searunner.it/booking/half-day</loc>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -132,13 +132,24 @@
   </url>
 
   <url>
-    <loc>https://searunner.it/booking?tour=sunset</loc>
-    <lastmod>2026-04-30</lastmod>
+    <loc>https://searunner.it/booking/sunset</loc>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://searunner.it/sunset-v2.png</image:loc>
       <image:title>Sunset private boat tour Italian Riviera</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://searunner.it/booking/tailored</loc>
+    <lastmod>2026-06-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://searunner.it/tailored-tour.png</image:loc>
+      <image:title>Tailored private boat tour Italian Riviera</image:title>
     </image:image>
   </url>
 
