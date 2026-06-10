@@ -21,7 +21,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // dominio canonical: aggiornato al dominio finale acquistato.
 const SITE_URL = 'https://searunner.it';
 // immagine principale usata come anteprima social (Open Graph). deve essere assoluta (URL completa).
-const SITE_OG_IMAGE = `${SITE_URL}/boat-2.jpg`;
+const SITE_OG_IMAGE = `${SITE_URL}/boat-2.webp`;
 const SITE_NAME = 'Sea Runner';
 
 function SEOMetadata({ title, description, image, path = '/', type = 'website' }) {
@@ -314,7 +314,7 @@ const initialTours = [
     id: 'cinque-terre', slug: 'cinque-terre', name: 'Cinque Terre', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1500, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
-    cardImage: '/cinque-terre-v2.png',
+    cardImage: '/cinque-terre.webp',
     itineraryAccent: '#d4a355',
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
@@ -336,7 +336,7 @@ const initialTours = [
     id: 'golfo-poeti', slug: 'golfo-dei-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1400, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
-    cardImage: '/golfo-poeti-v2.png',
+    cardImage: '/golfo-poeti.webp',
     itineraryAccent: '#d4a355',
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
@@ -358,7 +358,7 @@ const initialTours = [
     id: 'portofino', slug: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
     basePrice: 2350, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
-    cardImage: '/portofino-v2.png',
+    cardImage: '/portofino-v2.webp',
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
@@ -378,7 +378,7 @@ const initialTours = [
     id: 'half-day-choice', slug: 'half-day', name: 'Half day', subtitle: 'Cinque Terre or Golfo dei Poeti',
     duration: '4 hours', slotType: 'half-day-choice',
     basePrice: 1000, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
-    cardImage: '/half-day-v2.png',
+    cardImage: '/half-day-v2.webp',
     itineraryAccent: '#d4a355',
     shortDesc: 'Pick your coastline, pick your moment. Morning, afternoon or evening.',
     longDesc: 'A shorter escape with the same magic. Choose between the Cinque Terre route or the Golfo dei Poeti, then pick the light you prefer: fresh morning, sunny afternoon, or evening golden hour.',
@@ -416,7 +416,7 @@ const initialTours = [
     id: 'sunset', slug: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
     duration: '3.5 hours', fixedTime: '17:30 – 21:00', slotType: 'sunset',
     basePrice: 800, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
-    cardImage: '/sunset-v2.png',
+    cardImage: '/sunset.webp',
     itineraryAccent: '#fdba74',
     shortDesc: 'Aperitivo at sea while the coast turns amber and rose.',
     longDesc: 'The most romantic way to end the day. Sail the Golfo dei Poeti as the sun melts behind Palmaria, sip a Ligurian aperitivo with local wines, and let the colours do the rest.',
@@ -448,7 +448,7 @@ const initialTours = [
     id: 'custom', slug: 'tailored', name: 'Tailored', subtitle: 'Your day, your way',
     duration: 'Flexible', slotType: 'custom',
     basePrice: 0, maxPeople: 8, brandColor: '#1e293b', accent: '#fbbf24',
-    cardImage: '/tailored-tour.png',
+    cardImage: '/tailored-tour.webp',
     shortDesc: 'Your own itinerary. Marco and Paola craft the perfect day at sea.',
     longDesc: 'Choose destinations, duration and activities. Captain Marco and Paola will craft the perfect day based on your preferences.',
     includes: ['Everything tailored to you'], isCustom: true
@@ -2608,7 +2608,7 @@ function HomePage() {
     "description": "Private boat tours from La Spezia along the Italian Riviera. Discover Cinque Terre, Portofino, Portovenere and the Golfo dei Poeti aboard our award-winning Cap Camarat 9.0 WA with Captain Marco and Paola — fully private charter, never shared. Departures from Porto Mirabello.",
     "url": SITE_URL,
     "image": SITE_OG_IMAGE,
-    "logo": `${SITE_URL}/logo-v2.png`,
+    "logo": `${SITE_URL}/logo.webp`,
     "telephone": "+39 348 828 9438",
     "email": "searunnerprenotazioni@gmail.com",
     "priceRange": "€€€",
@@ -2675,7 +2675,7 @@ function HomePage() {
         {/* background: foto sfocata della barca + gradiente blu per leggibilità */}
         <div className="absolute inset-0"
           style={{
-            backgroundImage: 'url(/boat-2.jpg)',
+            backgroundImage: 'url(/boat-2.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             filter: 'blur(8px) brightness(0.6)',
@@ -2811,7 +2811,7 @@ function HomePage() {
       <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="aspect-[4/3] bg-slate-800 overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
-            <img src="/boat-1.jpg" alt="Sea Runner private boat at Tino island lighthouse — Cinque Terre coastline"
+            <img src="/boat-1.webp" alt="Sea Runner private boat at Tino island lighthouse — Cinque Terre coastline"
               className="w-full h-full"
               style={{ objectFit: 'cover', objectPosition: 'center' }}
               loading="lazy" />
@@ -2863,16 +2863,16 @@ function HomePage() {
 
 // ============ BOAT PHOTO GALLERY ============
 // gallery scorribile della barca. quando avremo le foto reali basta sostituire
-// l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.jpg')
+// l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.webp')
 // ordine pensato: apro con le 2 esterne più spettacolari (faro + vista dall'alto),
 // poi dettagli interni, poi chiudo con la foto "esperienza" del tavolo al tramonto
 const BOAT_PHOTOS = [
-  { src: '/boat-1.jpg', alt: 'Sea Runner private boat at Tino island lighthouse, Cinque Terre' },
-  { src: '/boat-2.jpg', alt: 'Cap Camarat 9.0 WA Sea Runner cruising the Italian Riviera' },
-  { src: '/boat-3.jpg', alt: 'Sea Runner boat aerial view over the Golfo dei Poeti' },
-  { src: '/bathroom.jpg', alt: 'Bathroom on board Sea Runner Cap Camarat 9.0 WA' },
-  { src: '/fridge.jpg', alt: 'Solar-powered fridge on board Sea Runner private boat' },
-  { src: '/sunset-table.jpg', alt: 'Sunset aperitivo at the table on Sea Runner private boat tour' },
+  { src: '/boat-1.webp', alt: 'Sea Runner private boat at Tino island lighthouse, Cinque Terre' },
+  { src: '/boat-2.webp', alt: 'Cap Camarat 9.0 WA Sea Runner cruising the Italian Riviera' },
+  { src: '/boat-3.webp', alt: 'Sea Runner boat aerial view over the Golfo dei Poeti' },
+  { src: '/bathroom.webp', alt: 'Bathroom on board Sea Runner Cap Camarat 9.0 WA' },
+  { src: '/fridge.webp', alt: 'Solar-powered fridge on board Sea Runner private boat' },
+  { src: '/sunset-table.webp', alt: 'Sunset aperitivo at the table on Sea Runner private boat tour' },
 ];
 
 function BoatPhotoGallery() {
@@ -2950,7 +2950,7 @@ function BoatPhotoGallery() {
 
 // ============ PLANIMETRIA SECTION ============
 // componente separato perché gestisce lo stato di errore in caricamento immagine
-// (quando /plani.jpg manca, mostriamo un placeholder pulito senza crash)
+// (quando /plani.webp manca, mostriamo un placeholder pulito senza crash)
 function BoatLayoutSection() {
   const [imgError, setImgError] = useState(false);
   return (
@@ -2966,7 +2966,7 @@ function BoatLayoutSection() {
             BOAT LAYOUT COMING SOON
           </div>
         ) : (
-          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA Sea Runner — boat layout and floor plan"
+          <img src="/plani.webp" alt="Cap Camarat 9.0 WA Sea Runner — boat layout and floor plan"
             className="w-full h-auto"
             onError={() => setImgError(true)} />
         )}
