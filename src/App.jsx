@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { createClient } from '@supabase/supabase-js';
 import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
@@ -311,7 +311,7 @@ function TourCardImage({ tour }) {
 // ============ DATA ============
 const initialTours = [
   {
-    id: 'cinque-terre', name: 'Cinque Terre', subtitle: 'Full day Tour',
+    id: 'cinque-terre', slug: 'cinque-terre', name: 'Cinque Terre', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1500, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
     cardImage: '/cinque-terre-v2.png',
@@ -319,7 +319,7 @@ const initialTours = [
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
     itinerary: [
-      { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+      { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'Scenic cruise past the village' },
       { place: 'Monasteroli — Campiglia', note: 'Hidden coastline & swim stop' },
       { place: 'Riomaggiore', note: 'First of the Five Lands' },
@@ -333,7 +333,7 @@ const initialTours = [
     includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
-    id: 'golfo-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
+    id: 'golfo-poeti', slug: 'golfo-dei-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1400, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
     cardImage: '/golfo-poeti-v2.png',
@@ -341,7 +341,7 @@ const initialTours = [
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
     itinerary: [
-      { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+      { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
       { place: 'Palmaria', note: 'Blue Grotto • Snorkeling' },
       { place: 'Tino', note: 'Ancient monastery island' },
@@ -355,7 +355,7 @@ const initialTours = [
     includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
-    id: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
+    id: 'portofino', slug: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
     basePrice: 2350, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
     cardImage: '/portofino-v2.png',
@@ -363,7 +363,7 @@ const initialTours = [
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
     itinerary: [
-      { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+      { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Ligurian Coast', note: 'Scenic cruise along the riviera' },
       { place: 'San Fruttuoso', note: 'Stop • Explore the abbey & swim' },
       { place: 'Portofino', note: 'Stop • Free time & lunch at restaurant' },
@@ -375,7 +375,7 @@ const initialTours = [
     includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
   },
   {
-    id: 'half-day-choice', name: 'Half day', subtitle: 'Cinque Terre or Golfo dei Poeti',
+    id: 'half-day-choice', slug: 'half-day', name: 'Half day', subtitle: 'Cinque Terre or Golfo dei Poeti',
     duration: '4 hours', slotType: 'half-day-choice',
     basePrice: 1000, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
     cardImage: '/half-day-v2.png',
@@ -385,7 +385,7 @@ const initialTours = [
     itineraryOptions: [
       { id: 'cinque', name: 'Cinque Terre', desc: 'Portovenere → Riomaggiore → Manarola → Vernazza',
         itinerary: [
-          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
           { place: 'Portovenere', note: 'Scenic cruise past the village' },
           { place: 'Riomaggiore', note: 'First of the Five Lands' },
           { place: 'Manarola', note: 'Snorkeling in crystal waters' },
@@ -395,7 +395,7 @@ const initialTours = [
       },
       { id: 'golfo', name: 'Golfo dei Poeti', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
         itinerary: [
-          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
           { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
           { place: 'Palmaria', note: 'Blue Grotto • Snorkeling' },
           { place: 'Lerici', note: 'Castle views • Time ashore' },
@@ -413,7 +413,7 @@ const initialTours = [
     includes: ['Italian aperitivo', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels']
   },
   {
-    id: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
+    id: 'sunset', slug: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
     duration: '3.5 hours', fixedTime: '17:30 – 21:00', slotType: 'sunset',
     basePrice: 800, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
     cardImage: '/sunset-v2.png',
@@ -424,7 +424,7 @@ const initialTours = [
     itineraryOptions: [
       { id: 'cinque', name: 'Cinque Terre at sunset', desc: 'Portovenere → Riomaggiore → Manarola',
         itinerary: [
-          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
           { place: 'Portovenere', note: 'First glimpse of golden hour' },
           { place: 'Riomaggiore', note: 'Sunset over the cliffs' },
           { place: 'Manarola', note: 'Aperitivo • Final stop' },
@@ -433,7 +433,7 @@ const initialTours = [
       },
       { id: 'golfo', name: 'Golfo dei Poeti at sunset', desc: 'Portovenere → Palmaria → Lerici',
         itinerary: [
-          { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
+          { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
           { place: 'Portovenere', note: 'Medieval waterfront at dusk' },
           { place: 'Palmaria', note: 'Sun melting behind the island' },
           { place: 'Lerici', note: 'Aperitivo with castle views' },
@@ -445,10 +445,9 @@ const initialTours = [
     includes: ['Italian aperitivo', 'Open bar with local wines', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels']
   },
   {
-    id: 'custom', name: 'Tailored', subtitle: 'Your day, your way',
+    id: 'custom', slug: 'tailored', name: 'Tailored', subtitle: 'Your day, your way',
     duration: 'Flexible', slotType: 'custom',
     basePrice: 0, maxPeople: 8, brandColor: '#1e293b', accent: '#fbbf24',
-    cardImage: '/tailored-tour.png',
     shortDesc: 'Your own itinerary. Marco and Paola craft the perfect day at sea.',
     longDesc: 'Choose destinations, duration and activities. Captain Marco and Paola will craft the perfect day based on your preferences.',
     includes: ['Everything tailored to you'], isCustom: true
@@ -473,6 +472,8 @@ const initialBookings = [
 // l'intero flusso a 3 step + dashboard skipper + schermata conferma
 function BookingApp() {
   const bookingLocation = useLocation();
+  const navigate = useNavigate();
+  const { slug } = useParams(); // slug del tour dall'URL /booking/:slug (undefined su /booking)
   const [tours, setTours] = useState(initialTours);
   // flag di caricamento iniziale dei dati da supabase:
   // true = stiamo recuperando dati freschi, false = siamo pronti.
@@ -717,18 +718,39 @@ function BookingApp() {
   // scroll in cima ogni volta che cambia lo step (l'animazione smooth parte dopo il render)
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [currentStep]);
 
-  // deep link: se l'URL contiene ?tour=xyz, pre-seleziona il tour e salta allo step 2
+  // routing del tour:
+  //  - /booking/:slug  → pre-seleziona il tour corrispondente e va allo step 2
+  //  - /booking?tour=ID (vecchio formato) → reindirizza automaticamente al nuovo URL pulito
+  //  - /booking        → schermata di scelta tour (step 1)
   useEffect(() => {
+    // retrocompatibilità: i vecchi link ?tour=ID vengono rediretti al nuovo URL /booking/slug
     const params = new URLSearchParams(bookingLocation.search);
-    const tourParam = params.get('tour');
-    if (tourParam) {
-      const match = initialTours.find(t => t.id === tourParam);
+    const legacyId = params.get('tour');
+    if (legacyId && !slug) {
+      const legacyMatch = initialTours.find(t => t.id === legacyId);
+      if (legacyMatch) { navigate(`/booking/${legacyMatch.slug}`, { replace: true }); return; }
+    }
+
+    if (slug) {
+      // se il tour già selezionato corrisponde allo slug non rifaccio nulla
+      // (evita di resettare lo step quando i prezzi si aggiornano da supabase)
+      if (selectedTour && selectedTour.slug === slug) return;
+      const match = tours.find(t => t.slug === slug) || initialTours.find(t => t.slug === slug);
       if (match) {
         setSelectedTour(match);
+        setHalfDayChoiceItinerary(null);
+        setHalfDayChoiceTime(null);
         setCurrentStep(2);
+      } else {
+        // slug inesistente → torno alla scelta tour
+        navigate('/booking', { replace: true });
       }
+    } else if (!legacyId) {
+      // /booking puro: schermata scelta tour
+      if (selectedTour) setSelectedTour(null);
+      setCurrentStep(1);
     }
-  }, [bookingLocation.search]);
+  }, [slug, bookingLocation.search, tours]);
 
   // === autenticazione skipper via supabase ===
   // al mount controlliamo se c'è già una sessione salvata (marco torna dopo giorni → resta loggato).
@@ -871,9 +893,10 @@ function BookingApp() {
     }
   };
 
-  const handleTourSelect = (tour) => { 
-    setSelectedTour(tour); setHalfDayChoiceItinerary(null); setHalfDayChoiceTime(null);
-    setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleTourSelect = (tour) => {
+    // naviga all'URL pulito del tour; l'effetto sul routing pre-seleziona e va allo step 2
+    navigate(`/booking/${tour.slug}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const toggleAddOn = (id) => setSelectedAddOns(selectedAddOns.includes(id) ? selectedAddOns.filter(a => a !== id) : [...selectedAddOns, id]);
 
@@ -1105,6 +1128,7 @@ ${customerData.notes || 'No special requests'}
   };
 
   const resetBooking = () => {
+    navigate('/booking'); // torna all'URL pulito di scelta tour
     setSubmitted(false); setCurrentStep(1); setSelectedTour(null); setSelectedDate(null);
     setHalfDayChoiceItinerary(null); setHalfDayChoiceTime(null);
     setSelectedAddOns([]); setNumPeople(2); setMeetingPoint('Porto Mirabello (La Spezia)'); setCustomMeetingPoint('');
@@ -1622,7 +1646,7 @@ ${customerData.notes || 'No special requests'}
       "priceCurrency": "EUR",
       "availability": "https://schema.org/InStock",
       "validFrom": new Date().toISOString().split('T')[0],
-      "url": `${SITE_URL}/booking?tour=${selectedTour.id}`
+      "url": `${SITE_URL}/booking/${selectedTour.slug}`
     }
   } : null;
 
@@ -1634,7 +1658,7 @@ ${customerData.notes || 'No special requests'}
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Sea Runner", "item": SITE_URL },
       { "@type": "ListItem", "position": 2, "name": "Tours", "item": `${SITE_URL}/booking` },
-      { "@type": "ListItem", "position": 3, "name": selectedTour.name, "item": `${SITE_URL}/booking?tour=${selectedTour.id}` }
+      { "@type": "ListItem", "position": 3, "name": selectedTour.name, "item": `${SITE_URL}/booking/${selectedTour.slug}` }
     ]
   } : null;
 
@@ -1643,7 +1667,8 @@ ${customerData.notes || 'No special requests'}
       <SEOMetadata
         title={seoTitle}
         description={seoDescription}
-        path="/booking"
+        path={selectedTour ? `/booking/${selectedTour.slug}` : '/booking'}
+        image={selectedTour?.cardImage ? `${SITE_URL}${selectedTour.cardImage}` : undefined}
       />
       {/* schema TouristTrip + breadcrumb iniettati solo se c'è un tour selezionato (deep link) */}
       {tourTripSchema && (
@@ -2061,13 +2086,13 @@ ${customerData.notes || 'No special requests'}
                 {tours.filter(t => t.id !== selectedTour.id && !t.isCustom).map(t => (
                   <button key={t.id}
                     onClick={() => {
-                      // reset delle scelte del tour precedente e switch al nuovo
-                      setSelectedTour(t);
+                      // reset delle scelte del tour precedente e switch al nuovo (via URL pulito)
                       setSelectedDate(null);
                       setHalfDayChoiceItinerary(null);
                       setHalfDayChoiceTime(null);
                       setMeetingPoint('Porto Mirabello (La Spezia)');
                       setCustomMeetingPoint('');
+                      navigate(`/booking/${t.slug}`);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="text-left bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400 group">
@@ -2738,7 +2763,7 @@ function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {initialTours.slice(0, 3).map(tour => (
-              <Link key={tour.id} to={`/booking?tour=${tour.id}`}
+              <Link key={tour.id} to={`/booking/${tour.slug}`}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
@@ -3311,6 +3336,7 @@ export default function SeaRunnerApp() {
           <Route path="/" element={<HomePage />} />
           <Route path="/boat" element={<BoatPage />} />
           <Route path="/booking" element={<BookingApp />} />
+          <Route path="/booking/:slug" element={<BookingApp />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           {/* fallback: rotte non esistenti riportano a home */}
           <Route path="*" element={<HomePage />} />
