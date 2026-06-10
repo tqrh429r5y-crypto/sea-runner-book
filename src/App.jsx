@@ -2207,7 +2207,16 @@ ${customerData.notes || 'No special requests'}
 
           {/* RECAP con stima chiara e add-ons */}
           <div className="bg-slate-900 border border-amber-400/30 p-6 my-6">
-            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">YOUR REQUEST</p>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <p className="text-amber-400 text-[10px] tracking-[0.3em]">YOUR REQUEST</p>
+              {/* miniatura del tour selezionato */}
+              {selectedTour?.cardImage && (
+                <img src={selectedTour.cardImage} alt={selectedTour.name}
+                  className="w-14 h-10 rounded flex-shrink-0"
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
+                  onError={(e) => { e.target.style.display = 'none'; }} />
+              )}
+            </div>
             <div className="space-y-2 text-sm text-slate-300">
               <div className="flex justify-between"><span>Tour</span><span className="text-white">{selectedTour?.name}</span></div>
               {selectedTour?.itineraryOptions && halfDayChoiceItinerary && (
