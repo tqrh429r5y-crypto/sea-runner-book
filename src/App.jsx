@@ -326,7 +326,8 @@ const initialTours = [
       { place: 'Manarola', note: 'Snorkeling in crystal waters' },
       { place: 'Corniglia', note: 'The clifftop village from the sea' },
       { place: 'Vernazza', note: 'Lunch stop • Time ashore' },
-      { place: 'Monterosso', note: 'Time ashore • Final stop' }
+      { place: 'Monterosso', note: 'Time ashore • Final stop' },
+      { place: 'La Spezia', note: 'Back to the meeting point' }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
     includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
@@ -347,7 +348,8 @@ const initialTours = [
       { place: 'Tinetto', note: 'Scenic cruise around the islet' },
       { place: 'San Terenzo', note: 'Charming seaside village' },
       { place: 'Lerici', note: 'Lunch stop • Castle views' },
-      { place: 'Tellaro', note: 'Hidden gem of the Gulf' }
+      { place: 'Tellaro', note: 'Hidden gem of the Gulf' },
+      { place: 'La Spezia', note: 'Back to the meeting point' }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
     includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
@@ -366,7 +368,8 @@ const initialTours = [
       { place: 'San Fruttuoso', note: 'Stop • Explore the abbey & swim' },
       { place: 'Portofino', note: 'Stop • Free time & lunch at restaurant' },
       { place: 'Marine Reserve', note: 'Snorkeling in crystal clear waters' },
-      { place: 'Cinque Terre', note: 'Sunset cruise along the coast' }
+      { place: 'Cinque Terre', note: 'Sunset cruise along the coast' },
+      { place: 'La Spezia', note: 'Back to the meeting point' }
     ],
     itineraryFootnote: 'Approx. 10 hours • Restaurant lunch not included',
     includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
@@ -386,7 +389,8 @@ const initialTours = [
           { place: 'Portovenere', note: 'Scenic cruise past the village' },
           { place: 'Riomaggiore', note: 'First of the Five Lands' },
           { place: 'Manarola', note: 'Snorkeling in crystal waters' },
-          { place: 'Vernazza', note: 'Time ashore • Final stop' }
+          { place: 'Vernazza', note: 'Time ashore • Final stop' },
+          { place: 'La Spezia', note: 'Back to the meeting point' }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
@@ -395,7 +399,8 @@ const initialTours = [
           { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
           { place: 'Palmaria', note: 'Blue Grotto • Snorkeling' },
           { place: 'Lerici', note: 'Castle views • Time ashore' },
-          { place: 'Tellaro', note: 'Hidden gem • Final stop' }
+          { place: 'Tellaro', note: 'Hidden gem • Final stop' },
+          { place: 'La Spezia', note: 'Back to the meeting point' }
         ]
       }
     ],
@@ -422,7 +427,8 @@ const initialTours = [
           { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
           { place: 'Portovenere', note: 'First glimpse of golden hour' },
           { place: 'Riomaggiore', note: 'Sunset over the cliffs' },
-          { place: 'Manarola', note: 'Aperitivo • Final stop' }
+          { place: 'Manarola', note: 'Aperitivo • Final stop' },
+          { place: 'La Spezia', note: 'Back to the meeting point' }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti at sunset', desc: 'Portovenere → Palmaria → Lerici',
@@ -430,7 +436,8 @@ const initialTours = [
           { place: 'La Spezia', note: 'Porto Mirabello • Departure' },
           { place: 'Portovenere', note: 'Medieval waterfront at dusk' },
           { place: 'Palmaria', note: 'Sun melting behind the island' },
-          { place: 'Lerici', note: 'Aperitivo with castle views' }
+          { place: 'Lerici', note: 'Aperitivo with castle views' },
+          { place: 'La Spezia', note: 'Back to the meeting point' }
         ]
       }
     ],
@@ -453,7 +460,7 @@ const addOns = [
   { id: 'cooking', name: 'Ligurian Cooking Class', desc: 'Traditional Italian cuisine with local chef', icon: Sparkles }
 ];
 
-const defaultPickupPoints = ['Porto Mirabello (La Spezia)', 'Portovenere', 'Le Grazie', 'Lerici'];
+const defaultPickupPoints = ['Porto Mirabello (La Spezia)', 'Portovenere', 'Lerici'];
 
 const initialBookings = [
   { id: 1, tourId: 'cinque-terre', tourName: 'Cinque Terre', customerName: 'Marco Rossi', email: 'marco@email.com', phone: '+39 333 1234567', date: new Date(Date.now() + 3*86400000), timeSlot: '10:00 – 17:00', slotType: 'full-day', people: 4, notes: 'Wedding anniversary', addOns: ['wine'], status: 'pending', basePrice: 1500, finalPrice: null, language: 'IT' },
