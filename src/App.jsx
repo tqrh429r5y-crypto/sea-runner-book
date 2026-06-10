@@ -2131,6 +2131,21 @@ ${customerData.notes || 'No special requests'}
             <p className="text-slate-400 text-sm mt-4 max-w-md mx-auto">Leave us your details and we'll send you a tailored quote within 24 hours. No payment required at this stage.</p>
           </div>
 
+          {/* immagine del tour scelto: richiamo visivo di cosa si sta prenotando */}
+          {selectedTour && (
+            <div className="max-w-xs mx-auto mb-8">
+              <div className="relative overflow-hidden rounded-lg border border-slate-800" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
+                {selectedTour.cardImage ? (
+                  <img src={selectedTour.cardImage} alt={selectedTour.name}
+                    className="w-full h-full"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    onError={(e) => { e.target.style.display = 'none'; }} />
+                ) : null}
+              </div>
+              <p className="text-center text-slate-400 text-xs tracking-[0.2em] mt-2">{selectedTour.name.toUpperCase()}</p>
+            </div>
+          )}
+
           <div className="bg-slate-900 border border-slate-800 p-6 space-y-5">
             <div>
               <label className="block text-[10px] text-amber-400 tracking-widest mb-2">FULL NAME *</label>
@@ -2207,16 +2222,7 @@ ${customerData.notes || 'No special requests'}
 
           {/* RECAP con stima chiara e add-ons */}
           <div className="bg-slate-900 border border-amber-400/30 p-6 my-6">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <p className="text-amber-400 text-[10px] tracking-[0.3em]">YOUR REQUEST</p>
-              {/* miniatura del tour selezionato */}
-              {selectedTour?.cardImage && (
-                <img src={selectedTour.cardImage} alt={selectedTour.name}
-                  className="w-14 h-10 rounded flex-shrink-0"
-                  style={{ objectFit: 'cover', objectPosition: 'center' }}
-                  onError={(e) => { e.target.style.display = 'none'; }} />
-              )}
-            </div>
+            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">YOUR REQUEST</p>
             <div className="space-y-2 text-sm text-slate-300">
               <div className="flex justify-between"><span>Tour</span><span className="text-white">{selectedTour?.name}</span></div>
               {selectedTour?.itineraryOptions && halfDayChoiceItinerary && (
