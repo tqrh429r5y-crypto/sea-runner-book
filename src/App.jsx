@@ -1125,6 +1125,17 @@ ${customerData.notes || 'No special requests'}
     } catch (e) {
       console.error('[sea-runner] booking DB save exception:', e);
     }
+
+    // tracciamento conversione (solo se l'utente ha acconsentito ai cookie analitici:
+    // window.gtag esiste unicamente dopo il consenso). Misura le richieste di preventivo.
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'generate_lead', {
+        currency: 'EUR',
+        value: effectivePrice || 0,
+        tour: selectedTour?.name
+      });
+    }
+
     setSubmitted(true);
   };
 
@@ -3152,7 +3163,7 @@ function PrivacyPage() {
 
       <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl mb-3">Privacy Policy</h1>
-        <p className="text-slate-500 text-sm mb-10">Last updated: April 2026</p>
+        <p className="text-slate-500 text-sm mb-10">Last updated: June 2026</p>
 
         <div className="space-y-8 text-slate-300 leading-relaxed">
 
@@ -3199,6 +3210,7 @@ function PrivacyPage() {
               <li><strong className="text-white">Web3Forms</strong> (based in the United States) — used to deliver booking request emails from our website to our inbox. Data transferred: all booking form fields. Safeguards: standard contractual clauses (SCC) for extra-EU data transfer.</li>
               <li><strong className="text-white">Google Calendar</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used to manage tour availability. No personal customer data is transferred to Google Calendar; only internal scheduling information is stored. Safeguards: EU-US Data Privacy Framework.</li>
               <li><strong className="text-white">Vercel Inc.</strong> (based in the United States) — used to host our website. May collect standard server log data (IP address, browser type, access timestamps) for operational purposes. Safeguards: EU-US Data Privacy Framework.</li>
+              <li><strong className="text-white">Google Analytics</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used, <strong className="text-white">only with your consent</strong>, to collect anonymous statistics on how visitors use the website (pages viewed, approximate location, device and browser type), so we can improve it. Analytics cookies are not loaded until you accept them through our cookie banner. Safeguards: EU-US Data Privacy Framework. Legal basis: your consent (GDPR art. 6.1.a).</li>
             </ul>
             <p className="mt-3 text-sm">We do not sell, rent, or share your personal data with any party beyond what is strictly required to provide our service.</p>
           </section>
@@ -3231,7 +3243,7 @@ function PrivacyPage() {
           <section>
             <h2 className="text-xl sm:text-2xl text-white mb-3">7. Cookies</h2>
             <p className="text-sm">
-              This website uses only technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices. It does not use profiling cookies or third-party tracking cookies without your consent. You can manage your preferences at any time by clearing your browser's local storage.
+              This website uses technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices — these do not require consent. With your explicit consent, it also uses analytics cookies (Google Analytics) to produce anonymous statistics on the use of the site; these are activated only after you click "Accept" on the cookie banner, and are never loaded if you decline. It does not use profiling or advertising cookies. You can change your choice at any time by clearing your browser's local storage, which will make the cookie banner appear again.
             </p>
           </section>
 
@@ -3268,26 +3280,69 @@ function PrivacyPage() {
 }
 
 
-// ============ COOKIE BANNER ============
-// banner provvisorio conforme al minimo sindacale del garante italiano.
-// compare in basso, non intrusivo, salva la scelta in localStorage.
-// NOTA: una volta attivato iubenda questo va sostituito con il loro widget ufficiale.
+// ============ COOKIE BANNER + GOOGLE ANALYTICS (con consenso GDPR) ============
+// Google Analytics viene caricato SOLO se l'utente accetta i cookie.
+// Prima del consenso non parte nessun tracciamento (niente cookie, niente dati).
+// La scelta viene memorizzata: chi ha già accettato non rivede il banner.
+const GA_MEASUREMENT_ID = 'G-D1LWJXKQ2P';
+
+// carica lo script ufficiale di Google Analytics, una sola volta, dopo il consenso
+function loadGoogleAnalytics() {
+  if (typeof window === 'undefined' || window.__gaLoaded) return; // evita doppio caricamento
+  window.__gaLoaded = true;
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+
+  // consenso concesso dall'utente → attiva la memorizzazione analitica
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+
+  // inietta lo script gtag.js
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+  document.head.appendChild(s);
+
+  gtag('js', new Date());
+  gtag('config', GA_MEASUREMENT_ID);
+}
+
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // mostra solo se l'utente non ha ancora scelto
-    try {
-      const choice = localStorage.getItem('sr-cookie-consent');
-      if (!choice) setVisible(true);
-    } catch {
-      // se localStorage bloccato (safari privato ecc), mostriamo comunque
+    // PRIMA di tutto: per default il tracciamento è NEGATO (GDPR / Consent Mode v2).
+    // Così, finché l'utente non accetta, nulla viene memorizzato.
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ window.dataLayer.push(arguments); }
+      if (!window.__gaConsentDefault) {
+        window.__gaConsentDefault = true;
+        gtag('consent', 'default', {
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied'
+        });
+      }
+    }
+
+    let choice = null;
+    try { choice = localStorage.getItem('sr-cookie-consent'); } catch {}
+    if (choice === 'accepted') {
+      // l'utente aveva già accettato in una visita precedente: carica Analytics
+      loadGoogleAnalytics();
+    } else if (!choice) {
+      // nessuna scelta ancora fatta: mostra il banner
       setVisible(true);
     }
+    // se 'declined' → non carichiamo nulla e non mostriamo il banner
   }, []);
 
   const save = (value) => {
     try { localStorage.setItem('sr-cookie-consent', value); } catch {}
+    if (value === 'accepted') loadGoogleAnalytics();
     setVisible(false);
   };
 
@@ -3298,7 +3353,7 @@ function CookieBanner() {
       style={{ fontFamily: 'Georgia, serif' }}>
       <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
         <p className="text-slate-300 text-xs sm:text-sm leading-relaxed flex-1">
-          This website uses technical cookies strictly necessary for its functioning. No profiling or tracking cookies are used without your consent. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.
+          We use technical cookies necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used and improve it. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.
         </p>
         <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
           <button onClick={() => save('declined')}
