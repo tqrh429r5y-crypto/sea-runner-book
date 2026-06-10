@@ -2026,7 +2026,7 @@ ${customerData.notes || 'No special requests'}
           {/* MEETING POINT con "Other" */}
           <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
             <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> MEETING POINT</p>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {[...defaultPickupPoints, 'Other'].map(point => {
                 // Porto Mirabello va spezzato su 2 righe con "(La Spezia)" intero sotto
                 const isMirabello = point === 'Porto Mirabello (La Spezia)';
