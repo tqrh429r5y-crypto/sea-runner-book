@@ -327,7 +327,7 @@ const initialTours = [
       { place: 'Corniglia', note: 'The clifftop village from the sea' },
       { place: 'Vernazza', note: 'Lunch stop • Time ashore' },
       { place: 'Monterosso', note: 'Time ashore • Final stop' },
-      { place: 'La Spezia', note: 'Back to the meeting point' }
+      { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
     includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
@@ -349,7 +349,7 @@ const initialTours = [
       { place: 'San Terenzo', note: 'Charming seaside village' },
       { place: 'Lerici', note: 'Lunch stop • Castle views' },
       { place: 'Tellaro', note: 'Hidden gem of the Gulf' },
-      { place: 'La Spezia', note: 'Back to the meeting point' }
+      { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
     includes: ['Light Italian lunch', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
@@ -369,7 +369,7 @@ const initialTours = [
       { place: 'Portofino', note: 'Stop • Free time & lunch at restaurant' },
       { place: 'Marine Reserve', note: 'Snorkeling in crystal clear waters' },
       { place: 'Cinque Terre', note: 'Sunset cruise along the coast' },
-      { place: 'La Spezia', note: 'Back to the meeting point' }
+      { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
     ],
     itineraryFootnote: 'Approx. 10 hours • Restaurant lunch not included',
     includes: ['Light lunch on board', 'Open bar', 'Multilingual hostess', 'Fuel & skipper', 'Private parking', 'Towels & equipment']
@@ -390,7 +390,7 @@ const initialTours = [
           { place: 'Riomaggiore', note: 'First of the Five Lands' },
           { place: 'Manarola', note: 'Snorkeling in crystal waters' },
           { place: 'Vernazza', note: 'Time ashore • Final stop' },
-          { place: 'La Spezia', note: 'Back to the meeting point' }
+          { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
@@ -400,7 +400,7 @@ const initialTours = [
           { place: 'Palmaria', note: 'Blue Grotto • Snorkeling' },
           { place: 'Lerici', note: 'Castle views • Time ashore' },
           { place: 'Tellaro', note: 'Hidden gem • Final stop' },
-          { place: 'La Spezia', note: 'Back to the meeting point' }
+          { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
         ]
       }
     ],
@@ -428,7 +428,7 @@ const initialTours = [
           { place: 'Portovenere', note: 'First glimpse of golden hour' },
           { place: 'Riomaggiore', note: 'Sunset over the cliffs' },
           { place: 'Manarola', note: 'Aperitivo • Final stop' },
-          { place: 'La Spezia', note: 'Back to the meeting point' }
+          { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti at sunset', desc: 'Portovenere → Palmaria → Lerici',
@@ -437,7 +437,7 @@ const initialTours = [
           { place: 'Portovenere', note: 'Medieval waterfront at dusk' },
           { place: 'Palmaria', note: 'Sun melting behind the island' },
           { place: 'Lerici', note: 'Aperitivo with castle views' },
-          { place: 'La Spezia', note: 'Back to the meeting point' }
+          { place: 'Drop-off point', note: 'Back to your chosen meeting point' }
         ]
       }
     ],
