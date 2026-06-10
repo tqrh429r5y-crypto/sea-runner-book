@@ -448,6 +448,7 @@ const initialTours = [
     id: 'custom', slug: 'tailored', name: 'Tailored', subtitle: 'Your day, your way',
     duration: 'Flexible', slotType: 'custom',
     basePrice: 0, maxPeople: 8, brandColor: '#1e293b', accent: '#fbbf24',
+    cardImage: '/tailored-tour.png',
     shortDesc: 'Your own itinerary. Marco and Paola craft the perfect day at sea.',
     longDesc: 'Choose destinations, duration and activities. Captain Marco and Paola will craft the perfect day based on your preferences.',
     includes: ['Everything tailored to you'], isCustom: true
