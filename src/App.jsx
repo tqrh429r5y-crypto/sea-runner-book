@@ -21,7 +21,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // dominio canonical: aggiornato al dominio finale acquistato.
 const SITE_URL = 'https://searunner.it';
 // immagine principale usata come anteprima social (Open Graph). deve essere assoluta (URL completa).
-const SITE_OG_IMAGE = `${SITE_URL}/boat-2.jpg`;
+const SITE_OG_IMAGE = `${SITE_URL}/boat-2.webp`;
 const SITE_NAME = 'Sea Runner';
 
 function SEOMetadata({ title, description, image, path = '/', type = 'website' }) {
@@ -314,7 +314,7 @@ const initialTours = [
     id: 'cinque-terre', slug: 'cinque-terre', name: 'Cinque Terre', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1500, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
-    cardImage: '/cinque-terre-v2.png',
+    cardImage: '/cinque-terre.webp',
     itineraryAccent: '#d4a355',
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
@@ -336,7 +336,7 @@ const initialTours = [
     id: 'golfo-poeti', slug: 'golfo-dei-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1400, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
-    cardImage: '/golfo-poeti-v2.png',
+    cardImage: '/golfo-poeti.webp',
     itineraryAccent: '#d4a355',
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
@@ -358,7 +358,7 @@ const initialTours = [
     id: 'portofino', slug: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
     basePrice: 2350, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
-    cardImage: '/portofino-v2.png',
+    cardImage: '/portofino-v2.webp',
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
@@ -378,7 +378,7 @@ const initialTours = [
     id: 'half-day-choice', slug: 'half-day', name: 'Half day', subtitle: 'Cinque Terre or Golfo dei Poeti',
     duration: '4 hours', slotType: 'half-day-choice',
     basePrice: 1000, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
-    cardImage: '/half-day-v2.png',
+    cardImage: '/half-day-v2.webp',
     itineraryAccent: '#d4a355',
     shortDesc: 'Pick your coastline, pick your moment. Morning, afternoon or evening.',
     longDesc: 'A shorter escape with the same magic. Choose between the Cinque Terre route or the Golfo dei Poeti, then pick the light you prefer: fresh morning, sunny afternoon, or evening golden hour.',
@@ -416,7 +416,7 @@ const initialTours = [
     id: 'sunset', slug: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
     duration: '3.5 hours', fixedTime: '17:30 – 21:00', slotType: 'sunset',
     basePrice: 800, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
-    cardImage: '/sunset-v2.png',
+    cardImage: '/sunset.webp',
     itineraryAccent: '#fdba74',
     shortDesc: 'Aperitivo at sea while the coast turns amber and rose.',
     longDesc: 'The most romantic way to end the day. Sail the Golfo dei Poeti as the sun melts behind Palmaria, sip a Ligurian aperitivo with local wines, and let the colours do the rest.',
@@ -448,7 +448,7 @@ const initialTours = [
     id: 'custom', slug: 'tailored', name: 'Tailored', subtitle: 'Your day, your way',
     duration: 'Flexible', slotType: 'custom',
     basePrice: 0, maxPeople: 8, brandColor: '#1e293b', accent: '#fbbf24',
-    cardImage: '/tailored-tour.png',
+    cardImage: '/tailored-tour.webp',
     shortDesc: 'Your own itinerary. Marco and Paola craft the perfect day at sea.',
     longDesc: 'Choose destinations, duration and activities. Captain Marco and Paola will craft the perfect day based on your preferences.',
     includes: ['Everything tailored to you'], isCustom: true
@@ -475,6 +475,8 @@ function BookingApp() {
   const bookingLocation = useLocation();
   const navigate = useNavigate();
   const { slug } = useParams(); // slug del tour dall'URL /booking/:slug (undefined su /booking)
+  // pagina di conferma con URL dedicato (/booking/thank-you), usata per il tracking conversioni Google Ads
+  const isThankYou = bookingLocation.pathname === '/booking/thank-you';
   const [tours, setTours] = useState(initialTours);
   // flag di caricamento iniziale dei dati da supabase:
   // true = stiamo recuperando dati freschi, false = siamo pronti.
@@ -724,6 +726,13 @@ function BookingApp() {
   //  - /booking?tour=ID (vecchio formato) → reindirizza automaticamente al nuovo URL pulito
   //  - /booking        → schermata di scelta tour (step 1)
   useEffect(() => {
+    // pagina di conferma con URL dedicato: non è né un tour né la scelta tour.
+    // se ci si arriva direttamente o si ricarica senza aver inviato, si torna al booking.
+    if (bookingLocation.pathname === '/booking/thank-you') {
+      if (!submitted) navigate('/booking', { replace: true });
+      return;
+    }
+
     // retrocompatibilità: i vecchi link ?tour=ID vengono rediretti al nuovo URL /booking/slug
     const params = new URLSearchParams(bookingLocation.search);
     const legacyId = params.get('tour');
@@ -751,7 +760,7 @@ function BookingApp() {
       if (selectedTour) setSelectedTour(null);
       setCurrentStep(1);
     }
-  }, [slug, bookingLocation.search, tours]);
+  }, [slug, bookingLocation.pathname, bookingLocation.search, tours, submitted]);
 
   // === autenticazione skipper via supabase ===
   // al mount controlliamo se c'è già una sessione salvata (marco torna dopo giorni → resta loggato).
@@ -1125,7 +1134,22 @@ ${customerData.notes || 'No special requests'}
     } catch (e) {
       console.error('[sea-runner] booking DB save exception:', e);
     }
+
+    // tracciamento conversione (solo se l'utente ha acconsentito ai cookie analitici:
+    // window.gtag esiste unicamente dopo il consenso). Misura le richieste di preventivo.
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'generate_lead', {
+        currency: 'EUR',
+        value: effectivePrice || 0,
+        tour: selectedTour?.name
+      });
+    }
+
     setSubmitted(true);
+    // porta l'utente alla pagina di conferma con URL dedicato (/booking/thank-you).
+    // serve a Google Ads per tracciare le conversioni in base all'URL raggiunto.
+    navigate('/booking/thank-you');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const resetBooking = () => {
@@ -1541,10 +1565,16 @@ ${customerData.notes || 'No special requests'}
     );
   }
 
-  // ============ CONFIRMATION ============
-  if (submitted) {
+  // ============ CONFIRMATION (URL dedicato /booking/thank-you) ============
+  if (isThankYou) {
+    // atterraggio diretto/refresh senza dati di invio → l'effetto reindirizza a /booking
+    if (!submitted) return null;
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 py-8" style={{ fontFamily: 'Georgia, serif' }}>
+        <Helmet>
+          <title>Thank you — Request received | Sea Runner</title>
+          <meta name="robots" content="noindex, follow" />
+        </Helmet>
         <div className="max-w-md w-full text-center text-white">
           <div className="mb-6 flex justify-center"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-white text-sm tracking-[0.3em] mb-8">SEA RUNNER</p>
@@ -2131,6 +2161,21 @@ ${customerData.notes || 'No special requests'}
             <p className="text-slate-400 text-sm mt-4 max-w-md mx-auto">Leave us your details and we'll send you a tailored quote within 24 hours. No payment required at this stage.</p>
           </div>
 
+          {/* immagine del tour scelto: richiamo visivo di cosa si sta prenotando */}
+          {selectedTour && (
+            <div className="max-w-xs mx-auto mb-8">
+              <div className="relative overflow-hidden rounded-lg border border-slate-800" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
+                {selectedTour.cardImage ? (
+                  <img src={selectedTour.cardImage} alt={selectedTour.name}
+                    className="w-full h-full"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    onError={(e) => { e.target.style.display = 'none'; }} />
+                ) : null}
+              </div>
+              <p className="text-center text-slate-400 text-xs tracking-[0.2em] mt-2">{selectedTour.name.toUpperCase()}</p>
+            </div>
+          )}
+
           <div className="bg-slate-900 border border-slate-800 p-6 space-y-5">
             <div>
               <label className="block text-[10px] text-amber-400 tracking-widest mb-2">FULL NAME *</label>
@@ -2281,7 +2326,7 @@ ${customerData.notes || 'No special requests'}
                   {/* messaggio specifico se la causa è il filtro antispam */}
                   {submitError.message && submitError.message.toLowerCase().includes('spam') ? (
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                      Our system could not validate your request. Please double-check your <span className="text-amber-400">name</span>, <span className="text-amber-400">email</span>, and <span className="text-amber-400">phone number</span> are complete and correct, then try again. If the problem persists, contact us directly:
+                      Our system could not validate your request. Please review the details you entered <span className="text-amber-400">carefully</span> — make sure your <span className="text-amber-400">phone number</span> and <span className="text-amber-400">email address</span> are written correctly and in full, with no typos or missing characters, then try again. If the problem persists, contact us directly:
                     </p>
                   ) : (
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
@@ -2593,7 +2638,7 @@ function HomePage() {
     "description": "Private boat tours from La Spezia along the Italian Riviera. Discover Cinque Terre, Portofino, Portovenere and the Golfo dei Poeti aboard our award-winning Cap Camarat 9.0 WA with Captain Marco and Paola — fully private charter, never shared. Departures from Porto Mirabello.",
     "url": SITE_URL,
     "image": SITE_OG_IMAGE,
-    "logo": `${SITE_URL}/logo-v2.png`,
+    "logo": `${SITE_URL}/logo.webp`,
     "telephone": "+39 348 828 9438",
     "email": "searunnerprenotazioni@gmail.com",
     "priceRange": "€€€",
@@ -2660,7 +2705,7 @@ function HomePage() {
         {/* background: foto sfocata della barca + gradiente blu per leggibilità */}
         <div className="absolute inset-0"
           style={{
-            backgroundImage: 'url(/boat-2.jpg)',
+            backgroundImage: 'url(/boat-2.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             filter: 'blur(8px) brightness(0.6)',
@@ -2796,7 +2841,7 @@ function HomePage() {
       <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="aspect-[4/3] bg-slate-800 overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
-            <img src="/boat-1.jpg" alt="Sea Runner private boat at Tino island lighthouse — Cinque Terre coastline"
+            <img src="/boat-1.webp" alt="Sea Runner private boat at Tino island lighthouse — Cinque Terre coastline"
               className="w-full h-full"
               style={{ objectFit: 'cover', objectPosition: 'center' }}
               loading="lazy" />
@@ -2848,16 +2893,16 @@ function HomePage() {
 
 // ============ BOAT PHOTO GALLERY ============
 // gallery scorribile della barca. quando avremo le foto reali basta sostituire
-// l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.jpg')
+// l'array BOAT_PHOTOS con i path delle immagini su github (es. '/boat-1.webp')
 // ordine pensato: apro con le 2 esterne più spettacolari (faro + vista dall'alto),
 // poi dettagli interni, poi chiudo con la foto "esperienza" del tavolo al tramonto
 const BOAT_PHOTOS = [
-  { src: '/boat-1.jpg', alt: 'Sea Runner private boat at Tino island lighthouse, Cinque Terre' },
-  { src: '/boat-2.jpg', alt: 'Cap Camarat 9.0 WA Sea Runner cruising the Italian Riviera' },
-  { src: '/boat-3.jpg', alt: 'Sea Runner boat aerial view over the Golfo dei Poeti' },
-  { src: '/bathroom.jpg', alt: 'Bathroom on board Sea Runner Cap Camarat 9.0 WA' },
-  { src: '/fridge.jpg', alt: 'Solar-powered fridge on board Sea Runner private boat' },
-  { src: '/sunset-table.jpg', alt: 'Sunset aperitivo at the table on Sea Runner private boat tour' },
+  { src: '/boat-1.webp', alt: 'Sea Runner private boat at Tino island lighthouse, Cinque Terre' },
+  { src: '/boat-2.webp', alt: 'Cap Camarat 9.0 WA Sea Runner cruising the Italian Riviera' },
+  { src: '/boat-3.webp', alt: 'Sea Runner boat aerial view over the Golfo dei Poeti' },
+  { src: '/bathroom.webp', alt: 'Bathroom on board Sea Runner Cap Camarat 9.0 WA' },
+  { src: '/fridge.webp', alt: 'Solar-powered fridge on board Sea Runner private boat' },
+  { src: '/sunset-table.webp', alt: 'Sunset aperitivo at the table on Sea Runner private boat tour' },
 ];
 
 function BoatPhotoGallery() {
@@ -2935,7 +2980,7 @@ function BoatPhotoGallery() {
 
 // ============ PLANIMETRIA SECTION ============
 // componente separato perché gestisce lo stato di errore in caricamento immagine
-// (quando /plani.jpg manca, mostriamo un placeholder pulito senza crash)
+// (quando /plani.webp manca, mostriamo un placeholder pulito senza crash)
 function BoatLayoutSection() {
   const [imgError, setImgError] = useState(false);
   return (
@@ -2951,7 +2996,7 @@ function BoatLayoutSection() {
             BOAT LAYOUT COMING SOON
           </div>
         ) : (
-          <img src="/plani.jpg" alt="Cap Camarat 9.0 WA Sea Runner — boat layout and floor plan"
+          <img src="/plani.webp" alt="Cap Camarat 9.0 WA Sea Runner — boat layout and floor plan"
             className="w-full h-auto"
             onError={() => setImgError(true)} />
         )}
@@ -3137,7 +3182,7 @@ function PrivacyPage() {
 
       <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl mb-3">Privacy Policy</h1>
-        <p className="text-slate-500 text-sm mb-10">Last updated: April 2026</p>
+        <p className="text-slate-500 text-sm mb-10">Last updated: June 2026</p>
 
         <div className="space-y-8 text-slate-300 leading-relaxed">
 
@@ -3184,6 +3229,7 @@ function PrivacyPage() {
               <li><strong className="text-white">Web3Forms</strong> (based in the United States) — used to deliver booking request emails from our website to our inbox. Data transferred: all booking form fields. Safeguards: standard contractual clauses (SCC) for extra-EU data transfer.</li>
               <li><strong className="text-white">Google Calendar</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used to manage tour availability. No personal customer data is transferred to Google Calendar; only internal scheduling information is stored. Safeguards: EU-US Data Privacy Framework.</li>
               <li><strong className="text-white">Vercel Inc.</strong> (based in the United States) — used to host our website. May collect standard server log data (IP address, browser type, access timestamps) for operational purposes. Safeguards: EU-US Data Privacy Framework.</li>
+              <li><strong className="text-white">Google Analytics</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used, <strong className="text-white">only with your consent</strong>, to collect anonymous statistics on how visitors use the website (pages viewed, approximate location, device and browser type), so we can improve it. Analytics cookies are not loaded until you accept them through our cookie banner. Safeguards: EU-US Data Privacy Framework. Legal basis: your consent (GDPR art. 6.1.a).</li>
             </ul>
             <p className="mt-3 text-sm">We do not sell, rent, or share your personal data with any party beyond what is strictly required to provide our service.</p>
           </section>
@@ -3216,7 +3262,7 @@ function PrivacyPage() {
           <section>
             <h2 className="text-xl sm:text-2xl text-white mb-3">7. Cookies</h2>
             <p className="text-sm">
-              This website uses only technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices. It does not use profiling cookies or third-party tracking cookies without your consent. You can manage your preferences at any time by clearing your browser's local storage.
+              This website uses technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices — these do not require consent. With your explicit consent, it also uses analytics cookies (Google Analytics) to produce anonymous statistics on the use of the site; these are activated only after you click "Accept" on the cookie banner, and are never loaded if you decline. It does not use profiling or advertising cookies. You can change your choice at any time by clearing your browser's local storage, which will make the cookie banner appear again.
             </p>
           </section>
 
@@ -3253,26 +3299,69 @@ function PrivacyPage() {
 }
 
 
-// ============ COOKIE BANNER ============
-// banner provvisorio conforme al minimo sindacale del garante italiano.
-// compare in basso, non intrusivo, salva la scelta in localStorage.
-// NOTA: una volta attivato iubenda questo va sostituito con il loro widget ufficiale.
+// ============ COOKIE BANNER + GOOGLE ANALYTICS (con consenso GDPR) ============
+// Google Analytics viene caricato SOLO se l'utente accetta i cookie.
+// Prima del consenso non parte nessun tracciamento (niente cookie, niente dati).
+// La scelta viene memorizzata: chi ha già accettato non rivede il banner.
+const GA_MEASUREMENT_ID = 'G-D1LWJXKQ2P';
+
+// carica lo script ufficiale di Google Analytics, una sola volta, dopo il consenso
+function loadGoogleAnalytics() {
+  if (typeof window === 'undefined' || window.__gaLoaded) return; // evita doppio caricamento
+  window.__gaLoaded = true;
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+
+  // consenso concesso dall'utente → attiva la memorizzazione analitica
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+
+  // inietta lo script gtag.js
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+  document.head.appendChild(s);
+
+  gtag('js', new Date());
+  gtag('config', GA_MEASUREMENT_ID);
+}
+
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // mostra solo se l'utente non ha ancora scelto
-    try {
-      const choice = localStorage.getItem('sr-cookie-consent');
-      if (!choice) setVisible(true);
-    } catch {
-      // se localStorage bloccato (safari privato ecc), mostriamo comunque
+    // PRIMA di tutto: per default il tracciamento è NEGATO (GDPR / Consent Mode v2).
+    // Così, finché l'utente non accetta, nulla viene memorizzato.
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ window.dataLayer.push(arguments); }
+      if (!window.__gaConsentDefault) {
+        window.__gaConsentDefault = true;
+        gtag('consent', 'default', {
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied'
+        });
+      }
+    }
+
+    let choice = null;
+    try { choice = localStorage.getItem('sr-cookie-consent'); } catch {}
+    if (choice === 'accepted') {
+      // l'utente aveva già accettato in una visita precedente: carica Analytics
+      loadGoogleAnalytics();
+    } else if (!choice) {
+      // nessuna scelta ancora fatta: mostra il banner
       setVisible(true);
     }
+    // se 'declined' → non carichiamo nulla e non mostriamo il banner
   }, []);
 
   const save = (value) => {
     try { localStorage.setItem('sr-cookie-consent', value); } catch {}
+    if (value === 'accepted') loadGoogleAnalytics();
     setVisible(false);
   };
 
@@ -3283,7 +3372,7 @@ function CookieBanner() {
       style={{ fontFamily: 'Georgia, serif' }}>
       <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
         <p className="text-slate-300 text-xs sm:text-sm leading-relaxed flex-1">
-          This website uses technical cookies strictly necessary for its functioning. No profiling or tracking cookies are used without your consent. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.
+          We use technical cookies necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used and improve it. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.
         </p>
         <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
           <button onClick={() => save('declined')}
@@ -3339,6 +3428,7 @@ function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/boat" element={<BoatPage />} />
         <Route path="/booking" element={<BookingApp />} />
+        <Route path="/booking/thank-you" element={<BookingApp />} />
         <Route path="/booking/:slug" element={<BookingApp />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         {/* fallback: rotte non esistenti riportano a home */}
