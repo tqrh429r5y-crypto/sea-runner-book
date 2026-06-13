@@ -475,6 +475,8 @@ function BookingApp() {
   const bookingLocation = useLocation();
   const navigate = useNavigate();
   const { slug } = useParams(); // slug del tour dall'URL /booking/:slug (undefined su /booking)
+  // pagina di conferma con URL dedicato (/booking/thank-you), usata per il tracking conversioni Google Ads
+  const isThankYou = bookingLocation.pathname === '/booking/thank-you';
   const [tours, setTours] = useState(initialTours);
   // flag di caricamento iniziale dei dati da supabase:
   // true = stiamo recuperando dati freschi, false = siamo pronti.
@@ -724,6 +726,13 @@ function BookingApp() {
   //  - /booking?tour=ID (vecchio formato) → reindirizza automaticamente al nuovo URL pulito
   //  - /booking        → schermata di scelta tour (step 1)
   useEffect(() => {
+    // pagina di conferma con URL dedicato: non è né un tour né la scelta tour.
+    // se ci si arriva direttamente o si ricarica senza aver inviato, si torna al booking.
+    if (bookingLocation.pathname === '/booking/thank-you') {
+      if (!submitted) navigate('/booking', { replace: true });
+      return;
+    }
+
     // retrocompatibilità: i vecchi link ?tour=ID vengono rediretti al nuovo URL /booking/slug
     const params = new URLSearchParams(bookingLocation.search);
     const legacyId = params.get('tour');
@@ -751,7 +760,7 @@ function BookingApp() {
       if (selectedTour) setSelectedTour(null);
       setCurrentStep(1);
     }
-  }, [slug, bookingLocation.search, tours]);
+  }, [slug, bookingLocation.pathname, bookingLocation.search, tours, submitted]);
 
   // === autenticazione skipper via supabase ===
   // al mount controlliamo se c'è già una sessione salvata (marco torna dopo giorni → resta loggato).
@@ -1137,6 +1146,10 @@ ${customerData.notes || 'No special requests'}
     }
 
     setSubmitted(true);
+    // porta l'utente alla pagina di conferma con URL dedicato (/booking/thank-you).
+    // serve a Google Ads per tracciare le conversioni in base all'URL raggiunto.
+    navigate('/booking/thank-you');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const resetBooking = () => {
@@ -1552,10 +1565,16 @@ ${customerData.notes || 'No special requests'}
     );
   }
 
-  // ============ CONFIRMATION ============
-  if (submitted) {
+  // ============ CONFIRMATION (URL dedicato /booking/thank-you) ============
+  if (isThankYou) {
+    // atterraggio diretto/refresh senza dati di invio → l'effetto reindirizza a /booking
+    if (!submitted) return null;
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 py-8" style={{ fontFamily: 'Georgia, serif' }}>
+        <Helmet>
+          <title>Thank you — Request received | Sea Runner</title>
+          <meta name="robots" content="noindex, follow" />
+        </Helmet>
         <div className="max-w-md w-full text-center text-white">
           <div className="mb-6 flex justify-center"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-white text-sm tracking-[0.3em] mb-8">SEA RUNNER</p>
@@ -2307,7 +2326,7 @@ ${customerData.notes || 'No special requests'}
                   {/* messaggio specifico se la causa è il filtro antispam */}
                   {submitError.message && submitError.message.toLowerCase().includes('spam') ? (
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                      Our system could not validate your request. Please double-check your <span className="text-amber-400">name</span>, <span className="text-amber-400">email</span>, and <span className="text-amber-400">phone number</span> are complete and correct, then try again. If the problem persists, contact us directly:
+                      Our system could not validate your request. Please review the details you entered <span className="text-amber-400">carefully</span> — make sure your <span className="text-amber-400">phone number</span> and <span className="text-amber-400">email address</span> are written correctly and in full, with no typos or missing characters, then try again. If the problem persists, contact us directly:
                     </p>
                   ) : (
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
@@ -3409,6 +3428,7 @@ function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/boat" element={<BoatPage />} />
         <Route path="/booking" element={<BookingApp />} />
+        <Route path="/booking/thank-you" element={<BookingApp />} />
         <Route path="/booking/:slug" element={<BookingApp />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         {/* fallback: rotte non esistenti riportano a home */}
