@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { createClient } from '@supabase/supabase-js';
@@ -2620,7 +2620,107 @@ function FAQSection({ id = 'faq' }) {
   );
 }
 
+// ============ SOCIAL SECTION ============
+function InstagramIcon({ className = 'w-7 h-7' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+function TikTokIcon({ className = 'w-7 h-7' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.2v12.9a2.59 2.59 0 0 1-2.59 2.5 2.59 2.59 0 1 1 0-5.18c.27 0 .52.04.77.12V9.86a5.86 5.86 0 0 0-.77-.05 5.78 5.78 0 1 0 5.78 5.78V9.01a7.43 7.43 0 0 0 4.33 1.38V7.18a4.28 4.28 0 0 1-3.26-1.36z" />
+    </svg>
+  );
+}
 
+function SocialSection() {
+  const socials = [
+    { name: 'Instagram', handle: '@searunner_laspezia', url: 'https://www.instagram.com/searunner_laspezia/', Icon: InstagramIcon },
+    { name: 'TikTok', handle: '@searunner.5terre', url: 'https://www.tiktok.com/@searunner.5terre', Icon: TikTokIcon }
+  ];
+  return (
+    <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
+      <div className="max-w-3xl mx-auto px-4 text-center">
+        <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">FOLLOW THE JOURNEY</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">A daily glimpse of the Riviera</h2>
+        <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
+        <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto mb-10">
+          Sunsets, hidden coves and behind-the-scenes from our days at sea. Follow us to see where Sea Runner sails next.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+          {socials.map(({ name, handle, url, Icon }) => (
+            <a key={name} href={url} target="_blank" rel="noopener noreferrer"
+              className="group bg-slate-900 border border-slate-800 hover:border-amber-400 transition p-6 flex flex-col items-center gap-3">
+              <span className="w-14 h-14 rounded-full border border-slate-700 group-hover:border-amber-400 flex items-center justify-center text-slate-300 group-hover:text-amber-400 transition-all group-hover:-translate-y-0.5">
+                <Icon />
+              </span>
+              <span className="text-xs tracking-[0.3em] uppercase text-white group-hover:text-amber-400 transition">{name}</span>
+              <span className="text-[11px] text-slate-500">{handle}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ HOME VIDEO (drone) ============
+function HomeVideoSection() {
+  const wrapRef = useRef(null);
+  const videoRef = useRef(null);
+  const [load, setLoad] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.15, rootMargin: '300px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (visible && !load) setLoad(true);
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    if (visible) v.play?.().catch(() => {});
+    else v.pause?.();
+  }, [visible, load]);
+
+  useEffect(() => {
+    if (!load) return;
+    const v = videoRef.current;
+    if (v) { v.muted = true; v.load(); v.play().catch(() => {}); }
+  }, [load]);
+
+  return (
+    <section ref={wrapRef} className="border-t border-slate-800 py-14 sm:py-20">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <video
+            ref={videoRef}
+            poster="/drone-poster.webp"
+            muted loop playsInline preload="none"
+            className="w-full h-full block"
+            style={{ objectFit: 'cover' }}>
+            {load && <source src="/drone.mp4" type="video/mp4" />}
+          </video>
+        </div>
+      </div>
+    </section>
+  );
+}
 // ============ HOMEPAGE (route /) ============
 function HomePage() {
   // dati strutturati JSON-LD per Google: dichiarano "questa è un'attività turistica nautica
@@ -2679,8 +2779,9 @@ function HomePage() {
     },
     // sameAs: link a tutti i profili "esterni" della stessa azienda.
     // questo aiuta google a confermare che sito + google business + tripadvisor + instagram sono la stessa entità.
-    "sameAs": [
+"sameAs": [
       "https://www.instagram.com/searunner_laspezia/",
+      "https://www.tiktok.com/@searunner.5terre",
       "https://www.tripadvisor.it/AttractionProductReview-g187824-d25176464-Cinque_Terre_and_Portovenere_Private_Boat_Tour_from_La_Spezia-La_Spezia_Province_o.html",
       "https://share.google/kXcd0FNDaHPgSmngG"
     ]
@@ -2797,7 +2898,7 @@ function HomePage() {
           </div>
         </div>
       </section>
-
+<HomeVideoSection />
       {/* TOURS PREVIEW */}
       <section className="border-t border-slate-800 py-14 sm:py-20">
         <div className="max-w-7xl mx-auto px-4">
@@ -2863,7 +2964,7 @@ function HomePage() {
 
       {/* FAQ — prima del contact, così chi scorre le trova prima di uscire */}
       <FAQSection />
-
+<SocialSection />
       {/* CONTACT STRIP */}
       <section className="border-t border-slate-800 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
