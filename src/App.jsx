@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { createClient } from '@supabase/supabase-js';
