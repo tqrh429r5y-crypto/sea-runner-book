@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { createClient } from '@supabase/supabase-js';
@@ -2620,59 +2620,7 @@ function FAQSection({ id = 'faq' }) {
   );
 }
 
-// ============ HOME VIDEO (drone) ============
-// video del drone integrato subito sotto l'hero, nella larghezza del sito, senza cornice.
-// caricamento pigro: la <source> viene montata SOLO quando entra nello schermo,
-// così non pesa sull'LCP dell'hero. autoplay anche su mobile.
-// (rispettiamo prefers-reduced-motion: chi ha disattivato le animazioni vede solo il poster.)
-function HomeVideoSection() {
-  const wrapRef = useRef(null);
-  const videoRef = useRef(null);
-  const [load, setLoad] = useState(false);
-  const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) return; // accessibilità: niente video, resta il poster
-    const el = wrapRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.2 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (visible && !load) setLoad(true);
-    const v = videoRef.current;
-    if (!v) return;
-    if (visible) v.play?.().catch(() => {});
-    else v.pause?.();
-  }, [visible, load]);
-
-  useEffect(() => {
-    if (!load) return;
-    const v = videoRef.current;
-    if (v) { v.load(); v.play().catch(() => {}); }
-  }, [load]);
-
-  return (
-    <div ref={wrapRef} className="max-w-5xl mx-auto px-4 pt-6 sm:pt-10">
-      <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
-        <video
-          ref={videoRef}
-          poster="/drone-poster.webp"
-          muted loop playsInline preload="none"
-          className="w-full h-full block"
-          style={{ objectFit: 'cover' }}>
-          {load && <source src="/drone.mp4" type="video/mp4" />}
-        </video>
-      </div>
-    </div>
-  );
-}
 // ============ HOMEPAGE (route /) ============
 function HomePage() {
   // dati strutturati JSON-LD per Google: dichiarano "questa è un'attività turistica nautica
@@ -2800,10 +2748,8 @@ function HomePage() {
             0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
             50% { transform: translate(-50%, 6px); opacity: 1; }
           }
-       `}</style>
+        `}</style>
       </section>
-
-      <HomeVideoSection />
 
       {/* INTRO */}
       <section className="max-w-4xl mx-auto px-4 py-14 sm:py-20 text-center">
