@@ -185,14 +185,16 @@ async function fetchGoogleCalendarEvents() {
 
 // ============ LOGO ============
 function SeaRunnerLogoCompact({ size = 'sm' }) {
-  const sizes = { sm: 50, md: 80 };
-  const s = sizes[size];
+  // altezza del logo in px per le due taglie usate nel sito
+  const heights = { sm: 36, md: 56 };
+  const h = heights[size] || 36;
   return (
-    <svg width={s*2} height={s} viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M 20,40 Q 60,15 100,35 Q 140,20 180,35" stroke="#60a5fa" strokeWidth="10" fill="none" strokeLinecap="round"/>
-      <path d="M 25,55 Q 65,30 105,50 Q 145,35 180,50" stroke="#3b82f6" strokeWidth="9" fill="none" strokeLinecap="round"/>
-      <path d="M 110,48 Q 140,40 170,48" stroke="#fbbf24" strokeWidth="7" fill="none" strokeLinecap="round"/>
-    </svg>
+    <img
+      src="/logo.webp"
+      alt="Sea Runner"
+      style={{ height: h, width: 'auto', display: 'block' }}
+      width="400" height="140"
+    />
   );
 }
 
