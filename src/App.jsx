@@ -2807,8 +2807,10 @@ function HomePage() {
             0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
             50% { transform: translate(-50%, 6px); opacity: 1; }
           }
-        `}</style>
+       `}</style>
       </section>
+
+      <HomeVideoSection />
 
       {/* INTRO */}
       <section className="max-w-4xl mx-auto px-4 py-14 sm:py-20 text-center">
