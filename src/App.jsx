@@ -2620,7 +2620,66 @@ function FAQSection({ id = 'faq' }) {
   );
 }
 
+// ============ HOME VIDEO SECTION (drone) ============
+// video del drone, sotto l'hero. caricamento pigro: la <source> viene montata
+// SOLO quando la sezione entra nello schermo, così non pesa sull'LCP dell'hero.
+// su mobile / reduced-motion resta solo il poster (immagine statica leggera).
+function HomeVideoSection() {
+  const sectionRef = useRef(null);
+  const videoRef = useRef(null);
+  const [load, setLoad] = useState(false);
+  const [visible, setVisible] = useState(false);
 
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobile = window.matchMedia('(max-width: 768px)').matches;
+    if (reduce || mobile) return; // niente video: resta il poster
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.25 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (visible && !load) setLoad(true);
+    const v = videoRef.current;
+    if (!v) return;
+    if (visible) v.play?.().catch(() => {});
+    else v.pause?.();
+  }, [visible, load]);
+
+  useEffect(() => {
+    if (!load) return;
+    const v = videoRef.current;
+    if (v) { v.load(); v.play().catch(() => {}); }
+  }, [load]);
+
+  return (
+    <section ref={sectionRef} className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="text-center mb-8 sm:mb-10">
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">SEEN FROM ABOVE</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">The coast from the sky</h2>
+          <div className="w-16 h-px bg-amber-400 mx-auto"></div>
+        </div>
+        <div className="relative overflow-hidden border border-slate-800 bg-slate-950" style={{ aspectRatio: '16/9' }}>
+          <video
+            ref={videoRef}
+            poster="/drone-poster.webp"
+            muted loop playsInline preload="none"
+            className="w-full h-full"
+            style={{ objectFit: 'cover' }}>
+            {load && <source src="/drone.mp4" type="video/mp4" />}
+          </video>
+        </div>
+      </div>
+    </section>
+  );
+}
 // ============ HOMEPAGE (route /) ============
 function HomePage() {
   // dati strutturati JSON-LD per Google: dichiarano "questa è un'attività turistica nautica
