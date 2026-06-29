@@ -934,64 +934,63 @@ const getBookedSlotsOnDate = (date) => {
     return [...internalSlots, ...gcalSlots];
   };
 
-  const isTourAvailableOnDate = (tour, date) => {
-    // prima cosa: controllo se lo skipper ha chiuso questa data dalla dashboard
+const isTourAvailableOnDate = (tour, date) => {
+    // 1) chiusura manuale dalla dashboard: blocca tutto
     const key = dateToKey(date);
     if (dateOverrides[key]?.closed) return { available: false };
 
     const booked = getBookedSlotsOnDate(date);
     if (booked.length === 0) return { available: true };
 
-    // analizziamo gli slot occupati distinguendo pending (prenotabili con needs-confirmation)
-    // da confirmed/gcal (che bloccano veramente la data)
-    const confirmedOnly = booked.filter(b => !b.isPending);
-    const anyExtended = booked.some(b => b.slotType === 'full-day-extended');
-    const anyFullDay = booked.some(b => b.slotType === 'full-day');
-    const anySunset = booked.some(b => b.slotType === 'sunset');
-    const anyHalfMorning = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
-    const anyHalfAfternoon = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
-    const anyHalfEvening = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
-    const hasConfirmedExtended = confirmedOnly.some(b => b.slotType === 'full-day-extended');
-    const hasConfirmedFullDay = confirmedOnly.some(b => b.slotType === 'full-day');
-    const hasConfirmedSunset = confirmedOnly.some(b => b.slotType === 'sunset');
-    const hasConfirmedHalfMorning = confirmedOnly.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
-    const hasConfirmedHalfAfternoon = confirmedOnly.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
-    const hasConfirmedHalfEvening = confirmedOnly.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
+    // cosa è occupato quel giorno (solo confermati + gcal, niente pending)
+    const hasExtended      = booked.some(b => b.slotType === 'full-day-extended'); // Portofino
+    const hasFullDay       = booked.some(b => b.slotType === 'full-day');          // Cinque Terre / Golfo
+    const hasSunset        = booked.some(b => b.slotType === 'sunset');
+    const hasHalfMorning   = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
+    const hasHalfAfternoon = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
+    const hasHalfEvening   = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
 
-    // helper: se ci sono conflitti SOLO da pending → available con needsConfirmation
-    const pendingConflictReason = 'Another request is pending for this date — skipper will confirm';
-
-    if (tour.slotType === 'full-day-extended') {
-      if (hasConfirmedExtended || hasConfirmedFullDay || hasConfirmedHalfMorning || hasConfirmedHalfAfternoon) return { available: false };
-      if (anyExtended || anyFullDay || anyHalfMorning || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
-      if (hasConfirmedSunset || anySunset) return { available: true, needsConfirmation: true, reason: 'Sunset already booked — skipper will confirm' };
-      return { available: true };
-    }
+    // --- FULL DAY (Cinque Terre, Golfo — 7h) ---
+    // disponibile anche con un half-day in una fascia o con un sunset.
+    // bloccato solo se c'è già una giornata intera (altro full-day o Portofino).
     if (tour.slotType === 'full-day') {
-      if (hasConfirmedExtended || hasConfirmedFullDay || hasConfirmedHalfMorning || hasConfirmedHalfAfternoon) return { available: false };
-      if (anyExtended || anyFullDay || anyHalfMorning || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      if (hasFullDay || hasExtended) return { available: false };
       return { available: true };
     }
+
+    // --- PORTOFINO (full-day-extended) ---
+    // richiede il giorno libero, ma resta disponibile se l'unica cosa presente
+    // è un sunset o un half-day serale. bloccato da full-day, altro Portofino,
+    // o half-day mattina/pomeriggio.
+    if (tour.slotType === 'full-day-extended') {
+      if (hasFullDay || hasExtended || hasHalfMorning || hasHalfAfternoon) return { available: false };
+      return { available: true };
+    }
+
+    // --- SUNSET (3h serali) ---
+    // incompatibile con un altro sunset o con un half-day serale.
+    // disponibile se c'è full-day, Portofino, o half-day mattina/pomeriggio.
     if (tour.slotType === 'sunset') {
-      if (hasConfirmedSunset || hasConfirmedHalfEvening) return { available: false };
-      if (anySunset || anyHalfEvening) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
-      if (hasConfirmedExtended || anyExtended) return { available: true, needsConfirmation: true, reason: 'Portofino tour booked — skipper will confirm' };
-      if (hasConfirmedHalfAfternoon || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: 'Afternoon half day booked — skipper will confirm' };
+      if (hasSunset || hasHalfEvening) return { available: false };
       return { available: true };
     }
+
+    // --- HALF DAY (scelta fascia: mattina / pomeriggio / sera) ---
+    // ogni fascia è indipendente: si blocca solo la fascia identica già occupata.
+    // la sera è in comune col sunset (sunset e half-day serale si escludono a vicenda).
+    // una giornata intera (full-day o Portofino) occupa tutto → niente half-day.
     if (tour.slotType === 'half-day-choice') {
-      if (hasConfirmedExtended || hasConfirmedFullDay) return { available: false };
-      if (anyExtended || anyFullDay) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
-      return { available: true, bookedParts: {
-        morning: hasConfirmedHalfMorning,
-        afternoon: hasConfirmedHalfAfternoon,
-        evening: hasConfirmedHalfEvening || hasConfirmedSunset
-      }, pendingParts: {
-        morning: anyHalfMorning && !hasConfirmedHalfMorning,
-        afternoon: anyHalfAfternoon && !hasConfirmedHalfAfternoon,
-        evening: (anyHalfEvening || anySunset) && !(hasConfirmedHalfEvening || hasConfirmedSunset)
-      }};
+      if (hasFullDay || hasExtended) return { available: false };
+      return {
+        available: true,
+        bookedParts: {
+          morning: hasHalfMorning,
+          afternoon: hasHalfAfternoon,
+          evening: hasHalfEvening || hasSunset
+        }
+      };
     }
+
     return { available: true };
   };
 
