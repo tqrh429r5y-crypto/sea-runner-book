@@ -942,7 +942,7 @@ const isTourAvailableOnDate = (tour, date) => {
     const booked = getBookedSlotsOnDate(date);
     if (booked.length === 0) return { available: true };
 
-    // cosa è occupato quel giorno (solo confermati + gcal, niente pending)
+    // cosa è occupato quel giorno (solo confermati + gcal; pending e in-check non entrano)
     const hasExtended      = booked.some(b => b.slotType === 'full-day-extended'); // Portofino
     const hasFullDay       = booked.some(b => b.slotType === 'full-day');          // Cinque Terre / Golfo
     const hasSunset        = booked.some(b => b.slotType === 'sunset');
@@ -951,10 +951,21 @@ const isTourAvailableOnDate = (tour, date) => {
     const hasHalfEvening   = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
 
     // --- FULL DAY (Cinque Terre, Golfo — 7h) ---
-    // disponibile anche con un half-day in una fascia o con un sunset.
-    // bloccato solo se c'è già una giornata intera (altro full-day o Portofino).
+    // disponibile SOLO se:
+    //   - giornata libera, oppure
+    //   - c'è SOLO una half mattina, oppure
+    //   - c'è SOLO un sunset, oppure
+    //   - c'è SOLO una half serale.
+    // bloccato negli altri casi: half pomeriggio (anche da sola),
+    // 2+ impegni qualsiasi, un altro full-day, o un Portofino.
     if (tour.slotType === 'full-day') {
       if (hasFullDay || hasExtended) return { available: false };
+      if (hasHalfAfternoon) return { available: false };
+      const occupiedSlots =
+        (hasHalfMorning ? 1 : 0) +
+        (hasHalfEvening ? 1 : 0) +
+        (hasSunset ? 1 : 0);
+      if (occupiedSlots >= 2) return { available: false };
       return { available: true };
     }
 
