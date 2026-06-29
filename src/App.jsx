@@ -915,21 +915,21 @@ function BookingApp() {
   // ============ LOGICA SLOT ============
   // unisce due sorgenti: bookings interni (dal form sea runner) + eventi google calendar (dal .ics).
   // entrambi hanno la stessa struttura { slotType, part }, così la logica a valle non cambia.
-  const getBookedSlotsOnDate = (date) => {
+const getBookedSlotsOnDate = (date) => {
+    // solo le prenotazioni CONFERMATE occupano davvero la barca.
+    // le 'pending' (richieste non ancora confermate) non bloccano più nulla.
     const internalSlots = bookings
-      .filter(b => b.date.toDateString() === date.toDateString() && (b.status === 'confirmed' || b.status === 'pending'))
+      .filter(b => b.date.toDateString() === date.toDateString() && b.status === 'confirmed')
       .map(b => ({
         slotType: b.slotType,
-        part: b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' : 
+        part: b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' :
               b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
-              b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null,
-        // pending = non conferma ancora, la data rimane prenotabile come "needs confirmation"
-        isPending: b.status === 'pending'
+              b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null
       }));
 
     const gcalSlots = gcalEvents
       .filter(e => e.date.toDateString() === date.toDateString())
-      .map(e => ({ slotType: e.slotType, part: e.part, isPending: false }));
+      .map(e => ({ slotType: e.slotType, part: e.part }));
 
     return [...internalSlots, ...gcalSlots];
   };
