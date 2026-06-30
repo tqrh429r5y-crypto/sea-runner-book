@@ -23,6 +23,20 @@ const SITE_URL = 'https://searunner.it';
 // immagine principale usata come anteprima social (Open Graph). deve essere assoluta (URL completa).
 const SITE_OG_IMAGE = `${SITE_URL}/boat-2.webp`;
 const SITE_NAME = 'Sea Runner';
+// ============ INTERVALLI ORARI SLOT (per disponibilità a orari reali) ============
+const HHMM = (h, m = 0) => h * 60 + m;
+const SLOT_INTERVALS = {
+  'full-day':          [HHMM(10, 0), HHMM(17, 0)],
+  'full-day-extended': [HHMM(9, 0),  HHMM(19, 0)],
+  'sunset':            [HHMM(19, 0), HHMM(21, 0)],
+  'morning':           [HHMM(9, 30), HHMM(13, 30)],
+  'afternoon':         [HHMM(14, 0), HHMM(18, 0)],
+  'evening':           [HHMM(19, 0), HHMM(21, 0)],
+};
+function intervalsOverlap(a, b) { return a[0] < b[1] && b[0] < a[1]; }
+function isIntervalFree(controlInterval, busyIntervals) {
+  return !busyIntervals.some(b => intervalsOverlap(controlInterval, b));
+}
 
 function SEOMetadata({ title, description, image, path = '/', type = 'website' }) {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
