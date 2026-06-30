@@ -925,26 +925,40 @@ function BookingApp() {
   // ============ LOGICA SLOT ============
   // unisce due sorgenti: bookings interni (dal form sea runner) + eventi google calendar (dal .ics).
   // entrambi hanno la stessa struttura { slotType, part }, così la logica a valle non cambia.
-const getBookedSlotsOnDate = (date) => {
-    // solo le prenotazioni CONFERMATE occupano davvero la barca.
-    // le 'pending' (richieste non ancora confermate) non bloccano più nulla.
+// restituisce gli intervalli orari OCCUPATI nella data (solo confermati + gcal).
+  // ogni elemento ha { interval: [startMin, endMin], slotType, part }.
+  const getBookedSlotsOnDate = (date) => {
+    const slotToInterval = (slotType, part) => {
+      if (slotType === 'full-day') return SLOT_INTERVALS['full-day'];
+      if (slotType === 'full-day-extended') return SLOT_INTERVALS['full-day-extended'];
+      if (slotType === 'sunset') return SLOT_INTERVALS['evening'];
+      if (slotType === 'half-day' || slotType === 'half-day-choice') {
+        if (part === 'morning') return SLOT_INTERVALS['morning'];
+        if (part === 'afternoon') return SLOT_INTERVALS['afternoon'];
+        if (part === 'evening') return SLOT_INTERVALS['evening'];
+      }
+      return null;
+    };
+
     const internalSlots = bookings
       .filter(b => b.date.toDateString() === date.toDateString() && b.status === 'confirmed')
-      .map(b => ({
-        slotType: b.slotType,
-        part: b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' :
-              b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
-              b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null
-      }));
+      .map(b => {
+        const part = b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' :
+                     b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
+                     b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null;
+        return { slotType: b.slotType, part, interval: slotToInterval(b.slotType, part) };
+      })
+      .filter(s => s.interval);
 
     const gcalSlots = gcalEvents
       .filter(e => e.date.toDateString() === date.toDateString())
-      .map(e => ({ slotType: e.slotType, part: e.part }));
+      .map(e => ({ slotType: e.slotType, part: e.part, interval: e.interval || slotToInterval(e.slotType, e.part) }))
+      .filter(s => s.interval);
 
     return [...internalSlots, ...gcalSlots];
   };
 
-const isTourAvailableOnDate = (tour, date) => {
+  const isTourAvailableOnDate = (tour, date) => {
     // 1) chiusura manuale dalla dashboard: blocca tutto
     const key = dateToKey(date);
     if (dateOverrides[key]?.closed) return { available: false };
@@ -952,69 +966,38 @@ const isTourAvailableOnDate = (tour, date) => {
     const booked = getBookedSlotsOnDate(date);
     if (booked.length === 0) return { available: true };
 
-    // cosa è occupato quel giorno (solo confermati + gcal; pending e in-check non entrano)
-    const hasExtended      = booked.some(b => b.slotType === 'full-day-extended'); // Portofino
-    const hasFullDay       = booked.some(b => b.slotType === 'full-day');          // Cinque Terre / Golfo
-    const hasSunset        = booked.some(b => b.slotType === 'sunset');
-    const hasHalfMorning   = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
-    const hasHalfAfternoon = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
-    const hasHalfEvening   = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
+    // intervalli occupati quel giorno (solo confermati + gcal; pending e in-check non entrano)
+    const busy = booked.map(b => b.interval);
 
-    // --- FULL DAY (Cinque Terre, Golfo — 7h) ---
-    // disponibile SOLO se:
-    //   - giornata libera, oppure
-    //   - c'è SOLO una half mattina, oppure
-    //   - c'è SOLO un sunset, oppure
-    //   - c'è SOLO una half serale.
-    // bloccato negli altri casi: half pomeriggio (anche da sola),
-    // 2+ impegni qualsiasi, un altro full-day, o un Portofino.
+    // FULL DAY: prenotabile se la fascia 10-17 è libera
     if (tour.slotType === 'full-day') {
-      if (hasFullDay || hasExtended) return { available: false };
-      if (hasHalfAfternoon) return { available: false };
-      const occupiedSlots =
-        (hasHalfMorning ? 1 : 0) +
-        (hasHalfEvening ? 1 : 0) +
-        (hasSunset ? 1 : 0);
-      if (occupiedSlots >= 2) return { available: false };
-      return { available: true };
+      return { available: isIntervalFree(SLOT_INTERVALS['full-day'], busy) };
     }
-
-    // --- PORTOFINO (full-day-extended) ---
-    // richiede il giorno libero, ma resta disponibile se l'unica cosa presente
-    // è un sunset o un half-day serale. bloccato da full-day, altro Portofino,
-    // o half-day mattina/pomeriggio.
+    // PORTOFINO: prenotabile se la fascia 9-19 è libera
     if (tour.slotType === 'full-day-extended') {
-      if (hasFullDay || hasExtended || hasHalfMorning || hasHalfAfternoon) return { available: false };
-      return { available: true };
+      return { available: isIntervalFree(SLOT_INTERVALS['full-day-extended'], busy) };
     }
-
-    // --- SUNSET (3h serali) ---
-    // incompatibile con un altro sunset o con un half-day serale.
-    // disponibile se c'è full-day, Portofino, o half-day mattina/pomeriggio.
+    // SUNSET: prenotabile se la fascia serale 19-21 è libera
     if (tour.slotType === 'sunset') {
-      if (hasSunset || hasHalfEvening) return { available: false };
-      return { available: true };
+      return { available: isIntervalFree(SLOT_INTERVALS['sunset'], busy) };
     }
-
-    // --- HALF DAY (scelta fascia: mattina / pomeriggio / sera) ---
-    // ogni fascia è indipendente: si blocca solo la fascia identica già occupata.
-    // la sera è in comune col sunset (sunset e half-day serale si escludono a vicenda).
-    // una giornata intera (full-day o Portofino) occupa tutto → niente half-day.
+    // HALF DAY: ogni fascia controllata indipendentemente sui suoi orari reali
     if (tour.slotType === 'half-day-choice') {
-      if (hasFullDay || hasExtended) return { available: false };
+      const morningFree   = isIntervalFree(SLOT_INTERVALS['morning'], busy);
+      const afternoonFree = isIntervalFree(SLOT_INTERVALS['afternoon'], busy);
+      const eveningFree   = isIntervalFree(SLOT_INTERVALS['evening'], busy);
       return {
-        available: true,
+        available: morningFree || afternoonFree || eveningFree,
         bookedParts: {
-          morning: hasHalfMorning,
-          afternoon: hasHalfAfternoon,
-          evening: hasHalfEvening || hasSunset
+          morning: !morningFree,
+          afternoon: !afternoonFree,
+          evening: !eveningFree
         }
       };
     }
 
     return { available: true };
   };
-
   const WEB3FORMS_KEY = '970b85ef-e255-4ada-8ecf-52673d5cecc5';
 
   const getFinalTimeSlot = () => {
