@@ -106,19 +106,23 @@ function parseIcsDate(str) {
 //   altri casi                         → full-day (fallback prudente: blocca mattina+pom)
 function classifyCalendarEvent(startUtc, endUtc) {
   const durationHours = (endUtc - startUtc) / (1000 * 60 * 60);
-  // converto l'inizio in ora Europa/Roma per leggere l'ora locale
   const startLocal = new Date(startUtc.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+  const endLocal = new Date(endUtc.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+  const startMin = startLocal.getHours() * 60 + startLocal.getMinutes();
+  const endMin = endLocal.getHours() * 60 + endLocal.getMinutes();
   const startHour = startLocal.getHours();
 
-  if (durationHours >= 9) return 'full-day-extended';
-  if (durationHours >= 6) return 'full-day';
+  // ritorna { slotType, part, interval } — interval = fascia occupata in minuti, usata per i conflitti
+  if (durationHours >= 9) return { slotType: 'full-day-extended', part: null, interval: SLOT_INTERVALS['full-day-extended'] };
+  if (durationHours >= 6) return { slotType: 'full-day', part: null, interval: SLOT_INTERVALS['full-day'] };
   if (durationHours >= 3) {
-    if (startHour < 12) return 'half-day-morning';
-    if (startHour < 16) return 'half-day-afternoon';
-    return 'sunset';
+    if (startHour < 12) return { slotType: 'half-day-choice', part: 'morning', interval: SLOT_INTERVALS['morning'] };
+    if (startHour < 16) return { slotType: 'half-day-choice', part: 'afternoon', interval: SLOT_INTERVALS['afternoon'] };
+    // serale (sunset o half-evening): normalizzato alla fascia serale 19-21
+    return { slotType: 'sunset', part: 'evening', interval: SLOT_INTERVALS['evening'] };
   }
-  // evento breve anomalo — lo trattiamo come full-day per prudenza
-  return 'full-day';
+  // evento breve anomalo: orario reale, non blocca tutto il giorno
+  return { slotType: 'full-day', part: null, interval: [startMin, endMin] };
 }
 
 // fa il fetch del .ics e restituisce un array di eventi normalizzati.
