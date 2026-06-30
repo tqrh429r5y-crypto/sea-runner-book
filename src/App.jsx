@@ -23,20 +23,6 @@ const SITE_URL = 'https://searunner.it';
 // immagine principale usata come anteprima social (Open Graph). deve essere assoluta (URL completa).
 const SITE_OG_IMAGE = `${SITE_URL}/boat-2.webp`;
 const SITE_NAME = 'Sea Runner';
-// ============ INTERVALLI ORARI SLOT (per disponibilità a orari reali) ============
-const HHMM = (h, m = 0) => h * 60 + m;
-const SLOT_INTERVALS = {
-  'full-day':          [HHMM(10, 0), HHMM(17, 0)],
-  'full-day-extended': [HHMM(9, 0),  HHMM(19, 0)],
-  'sunset':            [HHMM(19, 0), HHMM(21, 0)],
-  'morning':           [HHMM(9, 30), HHMM(13, 30)],
-  'afternoon':         [HHMM(14, 0), HHMM(18, 0)],
-  'evening':           [HHMM(19, 0), HHMM(21, 0)],
-};
-function intervalsOverlap(a, b) { return a[0] < b[1] && b[0] < a[1]; }
-function isIntervalFree(controlInterval, busyIntervals) {
-  return !busyIntervals.some(b => intervalsOverlap(controlInterval, b));
-}
 
 function SEOMetadata({ title, description, image, path = '/', type = 'website' }) {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
@@ -106,23 +92,19 @@ function parseIcsDate(str) {
 //   altri casi                         → full-day (fallback prudente: blocca mattina+pom)
 function classifyCalendarEvent(startUtc, endUtc) {
   const durationHours = (endUtc - startUtc) / (1000 * 60 * 60);
+  // converto l'inizio in ora Europa/Roma per leggere l'ora locale
   const startLocal = new Date(startUtc.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
-  const endLocal = new Date(endUtc.toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
-  const startMin = startLocal.getHours() * 60 + startLocal.getMinutes();
-  const endMin = endLocal.getHours() * 60 + endLocal.getMinutes();
   const startHour = startLocal.getHours();
 
-  // ritorna { slotType, part, interval } — interval = fascia occupata in minuti, usata per i conflitti
-  if (durationHours >= 9) return { slotType: 'full-day-extended', part: null, interval: SLOT_INTERVALS['full-day-extended'] };
-  if (durationHours >= 6) return { slotType: 'full-day', part: null, interval: SLOT_INTERVALS['full-day'] };
+  if (durationHours >= 9) return 'full-day-extended';
+  if (durationHours >= 6) return 'full-day';
   if (durationHours >= 3) {
-    if (startHour < 12) return { slotType: 'half-day-choice', part: 'morning', interval: SLOT_INTERVALS['morning'] };
-    if (startHour < 16) return { slotType: 'half-day-choice', part: 'afternoon', interval: SLOT_INTERVALS['afternoon'] };
-    // serale (sunset o half-evening): normalizzato alla fascia serale 19-21
-    return { slotType: 'sunset', part: 'evening', interval: SLOT_INTERVALS['evening'] };
+    if (startHour < 12) return 'half-day-morning';
+    if (startHour < 16) return 'half-day-afternoon';
+    return 'sunset';
   }
-  // evento breve anomalo: orario reale, non blocca tutto il giorno
-  return { slotType: 'full-day', part: null, interval: [startMin, endMin] };
+  // evento breve anomalo — lo trattiamo come full-day per prudenza
+  return 'full-day';
 }
 
 // fa il fetch del .ics e restituisce un array di eventi normalizzati.
@@ -176,13 +158,21 @@ async function fetchGoogleCalendarEvents() {
       const eventDurationHours = (endUtc - startUtc) / (1000 * 60 * 60);
       if (eventDurationHours < 2) continue;
 
-      const classified = classifyCalendarEvent(startUtc, endUtc);
+      const slotType = classifyCalendarEvent(startUtc, endUtc);
+      let part = null;
+      if (slotType === 'half-day-morning') part = 'morning';
+      else if (slotType === 'half-day-afternoon') part = 'afternoon';
+      else if (slotType === 'sunset') part = 'evening';
+
+      let normalizedSlot = slotType;
+      if (slotType === 'half-day-morning' || slotType === 'half-day-afternoon') {
+        normalizedSlot = 'half-day-choice';
+      }
 
       events.push({
         date: new Date(startUtc),
-        slotType: classified.slotType,
-        part: classified.part,
-        interval: classified.interval,
+        slotType: normalizedSlot,
+        part,
         source: 'gcal'
       });
     }
@@ -925,79 +915,86 @@ function BookingApp() {
   // ============ LOGICA SLOT ============
   // unisce due sorgenti: bookings interni (dal form sea runner) + eventi google calendar (dal .ics).
   // entrambi hanno la stessa struttura { slotType, part }, così la logica a valle non cambia.
-// restituisce gli intervalli orari OCCUPATI nella data (solo confermati + gcal).
-  // ogni elemento ha { interval: [startMin, endMin], slotType, part }.
   const getBookedSlotsOnDate = (date) => {
-    const slotToInterval = (slotType, part) => {
-      if (slotType === 'full-day') return SLOT_INTERVALS['full-day'];
-      if (slotType === 'full-day-extended') return SLOT_INTERVALS['full-day-extended'];
-      if (slotType === 'sunset') return SLOT_INTERVALS['evening'];
-      if (slotType === 'half-day' || slotType === 'half-day-choice') {
-        if (part === 'morning') return SLOT_INTERVALS['morning'];
-        if (part === 'afternoon') return SLOT_INTERVALS['afternoon'];
-        if (part === 'evening') return SLOT_INTERVALS['evening'];
-      }
-      return null;
-    };
-
     const internalSlots = bookings
-      .filter(b => b.date.toDateString() === date.toDateString() && b.status === 'confirmed')
-      .map(b => {
-        const part = b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' :
-                     b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
-                     b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null;
-        return { slotType: b.slotType, part, interval: slotToInterval(b.slotType, part) };
-      })
-      .filter(s => s.interval);
+      .filter(b => b.date.toDateString() === date.toDateString() && (b.status === 'confirmed' || b.status === 'pending'))
+      .map(b => ({
+        slotType: b.slotType,
+        part: b.timeSlot && b.timeSlot.toLowerCase().includes('morning') ? 'morning' : 
+              b.timeSlot && b.timeSlot.toLowerCase().includes('afternoon') ? 'afternoon' :
+              b.timeSlot && b.timeSlot.toLowerCase().includes('evening') ? 'evening' : null,
+        // pending = non conferma ancora, la data rimane prenotabile come "needs confirmation"
+        isPending: b.status === 'pending'
+      }));
 
     const gcalSlots = gcalEvents
       .filter(e => e.date.toDateString() === date.toDateString())
-      .map(e => ({ slotType: e.slotType, part: e.part, interval: e.interval || slotToInterval(e.slotType, e.part) }))
-      .filter(s => s.interval);
+      .map(e => ({ slotType: e.slotType, part: e.part, isPending: false }));
 
     return [...internalSlots, ...gcalSlots];
   };
 
   const isTourAvailableOnDate = (tour, date) => {
-    // 1) chiusura manuale dalla dashboard: blocca tutto
+    // prima cosa: controllo se lo skipper ha chiuso questa data dalla dashboard
     const key = dateToKey(date);
     if (dateOverrides[key]?.closed) return { available: false };
 
     const booked = getBookedSlotsOnDate(date);
     if (booked.length === 0) return { available: true };
 
-    // intervalli occupati quel giorno (solo confermati + gcal; pending e in-check non entrano)
-    const busy = booked.map(b => b.interval);
+    // analizziamo gli slot occupati distinguendo pending (prenotabili con needs-confirmation)
+    // da confirmed/gcal (che bloccano veramente la data)
+    const confirmedOnly = booked.filter(b => !b.isPending);
+    const anyExtended = booked.some(b => b.slotType === 'full-day-extended');
+    const anyFullDay = booked.some(b => b.slotType === 'full-day');
+    const anySunset = booked.some(b => b.slotType === 'sunset');
+    const anyHalfMorning = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
+    const anyHalfAfternoon = booked.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
+    const anyHalfEvening = booked.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
+    const hasConfirmedExtended = confirmedOnly.some(b => b.slotType === 'full-day-extended');
+    const hasConfirmedFullDay = confirmedOnly.some(b => b.slotType === 'full-day');
+    const hasConfirmedSunset = confirmedOnly.some(b => b.slotType === 'sunset');
+    const hasConfirmedHalfMorning = confirmedOnly.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'morning');
+    const hasConfirmedHalfAfternoon = confirmedOnly.some(b => (b.slotType === 'half-day' || b.slotType === 'half-day-choice') && b.part === 'afternoon');
+    const hasConfirmedHalfEvening = confirmedOnly.some(b => b.slotType === 'half-day-choice' && b.part === 'evening');
 
-    // FULL DAY: prenotabile se la fascia 10-17 è libera
-    if (tour.slotType === 'full-day') {
-      return { available: isIntervalFree(SLOT_INTERVALS['full-day'], busy) };
-    }
-    // PORTOFINO: prenotabile se la fascia 9-19 è libera
+    // helper: se ci sono conflitti SOLO da pending → available con needsConfirmation
+    const pendingConflictReason = 'Another request is pending for this date — skipper will confirm';
+
     if (tour.slotType === 'full-day-extended') {
-      return { available: isIntervalFree(SLOT_INTERVALS['full-day-extended'], busy) };
+      if (hasConfirmedExtended || hasConfirmedFullDay || hasConfirmedHalfMorning || hasConfirmedHalfAfternoon) return { available: false };
+      if (anyExtended || anyFullDay || anyHalfMorning || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      if (hasConfirmedSunset || anySunset) return { available: true, needsConfirmation: true, reason: 'Sunset already booked — skipper will confirm' };
+      return { available: true };
     }
-    // SUNSET: prenotabile se la fascia serale 19-21 è libera
+    if (tour.slotType === 'full-day') {
+      if (hasConfirmedExtended || hasConfirmedFullDay || hasConfirmedHalfMorning || hasConfirmedHalfAfternoon) return { available: false };
+      if (anyExtended || anyFullDay || anyHalfMorning || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      return { available: true };
+    }
     if (tour.slotType === 'sunset') {
-      return { available: isIntervalFree(SLOT_INTERVALS['sunset'], busy) };
+      if (hasConfirmedSunset || hasConfirmedHalfEvening) return { available: false };
+      if (anySunset || anyHalfEvening) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      if (hasConfirmedExtended || anyExtended) return { available: true, needsConfirmation: true, reason: 'Portofino tour booked — skipper will confirm' };
+      if (hasConfirmedHalfAfternoon || anyHalfAfternoon) return { available: true, needsConfirmation: true, reason: 'Afternoon half day booked — skipper will confirm' };
+      return { available: true };
     }
-    // HALF DAY: ogni fascia controllata indipendentemente sui suoi orari reali
     if (tour.slotType === 'half-day-choice') {
-      const morningFree   = isIntervalFree(SLOT_INTERVALS['morning'], busy);
-      const afternoonFree = isIntervalFree(SLOT_INTERVALS['afternoon'], busy);
-      const eveningFree   = isIntervalFree(SLOT_INTERVALS['evening'], busy);
-      return {
-        available: morningFree || afternoonFree || eveningFree,
-        bookedParts: {
-          morning: !morningFree,
-          afternoon: !afternoonFree,
-          evening: !eveningFree
-        }
-      };
+      if (hasConfirmedExtended || hasConfirmedFullDay) return { available: false };
+      if (anyExtended || anyFullDay) return { available: true, needsConfirmation: true, reason: pendingConflictReason };
+      return { available: true, bookedParts: {
+        morning: hasConfirmedHalfMorning,
+        afternoon: hasConfirmedHalfAfternoon,
+        evening: hasConfirmedHalfEvening || hasConfirmedSunset
+      }, pendingParts: {
+        morning: anyHalfMorning && !hasConfirmedHalfMorning,
+        afternoon: anyHalfAfternoon && !hasConfirmedHalfAfternoon,
+        evening: (anyHalfEvening || anySunset) && !(hasConfirmedHalfEvening || hasConfirmedSunset)
+      }};
     }
-
     return { available: true };
   };
+
   const WEB3FORMS_KEY = '970b85ef-e255-4ada-8ecf-52673d5cecc5';
 
   const getFinalTimeSlot = () => {
