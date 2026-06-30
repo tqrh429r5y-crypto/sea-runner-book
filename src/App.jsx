@@ -176,21 +176,13 @@ async function fetchGoogleCalendarEvents() {
       const eventDurationHours = (endUtc - startUtc) / (1000 * 60 * 60);
       if (eventDurationHours < 2) continue;
 
-      const slotType = classifyCalendarEvent(startUtc, endUtc);
-      let part = null;
-      if (slotType === 'half-day-morning') part = 'morning';
-      else if (slotType === 'half-day-afternoon') part = 'afternoon';
-      else if (slotType === 'sunset') part = 'evening';
-
-      let normalizedSlot = slotType;
-      if (slotType === 'half-day-morning' || slotType === 'half-day-afternoon') {
-        normalizedSlot = 'half-day-choice';
-      }
+      const classified = classifyCalendarEvent(startUtc, endUtc);
 
       events.push({
         date: new Date(startUtc),
-        slotType: normalizedSlot,
-        part,
+        slotType: classified.slotType,
+        part: classified.part,
+        interval: classified.interval,
         source: 'gcal'
       });
     }
