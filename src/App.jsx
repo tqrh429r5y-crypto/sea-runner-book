@@ -315,7 +315,7 @@ const initialTours = [
   {
     id: 'cinque-terre', slug: 'cinque-terre', name: 'Cinque Terre', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
-    basePrice: 1500, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
+    basePrice: 1550, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
     cardImage: '/cinque-terre.webp',
     itineraryAccent: '#d4a355',
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
@@ -337,7 +337,7 @@ const initialTours = [
   {
     id: 'golfo-poeti', slug: 'golfo-dei-poeti', name: 'Golfo dei poeti', subtitle: 'Full day Tour',
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
-    basePrice: 1400, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
+    basePrice: 1550, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
     cardImage: '/golfo-poeti.webp',
     itineraryAccent: '#d4a355',
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
@@ -359,7 +359,7 @@ const initialTours = [
   {
     id: 'portofino', slug: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
-    basePrice: 2350, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
+    basePrice: 2400, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
     cardImage: '/portofino-v2.webp',
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
@@ -379,7 +379,7 @@ const initialTours = [
   {
     id: 'half-day-choice', slug: 'half-day', name: 'Half day', subtitle: 'Cinque Terre or Golfo dei Poeti',
     duration: '4 hours', slotType: 'half-day-choice',
-    basePrice: 1000, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
+    basePrice: 1200, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
     cardImage: '/half-day-v2.webp',
     itineraryAccent: '#d4a355',
     shortDesc: 'Pick your coastline, pick your moment. Morning, afternoon or evening.',
@@ -417,7 +417,7 @@ const initialTours = [
   {
     id: 'sunset', slug: 'sunset', name: 'Sunset Tour', subtitle: 'Golden hour aperitivo',
     duration: '3.5 hours', fixedTime: '17:30 – 21:00', slotType: 'sunset',
-    basePrice: 800, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
+    basePrice: 1000, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
     cardImage: '/sunset.webp',
     itineraryAccent: '#fdba74',
     shortDesc: 'Aperitivo at sea while the coast turns amber and rose.',
