@@ -24,7 +24,7 @@ const SITE_URL = 'https://searunner.it';
 const SITE_OG_IMAGE = `${SITE_URL}/boat-2.webp`;
 const SITE_NAME = 'Sea Runner';
 
-function SEOMetadata({ title, description, image, path = '/', type = 'website' }) {
+function SEOMetadata({ title, description, image, imageWidth = 1877, imageHeight = 1251, path = '/', type = 'website' }) {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const fullUrl = `${SITE_URL}${path}`;
   const ogImage = image || SITE_OG_IMAGE;
@@ -45,8 +45,9 @@ function SEOMetadata({ title, description, image, path = '/', type = 'website' }
       <meta property="og:url" content={fullUrl} />
       <meta property="og:type" content={type} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
+      {/* dimensioni reali dell'immagine (default = boat-2.webp 1877×1251) */}
+      <meta property="og:image:width" content={String(imageWidth)} />
+      <meta property="og:image:height" content={String(imageHeight)} />
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="en_US" />
 
@@ -220,7 +221,7 @@ function whatsappLink(prefilledMessage = '') {
 function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about your tours.' }) {
   return (
     <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-lg hover:shadow-xl transition-all p-4 flex items-center justify-center group"
+      className="fixed bottom-6 right-6 z-[60] bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-lg hover:shadow-xl transition-all p-4 flex items-center justify-center group"
       style={{ boxShadow: '0 4px 20px rgba(37, 211, 102, 0.4)' }}
       title="Chat with us on WhatsApp"
       aria-label="Chat with Sea Runner on WhatsApp">
@@ -266,8 +267,14 @@ function ItineraryTimeline({ itinerary, accentColor = '#d4a355', footnote = '' }
 }
 
 // ============ TOUR CARD IMAGE ============
-function TourCardImage({ tour }) {
+// testo alternativo (alt) delle foto dei tour: uguale al testo scritto nell'immagine + breve contesto (SEO)
+const tourImageAlt = (tour) => tour.imageTitle ? `${tour.imageTitle} – private boat tour from La Spezia` : tour.name;
+
+function TourCardImage({ tour, large = false }) {
   // se il tour ha un'immagine reale, la mostriamo in formato 3:2
+  // srcSet: il browser sceglie da solo la versione piccola (1000px) o grande (2000px) in base allo schermo
+  const srcSet = tour.cardImageSmall ? `${tour.cardImageSmall} 1000w, ${tour.cardImage} 2000w` : undefined;
+  const sizes = large ? '(min-width: 1024px) 1000px, 100vw' : '(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw';
   if (tour.cardImage) {
     return (
       <div className="relative overflow-hidden w-full" style={{ 
@@ -276,10 +283,12 @@ function TourCardImage({ tour }) {
       }}>
         <img 
           src={tour.cardImage} 
-          alt={tour.name}
+          srcSet={srcSet}
+          sizes={srcSet ? sizes : undefined}
+          alt={tourImageAlt(tour)}
           className="w-full h-full"
           style={{ objectFit: 'cover', objectPosition: 'center' }}
-          loading="lazy"
+          loading={large ? 'eager' : 'lazy'}
           onError={(e) => { e.target.style.display = 'none'; }}
         />
       </div>
@@ -317,6 +326,8 @@ const initialTours = [
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1650, maxPeople: 8, brandColor: '#0b3d7e', accent: '#fbbf24',
     cardImage: '/cinque-terre.webp',
+    // versione piccola per le card + testo scritto dentro l'immagine (usato per alt e H1 invisibile, SEO)
+    cardImageSmall: '/cinque-terre-1000.webp', imageTitle: 'Full Day Tour Cinque Terre',
     itineraryAccent: '#d4a355',
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
@@ -339,6 +350,8 @@ const initialTours = [
     duration: '7 hours', fixedTime: '10:00 – 17:00', slotType: 'full-day',
     basePrice: 1650, maxPeople: 8, brandColor: '#0e5d63', accent: '#fbbf24',
     cardImage: '/golfo-poeti.webp',
+    // versione piccola per le card + testo scritto dentro l'immagine (usato per alt e H1 invisibile, SEO)
+    cardImageSmall: '/golfo-poeti-1000.webp', imageTitle: 'Full Day Tour Golfo dei Poeti',
     itineraryAccent: '#d4a355',
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
@@ -361,6 +374,8 @@ const initialTours = [
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
     basePrice: 2500, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
     cardImage: '/portofino-v2.webp',
+    // versione piccola per le card + testo scritto dentro l'immagine (usato per alt e H1 invisibile, SEO)
+    cardImageSmall: '/portofino-v2-1000.webp', imageTitle: 'Full Day Tour Portofino',
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
@@ -381,6 +396,8 @@ const initialTours = [
     duration: '4 hours', slotType: 'half-day-choice',
     basePrice: 1250, maxPeople: 8, brandColor: '#1e40af', accent: '#fbbf24',
     cardImage: '/half-day-v2.webp',
+    // versione piccola per le card + testo scritto dentro l'immagine (usato per alt e H1 invisibile, SEO)
+    cardImageSmall: '/half-day-v2-1000.webp', imageTitle: 'Half Day Tour Cinque Terre / Golfo dei Poeti',
     itineraryAccent: '#d4a355',
     shortDesc: 'Pick your coastline, pick your moment. Morning, afternoon or evening.',
     longDesc: 'A shorter escape with the same magic. Choose between the Cinque Terre route or the Golfo dei Poeti, then pick the light you prefer: fresh morning, sunny afternoon, or evening golden hour.',
@@ -419,6 +436,8 @@ const initialTours = [
     duration: '3.5 hours', fixedTime: '17:30 – 21:00', slotType: 'sunset',
     basePrice: 1050, maxPeople: 8, brandColor: '#e8893b', accent: '#fdba74',
     cardImage: '/sunset.webp',
+    // versione piccola per le card + testo scritto dentro l'immagine (usato per alt e H1 invisibile, SEO)
+    cardImageSmall: '/sunset-1000.webp', imageTitle: 'Sunset Tour',
     itineraryAccent: '#fdba74',
     shortDesc: 'Aperitivo at sea while the coast turns amber and rose.',
     longDesc: 'The most romantic way to end the day. Sail the Golfo dei Poeti as the sun melts behind Palmaria, sip a Ligurian aperitivo with local wines, and let the colours do the rest.',
@@ -451,6 +470,8 @@ const initialTours = [
     duration: 'Flexible', slotType: 'custom',
     basePrice: 0, maxPeople: 8, brandColor: '#1e293b', accent: '#fbbf24',
     cardImage: '/tailored-tour.webp',
+    // versione piccola per le card + testo scritto dentro l'immagine (usato per alt e H1 invisibile, SEO)
+    cardImageSmall: '/tailored-tour-1000.webp', imageTitle: 'Full Day Tour Tailored Tour',
     shortDesc: 'Your own itinerary. Marco and Paola craft the perfect day at sea.',
     longDesc: 'Choose destinations, duration and activities. Captain Marco and Paola will craft the perfect day based on your preferences.',
     includes: ['Everything tailored to you'], isCustom: true
@@ -1601,7 +1622,7 @@ ${customerData.notes || 'No special requests'}
             {selectedTour && (
               <div className="relative w-full" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
                 {selectedTour.cardImage ? (
-                  <img src={selectedTour.cardImage} alt={selectedTour.name}
+                  <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour)}
                     className="w-full h-full"
                     style={{ objectFit: 'cover', objectPosition: 'center' }}
                     onError={(e) => { e.target.style.display = 'none'; }} />
@@ -1702,6 +1723,8 @@ ${customerData.notes || 'No special requests'}
         description={seoDescription}
         path={selectedTour ? `/booking/${selectedTour.slug}` : '/booking'}
         image={selectedTour?.cardImage ? `${SITE_URL}${selectedTour.cardImage}` : undefined}
+        imageWidth={selectedTour?.cardImage ? 2000 : undefined}
+        imageHeight={selectedTour?.cardImage ? 1333 : undefined}
       />
       {/* schema TouristTrip + breadcrumb iniettati solo se c'è un tour selezionato (deep link) */}
       {tourTripSchema && (
@@ -1720,6 +1743,8 @@ ${customerData.notes || 'No special requests'}
       )}
       {/* navbar condivisa con home/boat/booking */}
       <SharedNav />
+      {/* titolo principale per google, invisibile (sr-only): nome del tour come scritto nell'immagine */}
+      <h1 className="sr-only">{selectedTour ? (selectedTour.imageTitle || selectedTour.name) : 'Private boat tours from La Spezia'}</h1>
 
       {/* barra step specifica del booking */}
       <div className="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
@@ -1733,9 +1758,6 @@ ${customerData.notes || 'No special requests'}
               </div>
             ))}
           </div>
-          <button onClick={() => setShowSkipperLogin(true)} className="flex items-center gap-2 text-[10px] text-slate-500 hover:text-amber-400 transition tracking-widest flex-shrink-0">
-            <Lock className="w-3 h-3" /> SKIPPER
-          </button>
         </div>
       </div>
 
@@ -1802,7 +1824,7 @@ ${customerData.notes || 'No special requests'}
           </div>
 
           <div className="mb-8">
-            <TourCardImage tour={selectedTour} />
+            <TourCardImage tour={selectedTour} large />
             <div className="bg-slate-900 border border-slate-800 border-t-0 p-8">
               <p className="text-slate-300 leading-relaxed max-w-3xl mb-6">{selectedTour.longDesc}</p>
               <div className="flex flex-wrap gap-4 text-sm text-slate-300 pt-4 border-t border-slate-800">
@@ -2168,7 +2190,7 @@ ${customerData.notes || 'No special requests'}
             <div className="max-w-xs mx-auto mb-8">
               <div className="relative overflow-hidden rounded-lg border border-slate-800" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
                 {selectedTour.cardImage ? (
-                  <img src={selectedTour.cardImage} alt={selectedTour.name}
+                  <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour)}
                     className="w-full h-full"
                     style={{ objectFit: 'cover', objectPosition: 'center' }}
                     onError={(e) => { e.target.style.display = 'none'; }} />
@@ -2422,8 +2444,12 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
           <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
           <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
-          <p className="text-slate-500 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
-          <p className="text-slate-700 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+          <p className="text-slate-400 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
+          <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+          {/* accesso dashboard skipper: spostato qui dall'intestazione (ott 2026) */}
+          <button onClick={() => setShowSkipperLogin(true)} className="inline-flex items-center gap-1.5 mt-6 text-[10px] text-slate-400 hover:text-amber-400 transition tracking-widest">
+            <Lock className="w-3 h-3" /> Area riservata
+          </button>
         </div>
       </footer>
 
@@ -2466,7 +2492,7 @@ function SharedNav() {
         <Link to="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="flex-shrink-0"><SeaRunnerLogoCompact size="sm" /></div>
           <div className="min-w-0">
-            <h1 className="text-white text-sm sm:text-lg tracking-[0.15em] sm:tracking-[0.2em] truncate">SEA RUNNER</h1>
+            <p className="text-white text-sm sm:text-lg tracking-[0.15em] sm:tracking-[0.2em] truncate">SEA RUNNER</p>
             <p className="text-amber-400 text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em] truncate">PRIVATE BOAT TOURS</p>
           </div>
         </Link>
@@ -2769,16 +2795,7 @@ function HomePage() {
       { "@type": "Place", "name": "Italian Riviera" }
     ],
     "availableLanguage": ["Italian", "English", "French"],
-    // aggregateRating: dichiara a google che abbiamo recensioni reali sul nostro profilo google.
-    // i numeri (71 recensioni, 5 stelle) sono onesti e verificabili sul google business profile.
-    // questa info può attivare le "stelline" sotto il titolo nei risultati di ricerca.
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": "80",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
+    // aggregateRating rimosso (ott 2026): google non mostra stelle per recensioni dichiarate dall'azienda stessa
     // sameAs: link a tutti i profili "esterni" della stessa azienda.
     // questo aiuta google a confermare che sito + google business + tripadvisor + instagram sono la stessa entità.
 "sameAs": [
@@ -3170,7 +3187,7 @@ function BoatPage() {
             <Users className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
             <p className="text-lg sm:text-2xl mb-1 leading-tight">up to 8</p>
             <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">GUESTS</p>
-            <p className="text-[8px] sm:text-[10px] text-slate-600 tracking-wider mt-1 sm:mt-2">+ crew</p>
+            <p className="text-[8px] sm:text-[10px] text-slate-400 tracking-wider mt-1 sm:mt-2">+ crew</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
             <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
@@ -3253,15 +3270,15 @@ function SharedFooter() {
         <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
         <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
         <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
-        <p className="text-slate-500 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
-        <p className="text-slate-700 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+        <p className="text-slate-400 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
+        <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
 
         {/* info aziendali — d.lgs 70/2003 */}
         <div className="mt-6 pt-6 border-t border-slate-800/50">
-          <p className="text-[10px] text-slate-600 tracking-wider leading-relaxed">
+          <p className="text-[10px] text-slate-400 tracking-wider leading-relaxed">
             M B di Bulgheresi Marco · Via Buonviaggio 152/A, La Spezia · P.IVA IT 01096850118
           </p>
-          <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-slate-600 tracking-widest">
+          <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-slate-400 tracking-widest">
             <Link to="/privacy" className="hover:text-amber-400 transition">PRIVACY POLICY</Link>
           </div>
         </div>
@@ -3473,13 +3490,15 @@ function CookieBanner() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 backdrop-blur"
       style={{ fontFamily: 'Georgia, serif' }}>
-      <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+      {/* su telefono: testo breve e spazio a destra (pr-24) per lasciare visibile il pulsante WhatsApp */}
+      <div className="max-w-6xl mx-auto pl-4 pr-24 sm:px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6">
         <p className="text-slate-300 text-xs sm:text-sm leading-relaxed flex-1">
-          We use technical cookies necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used and improve it. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.
+          <span className="sm:hidden">We use analytics cookies (Google Analytics) only with your consent. <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link></span>
+          <span className="hidden sm:inline">We use technical cookies necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used and improve it. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.</span>
         </p>
         <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
           <button onClick={() => save('declined')}
-            className="flex-1 sm:flex-initial px-4 py-2 text-xs tracking-widest text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition">
+            className="flex-1 sm:flex-initial px-4 py-2 text-xs tracking-widest text-slate-300 hover:text-white border border-slate-600 hover:border-slate-400 transition">
             DECLINE
           </button>
           <button onClick={() => save('accepted')}
@@ -3494,6 +3513,33 @@ function CookieBanner() {
 
 
 // ============ ROOT APP CON ROUTER ============
+
+// ============ PAGINA NON TROVATA (404) ============
+// mostrata per gli indirizzi che non esistono. Vercel restituisce anche il codice 404 vero (vedi vercel.json + vite.config.js, che crea dist/404.html)
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col" style={{ fontFamily: 'Georgia, serif' }}>
+      <Helmet>
+        <title>Page not found | Sea Runner</title>
+        <meta name="robots" content="noindex" />
+      </Helmet>
+      <SharedNav />
+      <div className="flex-1 flex items-center justify-center px-4 py-24">
+        <div className="text-center max-w-lg">
+          <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">404</p>
+          <h1 className="text-4xl sm:text-5xl mb-4">Page not found</h1>
+          <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
+          <p className="text-slate-300 mb-8">The page you are looking for doesn't exist. Discover our private boat tours instead.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/" className="px-6 py-3 border border-slate-600 text-sm tracking-widest hover:border-amber-400 transition">HOME</Link>
+            <Link to="/booking" className="px-6 py-3 bg-amber-400 text-slate-950 text-sm tracking-widest hover:bg-amber-300 transition">OUR TOURS</Link>
+          </div>
+        </div>
+      </div>
+      <SharedFooter />
+    </div>
+  );
+}
 
 // resetta lo scroll in cima ogni volta che cambia l'url — altrimenti react router
 // mantiene la posizione di scroll della pagina precedente e il cliente atterra a metà pagina.
@@ -3527,6 +3573,8 @@ function AppRoutes() {
         <meta name="google-site-verification" content="zpjKX-1DmcXTbp_XSXR0ilbmUl4t5G3SIlHYlPLoONQ" />
       </Helmet>
       <ScrollToTop />
+      {/* <main>: contenitore principale della pagina (accessibilità / struttura HTML), non cambia la grafica */}
+      <main>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/boat" element={<BoatPage />} />
@@ -3534,9 +3582,10 @@ function AppRoutes() {
         <Route path="/booking/thank-you" element={<BookingApp />} />
         <Route path="/booking/:slug" element={<BookingApp />} />
         <Route path="/privacy" element={<PrivacyPage />} />
-        {/* fallback: rotte non esistenti riportano a home */}
-        <Route path="*" element={<HomePage />} />
+        {/* indirizzi inesistenti: pagina "non trovata" (prima mostravano la home) */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </main>
       {/* cookie banner visibile fino a scelta esplicita */}
       <CookieBanner />
     </HelmetProvider>

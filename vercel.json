@@ -1,6 +1,18 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "sea-runner-book.vercel.app" }],
+      "destination": "https://searunner.it/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/boat", "destination": "/index.html" },
+    { "source": "/booking", "destination": "/index.html" },
+    { "source": "/booking/:path*", "destination": "/index.html" },
+    { "source": "/privacy", "destination": "/index.html" }
   ],
   "crons": [
     { "path": "/api/keep-alive", "schedule": "0 6 * * *" }
