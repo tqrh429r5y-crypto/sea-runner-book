@@ -1776,6 +1776,8 @@ ${customerData.notes || 'No special requests'}
             {tours.map((tour) => (
               <div key={tour.id} onClick={() => handleTourSelect(tour)}
                 className="group cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
+                {/* nome del tour in testo sopra la foto: solo su telefono (da computer la card resta identica) */}
+                <h3 className="md:hidden px-5 pt-4 pb-3 text-white text-lg tracking-wide">{tour.name}</h3>
                 <TourCardImage tour={tour} />
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-800">
@@ -2512,7 +2514,7 @@ function SharedNav() {
 
         {/* menu hamburger mobile */}
         <button onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden text-slate-400 hover:text-amber-400 transition"
+          className="md:hidden text-slate-400 hover:text-amber-400 transition p-2.5 -m-2.5"
           aria-label="Toggle menu">
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -2932,6 +2934,8 @@ function HomePage() {
             {initialTours.slice(0, 3).map(tour => (
               <Link key={tour.id} to={`/booking/${tour.slug}`}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
+                {/* nome del tour in testo sopra la foto: solo su telefono (da computer la card resta identica) */}
+                <h3 className="md:hidden px-5 pt-4 pb-3 text-white text-lg tracking-wide">{tour.name}</h3>
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
@@ -3082,7 +3086,7 @@ function BoatPhotoGallery() {
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {photos.map((_, i) => (
                 <button key={i} onClick={() => setIndex(i)}
-                  className={`w-2 h-2 rounded-full transition ${i === index ? 'bg-amber-400 w-6' : 'bg-white/40 hover:bg-white/70'}`}
+                  className={`relative w-2 h-2 rounded-full transition after:content-[''] after:absolute after:-inset-3 ${i === index ? 'bg-amber-400 w-6' : 'bg-white/40 hover:bg-white/70'}`}
                   aria-label={`Go to photo ${i + 1}`} />
               ))}
             </div>
