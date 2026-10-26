@@ -1992,7 +1992,8 @@ ${customerData.notes || 'No special requests'}
                         <span className="text-[10px] text-slate-500 line-through">€{base.toLocaleString()}</span>
                       )}
                       <span className={`text-sm font-semibold ${isDiscount ? 'text-emerald-400' : isSurcharge ? 'text-white' : 'text-white'}`}>
-                        €{eff.toLocaleString()}
+                        {/* ≈ = prezzo indicativo, confermato poi dallo skipper */}
+                        ≈ €{eff.toLocaleString()}
                       </span>
                       {note && isDiscount && (
                         <span className="text-[10px] text-emerald-400/80 italic">· {note}</span>
@@ -2004,10 +2005,7 @@ ${customerData.notes || 'No special requests'}
 
               <div className="mt-3 space-y-1">
                 <p className="text-[10px] text-slate-500 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
-                <p className="text-[10px] text-slate-500 tracking-wider flex items-center gap-1.5">
-                  <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-400 text-slate-950 text-[8px] font-bold leading-none">%</span>
-                  SPECIAL PRICE
-                </p>
+                {/* legenda "special price" tolta (ott 2026): il simbolo % resta sui giorni scontati, ma non si mostra in legenda */}
                 {/* indicatore sincronizzazione google calendar */}
                 <div className="flex items-center gap-2 pt-2 mt-2 border-t border-slate-800">
                   {gcalStatus === 'syncing' && (
@@ -2333,13 +2331,13 @@ ${customerData.notes || 'No special requests'}
                               </span>
                             )}
                           </span>
-                          <span className="text-amber-400 flex-shrink-0">€{effectivePrice.toLocaleString()}</span>
+                          <span className="text-amber-400 flex-shrink-0">≈ €{effectivePrice.toLocaleString()}</span>
                         </div>
                       </>
                     )}
                     <div className="flex justify-between pt-2 border-t border-slate-700/50">
                       <span className="text-slate-300">Indicative price</span>
-                      <span className="text-white text-lg">€{effectivePrice.toLocaleString()}</span>
+                      <span className="text-white text-lg">≈ €{effectivePrice.toLocaleString()}</span>
                     </div>
                     <div className="mt-3 p-3 bg-amber-400/10 border border-amber-400/20">
                       <p className="text-[11px] text-amber-400 leading-relaxed flex items-start gap-2">
