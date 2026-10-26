@@ -359,7 +359,7 @@ const initialTours = [
   {
     id: 'portofino', slug: 'portofino', name: 'Portofino', subtitle: 'San Fruttuoso & Cinque Terre',
     duration: '10 hours', fixedTime: '9:00 – 19:00', slotType: 'full-day-extended',
-    basePrice: 2450, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
+    basePrice: 2500, maxPeople: 8, brandColor: '#065f46', accent: '#fbbf24',
     cardImage: '/portofino-v2.webp',
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
