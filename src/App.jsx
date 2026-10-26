@@ -786,6 +786,21 @@ function BookingApp() {
     }
   }, [slug, bookingLocation.pathname, bookingLocation.search, tours, submitted]);
 
+  // passo 3 (dettagli) legato a #details nell'indirizzo, cosi' i tasti avanti/indietro del browser e del telefono funzionano:
+  //  - indietro dal passo 3 → torna al passo 2 dello stesso tour
+  //  - #details senza una data scelta (es. pagina ricaricata) → si resta al passo 2
+  const detailsPushed = useRef(false);
+  useEffect(() => {
+    if (bookingLocation.pathname === '/booking/thank-you') return;
+    if (bookingLocation.hash === '#details') {
+      if (currentStep === 2 && selectedDate) setCurrentStep(3);
+      else if (currentStep !== 3) navigate(bookingLocation.pathname, { replace: true });
+    } else if (currentStep === 3) {
+      setCurrentStep(2);
+      detailsPushed.current = false;
+    }
+  }, [bookingLocation.hash, bookingLocation.pathname]);
+
   // === autenticazione skipper via supabase ===
   // al mount controlliamo se c'è già una sessione salvata (marco torna dopo giorni → resta loggato).
   // inoltre ascoltiamo cambi di stato: logout, scadenza, refresh token, ecc.
@@ -1776,8 +1791,6 @@ ${customerData.notes || 'No special requests'}
             {tours.map((tour) => (
               <div key={tour.id} onClick={() => handleTourSelect(tour)}
                 className="group cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
-                {/* nome del tour in testo sopra la foto: solo su telefono (da computer la card resta identica) */}
-                <h3 className="md:hidden px-5 pt-4 pb-3 text-white text-lg tracking-wide">{tour.name}</h3>
                 <TourCardImage tour={tour} />
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-800">
@@ -1816,7 +1829,7 @@ ${customerData.notes || 'No special requests'}
       {/* STEP 2 */}
       {currentStep === 2 && selectedTour && (
         <div className="max-w-5xl mx-auto px-4 py-12">
-          <button onClick={() => { setCurrentStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← CHANGE TOUR</button>
+          <button onClick={() => { navigate('/booking'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← CHANGE TOUR</button>
 
           {/* box rassicurazione: il cliente sta solo richiedendo un preventivo, niente obblighi */}
           <div className="mb-6 p-4 bg-amber-400/5 border border-amber-400/20 flex items-start gap-3">
@@ -2114,6 +2127,9 @@ ${customerData.notes || 'No special requests'}
               if (selectedTour.slotType === 'sunset' && selectedTour.itineraryOptions && !halfDayChoiceItinerary) return;
               if (meetingPoint === 'Other' && !customMeetingPoint.trim()) return;
               setCurrentStep(3); window.scrollTo({ top: 0, behavior: 'smooth' });
+              // #details nell'indirizzo: il tasto "indietro" del telefono riporta al passo 2 invece di uscire dal tour
+              detailsPushed.current = true;
+              navigate(`${bookingLocation.pathname}#details`);
             }} 
             disabled={
               !selectedDate ||
@@ -2166,7 +2182,7 @@ ${customerData.notes || 'No special requests'}
                 ))}
               </div>
               <div className="text-center mt-8">
-                <button onClick={() => { setCurrentStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                <button onClick={() => { navigate('/booking'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
                   ← BACK TO ALL TOURS
                 </button>
@@ -2179,7 +2195,11 @@ ${customerData.notes || 'No special requests'}
       {/* STEP 3 */}
       {currentStep === 3 && (
         <div className="max-w-2xl mx-auto px-4 py-12">
-          <button onClick={() => { setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← BACK</button>
+          <button onClick={() => {
+            setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' });
+            // stesso comportamento del tasto indietro del browser (toglie #details)
+            if (detailsPushed.current) navigate(-1); else navigate(bookingLocation.pathname, { replace: true });
+          }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← BACK</button>
 
           <div className="text-center mb-8">
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LAST STEP — YOUR CONTACT INFO</p>
@@ -2934,8 +2954,6 @@ function HomePage() {
             {initialTours.slice(0, 3).map(tour => (
               <Link key={tour.id} to={`/booking/${tour.slug}`}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
-                {/* nome del tour in testo sopra la foto: solo su telefono (da computer la card resta identica) */}
-                <h3 className="md:hidden px-5 pt-4 pb-3 text-white text-lg tracking-wide">{tour.name}</h3>
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
                   <p className="text-slate-400 text-sm mb-4 leading-relaxed">{tour.shortDesc}</p>
