@@ -2860,7 +2860,7 @@ function HomePage() {
         <div className="relative max-w-5xl mx-auto px-4 py-20 sm:py-24 md:py-32 text-center">
           <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] sm:tracking-[0.5em] mb-4 sm:mb-6">LA SPEZIA · ITALIAN RIVIERA</p>
           <h1 className="text-4xl sm:text-5xl md:text-7xl mb-5 sm:mb-6 leading-tight">
-            Private boat tours along the<br/>
+            Private boat tours along the{' '}<br/>
             <span style={{ fontFamily: '"Brush Script MT", "Lucida Handwriting", cursive', color: '#fbbf24', fontSize: '1.2em' }}>italian riviera</span>
           </h1>
           <div className="w-20 sm:w-24 h-px bg-amber-400 mx-auto mb-5 sm:mb-6"></div>
