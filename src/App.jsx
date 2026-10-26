@@ -236,24 +236,25 @@ function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about
 // ============ ITINERARY TIMELINE ============
 // replica lo stile della brochure ufficiale: timeline verticale tratteggiata
 // con pallini colorati, nome tappa in serif, sottotitolo piccolo in grigio
+// su telefono più compatta (spazi e testo ridotti), da computer invariata
 function ItineraryTimeline({ itinerary, accentColor = '#d4a355', footnote = '' }) {
   if (!itinerary || itinerary.length === 0) return null;
   return (
     <div className="py-2">
       <div className="border-t mb-6" style={{ borderColor: accentColor, opacity: 0.5 }}></div>
-      <p className="text-center tracking-[0.4em] text-xs mb-8" style={{ color: accentColor }}>ITINERARY</p>
+      <p className="text-center tracking-[0.4em] text-xs mb-5 sm:mb-8" style={{ color: accentColor }}>ITINERARY</p>
       <div className="relative pl-14 pr-4 max-w-md mx-auto">
         {itinerary.map((stop, i) => {
           const isLast = i === itinerary.length - 1;
           return (
-            <div key={i} className="relative pb-6 last:pb-0">
+            <div key={i} className="relative pb-4 sm:pb-6 last:pb-0">
               {!isLast && (
                 <div className="absolute top-5 bottom-0 border-l-2 border-dashed" style={{ left: '-30px', borderColor: accentColor, opacity: 0.5 }}></div>
               )}
               <div className="absolute w-4 h-4 rounded-full" style={{ left: '-38px', top: '4px', backgroundColor: accentColor }}></div>
               <div>
-                <h4 className="text-white text-base leading-tight" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{stop.place}</h4>
-                {stop.note && <p className="text-slate-400 text-xs mt-1">{stop.note}</p>}
+                <h4 className="text-white text-sm sm:text-base leading-tight" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{stop.place}</h4>
+                {stop.note && <p className="text-slate-400 text-[11px] sm:text-xs mt-0.5 sm:mt-1">{stop.note}</p>}
               </div>
             </div>
           );
