@@ -2528,19 +2528,19 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
 // mostrata in tutte le pagine tranne booking step 2/3 e dashboard skipper
 // (il booking ha già il suo header con gli step 1/2/3)
 // selettore lingua EN | IT: porta alla STESSA pagina nell'altra lingua
-function LanguageSwitcher({ className = '' }) {
+function LanguageSwitcher({ className = '', large = false }) {
   const { lang, t, p } = useLang();
   const { pathname, search, hash } = useLocation();
   // dalla pagina di conferma si torna alla scelta tour (la conferma non ha senso ricaricata)
   const base = stripLang(pathname) === '/booking/thank-you' ? p('/booking') : pathname;
   return (
-    <div className={`flex items-center text-[11px] tracking-[0.2em] ${className}`} role="group" aria-label={t('nav.language')}>
+    <div className={`items-center ${large ? 'text-sm tracking-[0.2em]' : 'text-[10px] sm:text-[11px] tracking-[0.1em] sm:tracking-[0.2em]'} ${className}`} role="group" aria-label={t('nav.language')}>
       {LANG_CODES.map((code, i) => (
         <React.Fragment key={code}>
           {i > 0 && <span className="text-slate-700" aria-hidden="true">|</span>}
           <Link to={switchLangPath(base, search, hash, code)} hrefLang={LANGS[code].htmlLang} lang={LANGS[code].htmlLang}
             title={LANGS[code].name} aria-current={code === lang ? 'true' : undefined}
-            className={`px-1.5 py-2 transition ${code === lang ? 'text-amber-400' : 'text-slate-500 hover:text-amber-400'}`}>
+            className={`${large ? 'px-3 py-2' : 'px-[3px] sm:px-1.5 py-2'} transition ${code === lang ? 'text-amber-400' : 'text-slate-500 hover:text-amber-400'}`}>
             {LANGS[code].label}
           </Link>
         </React.Fragment>
@@ -2578,7 +2578,7 @@ function SharedNav() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-3 md:gap-6 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-6 flex-shrink-0">
         {/* nav desktop */}
         <nav className="hidden md:flex items-center gap-6">
           {links.map(l => (
@@ -2591,8 +2591,8 @@ function SharedNav() {
           ))}
         </nav>
 
-        {/* lingua (sempre visibile, anche da telefono) */}
-        <LanguageSwitcher />
+        {/* lingua: in alto da 385 px in su; sui telefoni più stretti è dentro il menu ☰ (così il nome non viene tagliato) */}
+        <LanguageSwitcher className="hidden min-[385px]:flex" />
 
         {/* menu hamburger mobile */}
         <button onClick={() => setMenuOpen(!menuOpen)}
@@ -2615,6 +2615,10 @@ function SharedNav() {
                 {l.label}
               </button>
             ))}
+            {/* lingua anche nel menu del telefono */}
+            <div className="px-5 py-2 border-t border-slate-800">
+              <LanguageSwitcher className="flex" large />
+            </div>
           </nav>
         </div>
       )}

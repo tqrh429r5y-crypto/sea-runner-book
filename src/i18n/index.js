@@ -2,7 +2,8 @@
 // Il sito esiste in più lingue con indirizzi separati:
 //   inglese  → searunner.it/...      (lingua principale, nessun prefisso)
 //   italiano → searunner.it/it/...
-//   francese → searunner.it/fr/...   (in futuro: basta togliere il commento qui sotto e creare fr.js)
+//   francese → searunner.it/fr/...
+// Per aggiungere un'altra lingua: nuovo file (es. es.js), una riga in LANGS, rotte in vercel.json, pagine nella sitemap.
 //
 // I testi stanno in un file per lingua (en.js, it.js, ...) con le STESSE chiavi.
 // Se in una lingua manca un testo, si usa quello inglese (così il sito non si rompe mai).
@@ -12,14 +13,15 @@
 import { useLocation } from 'react-router-dom';
 import en from './en.js';
 import it from './it.js';
+import fr from './fr.js';
 
 export const LANGS = {
   en: { prefix: '', label: 'EN', name: 'English', htmlLang: 'en', locale: 'en-GB', ogLocale: 'en_US', formLang: 'EN' },
   it: { prefix: '/it', label: 'IT', name: 'Italiano', htmlLang: 'it', locale: 'it-IT', ogLocale: 'it_IT', formLang: 'IT' },
-  // fr: { prefix: '/fr', label: 'FR', name: 'Français', htmlLang: 'fr', locale: 'fr-FR', ogLocale: 'fr_FR', formLang: 'FR' },
+  fr: { prefix: '/fr', label: 'FR', name: 'Français', htmlLang: 'fr', locale: 'fr-FR', ogLocale: 'fr_FR', formLang: 'FR' },
 };
 
-const DICTS = { en, it };
+const DICTS = { en, it, fr };
 
 export const DEFAULT_LANG = 'en';
 export const LANG_CODES = Object.keys(LANGS);

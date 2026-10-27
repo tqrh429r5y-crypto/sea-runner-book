@@ -17,7 +17,12 @@
     { "source": "/it/boat", "destination": "/index.html" },
     { "source": "/it/booking", "destination": "/index.html" },
     { "source": "/it/booking/:path*", "destination": "/index.html" },
-    { "source": "/it/privacy", "destination": "/index.html" }
+    { "source": "/it/privacy", "destination": "/index.html" },
+    { "source": "/fr", "destination": "/index.html" },
+    { "source": "/fr/boat", "destination": "/index.html" },
+    { "source": "/fr/booking", "destination": "/index.html" },
+    { "source": "/fr/booking/:path*", "destination": "/index.html" },
+    { "source": "/fr/privacy", "destination": "/index.html" }
   ],
   "crons": [
     { "path": "/api/keep-alive", "schedule": "0 6 * * *" }
