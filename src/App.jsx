@@ -765,8 +765,9 @@ function BookingApp() {
   useEffect(() => { reloadDateOverrides(); }, []);
   useEffect(() => { syncGoogleCalendar(); }, []);
   useEffect(() => { if (currentStep === 2) syncGoogleCalendar(); }, [currentStep]);
-  // scroll in cima ogni volta che cambia lo step (l'animazione smooth parte dopo il render)
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [currentStep]);
+  // scroll in cima ogni volta che cambia lo step. IMMEDIATO, non "smooth": sui telefoni l'animazione
+  // lunga (dal fondo del passo 2 alla cima) "mangiava" i tocchi e i campi del modulo non si attivavano.
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'auto' }); }, [currentStep]);
 
   // routing del tour:
   //  - /booking/:slug  → pre-seleziona il tour corrispondente e va allo step 2
@@ -2161,7 +2162,7 @@ ${customerData.notes || 'No special requests'}
               // sunset: richiede la scelta dell'itinerario (no orario, è fisso)
               if (selectedTour.slotType === 'sunset' && selectedTour.itineraryOptions && !halfDayChoiceItinerary) return;
               if (meetingPoint === 'Other' && !customMeetingPoint.trim()) return;
-              setCurrentStep(3); window.scrollTo({ top: 0, behavior: 'smooth' });
+              setCurrentStep(3); window.scrollTo({ top: 0, behavior: 'auto' });
               // #details nell'indirizzo: il tasto "indietro" del telefono riporta al passo 2 invece di uscire dal tour
               detailsPushed.current = true;
               navigate(`${bookingLocation.pathname}#details`);
@@ -2229,23 +2230,24 @@ ${customerData.notes || 'No special requests'}
 
       {/* STEP 3 */}
       {currentStep === 3 && (
-        <div className="max-w-2xl mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto px-4 py-6 sm:py-12">
           <button onClick={() => {
-            setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' });
+            setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'auto' });
             // stesso comportamento del tasto indietro del browser (toglie #details)
             if (detailsPushed.current) navigate(-1); else navigate(bookingLocation.pathname, { replace: true });
           }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">{t('step3.back')}</button>
 
           <div className="text-center mb-8">
             <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">{t('step3.kicker')}</p>
-            <h2 className="text-4xl text-white">{t('step3.title')}</h2>
+            <h2 className="text-3xl sm:text-4xl text-white">{t('step3.title')}</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto mt-4"></div>
             <p className="text-slate-400 text-sm mt-4 max-w-md mx-auto">{t('step3.intro')}</p>
           </div>
 
-          {/* immagine del tour scelto: richiamo visivo di cosa si sta prenotando */}
+          {/* immagine del tour scelto: richiamo visivo di cosa si sta prenotando.
+              su telefono è piccola, così i campi del modulo si vedono subito senza scorrere */}
           {selectedTour && (
-            <div className="max-w-xs mx-auto mb-8">
+            <div className="max-w-[150px] sm:max-w-xs mx-auto mb-6 sm:mb-8">
               <div className="relative overflow-hidden rounded-lg border border-slate-800" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
                 {selectedTour.cardImage ? (
                   <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour, lang)}
