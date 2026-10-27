@@ -12,7 +12,12 @@
     { "source": "/boat", "destination": "/index.html" },
     { "source": "/booking", "destination": "/index.html" },
     { "source": "/booking/:path*", "destination": "/index.html" },
-    { "source": "/privacy", "destination": "/index.html" }
+    { "source": "/privacy", "destination": "/index.html" },
+    { "source": "/it", "destination": "/index.html" },
+    { "source": "/it/boat", "destination": "/index.html" },
+    { "source": "/it/booking", "destination": "/index.html" },
+    { "source": "/it/booking/:path*", "destination": "/index.html" },
+    { "source": "/it/privacy", "destination": "/index.html" }
   ],
   "crons": [
     { "path": "/api/keep-alive", "schedule": "0 6 * * *" }

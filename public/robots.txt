@@ -5,6 +5,7 @@ Allow: /
 
 # escludiamo la pagina privacy dall'indicizzazione (non utile per SEO, sprecherebbe il "crawl budget")
 Disallow: /privacy
+Disallow: /it/privacy
 
 # il file sitemap aiuta google a trovare tutte le pagine importanti
 Sitemap: https://searunner.it/sitemap.xml

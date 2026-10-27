@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { createClient } from '@supabase/supabase-js';
+import { useLang, LANGS, LANG_CODES, stripLang, localizePath, switchLangPath, translate } from './i18n/index.js';
 import { Calendar, Clock, Users, MapPin, Check, Wine, Utensils, Lock, LogOut, X, CheckCircle, XCircle, Globe, Sparkles, Info, Edit2, Save, Euro, Sunset, Sun, AlertCircle, Accessibility, RefreshCw, Menu, Anchor, Phone, Mail, Star, Droplets, Umbrella, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
 // ============ SUPABASE CLIENT ============
@@ -24,9 +25,17 @@ const SITE_URL = 'https://searunner.it';
 const SITE_OG_IMAGE = `${SITE_URL}/boat-2.webp`;
 const SITE_NAME = 'Sea Runner';
 
+// indirizzo completo di una pagina nella lingua indicata (es. '/boat', 'it' → https://searunner.it/it/boat)
+function absUrl(path, lang) {
+  return `${SITE_URL}${localizePath(path, lang)}`;
+}
+
+// path = indirizzo SENZA prefisso di lingua ('/boat'): il prefisso (/it) lo aggiunge da solo.
+// hreflang: dice a Google quale versione mostrare in base alla lingua di chi cerca (x-default = inglese).
 function SEOMetadata({ title, description, image, imageWidth = 1877, imageHeight = 1251, path = '/', type = 'website' }) {
+  const { lang, htmlLang, ogLocale } = useLang();
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
-  const fullUrl = `${SITE_URL}${path}`;
+  const fullUrl = absUrl(path, lang);
   const ogImage = image || SITE_OG_IMAGE;
   return (
     <Helmet>
@@ -34,7 +43,7 @@ function SEOMetadata({ title, description, image, imageWidth = 1877, imageHeight
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={fullUrl} />
-      <html lang="en" />
+      <html lang={htmlLang} />
 
       {/* mobile UX: imposta colore della status bar del browser mobile (matches sito) */}
       <meta name="theme-color" content="#0a2540" />
@@ -49,7 +58,13 @@ function SEOMetadata({ title, description, image, imageWidth = 1877, imageHeight
       <meta property="og:image:width" content={String(imageWidth)} />
       <meta property="og:image:height" content={String(imageHeight)} />
       <meta property="og:site_name" content={SITE_NAME} />
-      <meta property="og:locale" content="en_US" />
+      <meta property="og:locale" content={ogLocale} />
+
+      {/* versioni nelle altre lingue */}
+      {LANG_CODES.map(code => (
+        <link key={code} rel="alternate" hrefLang={LANGS[code].htmlLang} href={absUrl(path, code)} />
+      ))}
+      <link rel="alternate" hrefLang="x-default" href={absUrl(path, 'en')} />
 
       {/* twitter card */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -218,16 +233,17 @@ function whatsappLink(prefilledMessage = '') {
 }
 
 // bottone floating whatsapp visibile in tutte le pagine cliente
-function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about your tours.' }) {
+function WhatsAppFloatingButton({ message }) {
+  const { t } = useLang();
   return (
-    <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer"
+    <a href={whatsappLink(message || t('wa.default'))} target="_blank" rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-[60] bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-lg hover:shadow-xl transition-all p-4 flex items-center justify-center group"
       style={{ boxShadow: '0 4px 20px rgba(37, 211, 102, 0.4)' }}
-      title="Chat with us on WhatsApp"
-      aria-label="Chat with Sea Runner on WhatsApp">
+      title={t('wa.title')}
+      aria-label={t('wa.aria')}>
       <WhatsAppIcon className="w-6 h-6" />
       <span className="absolute right-full mr-3 px-3 py-2 bg-slate-900 text-white text-xs tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-        Chat with us
+        {t('wa.hover')}
       </span>
     </a>
   );
@@ -238,11 +254,12 @@ function WhatsAppFloatingButton({ message = 'Hi! I would like to know more about
 // con pallini colorati, nome tappa in serif, sottotitolo piccolo in grigio
 // su telefono più compatta (spazi e testo ridotti), da computer invariata
 function ItineraryTimeline({ itinerary, accentColor = '#d4a355', footnote = '' }) {
+  const { t } = useLang();
   if (!itinerary || itinerary.length === 0) return null;
   return (
     <div className="py-2">
       <div className="border-t mb-6" style={{ borderColor: accentColor, opacity: 0.5 }}></div>
-      <p className="text-center tracking-[0.4em] text-xs mb-5 sm:mb-8" style={{ color: accentColor }}>ITINERARY</p>
+      <p className="text-center tracking-[0.4em] text-xs mb-5 sm:mb-8" style={{ color: accentColor }}>{t('tour.itinerary')}</p>
       <div className="relative pl-14 pr-4 max-w-md mx-auto">
         {itinerary.map((stop, i) => {
           const isLast = i === itinerary.length - 1;
@@ -269,9 +286,10 @@ function ItineraryTimeline({ itinerary, accentColor = '#d4a355', footnote = '' }
 
 // ============ TOUR CARD IMAGE ============
 // testo alternativo (alt) delle foto dei tour: uguale al testo scritto nell'immagine + breve contesto (SEO)
-const tourImageAlt = (tour) => tour.imageTitle ? `${tour.imageTitle} – private boat tour from La Spezia` : tour.name;
+const tourImageAlt = (tour, lang = 'en') => tour.imageTitle ? `${tour.imageTitle}${translate(lang, 'tour.altSuffix')}` : tour.name;
 
 function TourCardImage({ tour, large = false }) {
+  const { lang } = useLang();
   // se il tour ha un'immagine reale, la mostriamo in formato 3:2
   // srcSet: il browser sceglie da solo la versione piccola (1000px) o grande (2000px) in base allo schermo
   const srcSet = tour.cardImageSmall ? `${tour.cardImageSmall} 1000w, ${tour.cardImage} 2000w` : undefined;
@@ -286,7 +304,7 @@ function TourCardImage({ tour, large = false }) {
           src={tour.cardImage} 
           srcSet={srcSet}
           sizes={srcSet ? sizes : undefined}
-          alt={tourImageAlt(tour)}
+          alt={tourImageAlt(tour, lang)}
           className="w-full h-full"
           style={{ objectFit: 'cover', objectPosition: 'center' }}
           loading={large ? 'eager' : 'lazy'}
@@ -499,8 +517,12 @@ function BookingApp() {
   const bookingLocation = useLocation();
   const navigate = useNavigate();
   const { slug } = useParams(); // slug del tour dall'URL /booking/:slug (undefined su /booking)
+  // lingua della pagina (/it/booking → italiano). t = testi, p = indirizzi con prefisso lingua, tr = testi del tour
+  const { lang, t, p, tr, locale, formLang } = useLang();
+  // percorso senza prefisso lingua (/it/booking/sunset → /booking/sunset)
+  const bookingPath = stripLang(bookingLocation.pathname);
   // pagina di conferma con URL dedicato (/booking/thank-you), usata per il tracking conversioni Google Ads
-  const isThankYou = bookingLocation.pathname === '/booking/thank-you';
+  const isThankYou = bookingPath === '/booking/thank-you';
   const [tours, setTours] = useState(initialTours);
   // flag di caricamento iniziale dei dati da supabase:
   // true = stiamo recuperando dati freschi, false = siamo pronti.
@@ -518,7 +540,8 @@ function BookingApp() {
   const [meetingPoint, setMeetingPoint] = useState('Porto Mirabello (La Spezia)');
   const [customMeetingPoint, setCustomMeetingPoint] = useState('');
   const [customerData, setCustomerData] = useState({ 
-    name: '', email: '', phone: '', notes: '', language: 'EN',
+    // lingua preferita già impostata sulla lingua del sito (Paola sa subito in che lingua rispondere)
+    name: '', email: '', phone: '', notes: '', language: formLang,
     hasAllergies: false, allergiesDetails: '',
     reducedMobility: false, mobilityDetails: ''
   });
@@ -752,8 +775,8 @@ function BookingApp() {
   useEffect(() => {
     // pagina di conferma con URL dedicato: non è né un tour né la scelta tour.
     // se ci si arriva direttamente o si ricarica senza aver inviato, si torna al booking.
-    if (bookingLocation.pathname === '/booking/thank-you') {
-      if (!submitted) navigate('/booking', { replace: true });
+    if (bookingPath === '/booking/thank-you') {
+      if (!submitted) navigate(p('/booking'), { replace: true });
       return;
     }
 
@@ -762,7 +785,7 @@ function BookingApp() {
     const legacyId = params.get('tour');
     if (legacyId && !slug) {
       const legacyMatch = initialTours.find(t => t.id === legacyId);
-      if (legacyMatch) { navigate(`/booking/${legacyMatch.slug}`, { replace: true }); return; }
+      if (legacyMatch) { navigate(p(`/booking/${legacyMatch.slug}`), { replace: true }); return; }
     }
 
     if (slug) {
@@ -777,7 +800,7 @@ function BookingApp() {
         setCurrentStep(2);
       } else {
         // slug inesistente → torno alla scelta tour
-        navigate('/booking', { replace: true });
+        navigate(p('/booking'), { replace: true });
       }
     } else if (!legacyId) {
       // /booking puro: schermata scelta tour
@@ -791,7 +814,7 @@ function BookingApp() {
   //  - #details senza una data scelta (es. pagina ricaricata) → si resta al passo 2
   const detailsPushed = useRef(false);
   useEffect(() => {
-    if (bookingLocation.pathname === '/booking/thank-you') return;
+    if (bookingPath === '/booking/thank-you') return;
     if (bookingLocation.hash === '#details') {
       if (currentStep === 2 && selectedDate) setCurrentStep(3);
       else if (currentStep !== 3) navigate(bookingLocation.pathname, { replace: true });
@@ -944,7 +967,7 @@ function BookingApp() {
 
   const handleTourSelect = (tour) => {
     // naviga all'URL pulito del tour; l'effetto sul routing pre-seleziona e va allo step 2
-    navigate(`/booking/${tour.slug}`);
+    navigate(p(`/booking/${tour.slug}`));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const toggleAddOn = (id) => setSelectedAddOns(selectedAddOns.includes(id) ? selectedAddOns.filter(a => a !== id) : [...selectedAddOns, id]);
@@ -1045,6 +1068,20 @@ function BookingApp() {
     return '';
   };
   const getFinalMeetingPoint = () => meetingPoint === 'Other' ? `Other: ${customMeetingPoint}` : meetingPoint;
+
+  // versioni DA MOSTRARE al cliente nella sua lingua (getFinalTimeSlot / getFinalMeetingPoint restano in inglese per email e database)
+  const lt = tr(selectedTour);
+  const displayTimeSlot = () => {
+    if (!selectedTour) return '';
+    if (selectedTour.slotType === 'half-day-choice' && halfDayChoiceTime) {
+      const td = lt.timeOfDay.find(x => x.id === halfDayChoiceTime);
+      return `${td.label} (${td.time})`;
+    }
+    if (selectedTour.fixedTime) return selectedTour.fixedTime;
+    if (selectedTour.isCustom) return t('tour.toAgree');
+    return '';
+  };
+  const displayMeetingPoint = () => meetingPoint === 'Other' ? `${t('step2.other')}: ${customMeetingPoint}` : meetingPoint;
 
   const handleSubmit = async () => {
     setSubmitError(null); // reset diagnostica precedente
@@ -1187,16 +1224,16 @@ ${customerData.notes || 'No special requests'}
     setSubmitted(true);
     // porta l'utente alla pagina di conferma con URL dedicato (/booking/thank-you).
     // serve a Google Ads per tracciare le conversioni in base all'URL raggiunto.
-    navigate('/booking/thank-you');
+    navigate(p('/booking/thank-you'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const resetBooking = () => {
-    navigate('/booking'); // torna all'URL pulito di scelta tour
+    navigate(p('/booking')); // torna all'URL pulito di scelta tour
     setSubmitted(false); setCurrentStep(1); setSelectedTour(null); setSelectedDate(null);
     setHalfDayChoiceItinerary(null); setHalfDayChoiceTime(null);
     setSelectedAddOns([]); setNumPeople(2); setMeetingPoint('Porto Mirabello (La Spezia)'); setCustomMeetingPoint('');
-    setCustomerData({ name: '', email: '', phone: '', notes: '', language: 'EN', hasAllergies: false, allergiesDetails: '', reducedMobility: false, mobilityDetails: '' });
+    setCustomerData({ name: '', email: '', phone: '', notes: '', language: formLang, hasAllergies: false, allergiesDetails: '', reducedMobility: false, mobilityDetails: '' });
   };
 
   // ============ CALENDARIO CLIENTE — griglia mensile navigabile ============
@@ -1611,7 +1648,7 @@ ${customerData.notes || 'No special requests'}
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 py-8" style={{ fontFamily: 'Georgia, serif' }}>
         <Helmet>
-          <title>Thank you — Request received | Sea Runner</title>
+          <title>{t('thanks.metaTitle')}</title>
           <meta name="robots" content="noindex, follow" />
         </Helmet>
         <div className="max-w-md w-full text-center text-white">
@@ -1620,17 +1657,17 @@ ${customerData.notes || 'No special requests'}
           <div className="inline-flex items-center justify-center w-16 h-16 border-2 border-amber-400 rounded-full mb-6">
             <Check className="w-8 h-8 text-amber-400" />
           </div>
-          <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">QUOTE REQUEST RECEIVED</p>
-          <h2 className="text-4xl mb-6">Thank you,<br/>{customerData.name.split(' ')[0]}</h2>
+          <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">{t('thanks.kicker')}</p>
+          <h2 className="text-4xl mb-6">{t('thanks.title')}<br/>{customerData.name.split(' ')[0]}</h2>
           <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
           <p className="text-slate-300 mb-6 leading-relaxed">
-            Your request has been sent. Captain Marco and Paola will reply within 24 hours at <span className="text-amber-400">{customerData.email}</span> with availability confirmation and your tailored quote. <span className="text-slate-400 text-sm">No payment is required at this stage.</span>
+            {t('thanks.body1')}<span className="text-amber-400">{customerData.email}</span>{t('thanks.body2')}<span className="text-slate-400 text-sm">{t('thanks.noPayment')}</span>
           </p>
-          <p className="text-slate-400 text-xs tracking-widest mb-3">NEED TO REACH US DIRECTLY?</p>
+          <p className="text-slate-400 text-xs tracking-widest mb-3">{t('thanks.reachUs')}</p>
           {/* contatti sea runner: email generica + telefono attività */}
           <div className="flex items-center justify-center gap-3 mb-8 text-sm">
             <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:text-amber-300 transition">searunnerprenotazioni@gmail.com</a>
-            <span className="text-slate-500 uppercase text-xs tracking-widest">or</span>
+            <span className="text-slate-500 uppercase text-xs tracking-widest">{t('thanks.or')}</span>
             <a href="tel:+393488289438" className="text-amber-400 hover:text-amber-300 transition">+39 348 828 9438</a>
           </div>
           <div className="bg-slate-900 border border-slate-800 overflow-hidden mb-6">
@@ -1638,39 +1675,39 @@ ${customerData.notes || 'No special requests'}
             {selectedTour && (
               <div className="relative w-full" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
                 {selectedTour.cardImage ? (
-                  <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour)}
+                  <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour, lang)}
                     className="w-full h-full"
                     style={{ objectFit: 'cover', objectPosition: 'center' }}
                     onError={(e) => { e.target.style.display = 'none'; }} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <h3 className="text-white text-3xl" style={{ fontFamily: '"Brush Script MT", cursive' }}>{selectedTour.name}</h3>
+                    <h3 className="text-white text-3xl" style={{ fontFamily: '"Brush Script MT", cursive' }}>{lt.name}</h3>
                   </div>
                 )}
               </div>
             )}
             <div className="p-6 text-left">
-              <p className="text-xs text-amber-400 tracking-widest mb-3">YOUR REQUEST</p>
-              <p className="text-white mb-1">{selectedTour?.name}</p>
-              <p className="text-sm text-slate-400 mb-3">{selectedTour?.subtitle}</p>
+              <p className="text-xs text-amber-400 tracking-widest mb-3">{t('thanks.yourRequest')}</p>
+              <p className="text-white mb-1">{lt?.name}</p>
+              <p className="text-sm text-slate-400 mb-3">{lt?.subtitle}</p>
               <div className="space-y-1 text-sm text-slate-300">
-                <p>Date: {selectedDate?.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                <p>Time: {getFinalTimeSlot()}</p>
-                <p>Guests: {numPeople}</p>
-                <p>Meeting: {getFinalMeetingPoint()}</p>
+                <p>{t('thanks.date')}{selectedDate?.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <p>{t('thanks.time')}{displayTimeSlot()}</p>
+                <p>{t('thanks.guests')}{numPeople}</p>
+                <p>{t('thanks.meeting')}{displayMeetingPoint()}</p>
               </div>
             </div>
           </div>
-          <button onClick={resetBooking} className="border border-amber-400 text-amber-400 px-8 py-3 tracking-widest hover:bg-amber-400 hover:text-slate-950 transition">NEW BOOKING</button>
+          <button onClick={resetBooking} className="border border-amber-400 text-amber-400 px-8 py-3 tracking-widest hover:bg-amber-400 hover:text-slate-950 transition">{t('thanks.newBooking')}</button>
 
           {/* call-to-action whatsapp per domande post-prenotazione */}
           <div className="mt-8 pt-8 border-t border-slate-800">
-            <p className="text-slate-400 text-sm mb-4">Have any other questions? Don't hesitate to message us.</p>
-            <a href={whatsappLink(`Hi! I just submitted a booking request for ${selectedTour?.name} on ${selectedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. I have a question...`)}
+            <p className="text-slate-400 text-sm mb-4">{t('thanks.moreQuestions')}</p>
+            <a href={whatsappLink(t('thanks.whatsapp', lt?.name, selectedDate?.toLocaleDateString(locale, { day: 'numeric', month: 'long' })))}
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 tracking-wider transition">
               <WhatsAppIcon className="w-5 h-5" />
-              <span>MESSAGE US ON WHATSAPP</span>
+              <span>{t('thanks.whatsappButton')}</span>
             </a>
           </div>
         </div>
@@ -1683,22 +1720,22 @@ ${customerData.notes || 'No special requests'}
   // il title si adatta (es. "Cinque Terre Private Boat Tour — Request a Quote").
   // se invece è nello step 1 generico, usiamo un title broad-keyword.
   const seoTitle = selectedTour && currentStep > 1
-    ? `${selectedTour.name} Private Boat Tour — Request a Quote`
-    : 'Request a Free Quote — Private Boat Tours from La Spezia';
+    ? t('booking.seoTitleTour', lt)
+    : t('booking.seoTitle');
   const seoDescription = selectedTour && currentStep > 1
-    ? `Request a free quote for the ${selectedTour.name} private boat tour. ${selectedTour.shortDesc} No payment required, reply within 24 hours from Captain Marco.`
-    : 'Request a free quote for a fully private boat tour to Cinque Terre, Portofino or Golfo dei Poeti. Captain Marco replies within 24 hours — no payment required upfront.';
+    ? t('booking.seoDescriptionTour', lt)
+    : t('booking.seoDescription');
 
   // schema.org TouristTrip se siamo dentro un tour specifico:
   // dichiara a google "questa è un'esperienza turistica con prezzo da, durata, fornitore, location"
   const tourTripSchema = selectedTour && !selectedTour.isCustom ? {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
-    "name": `${selectedTour.name} — Private Boat Tour`,
-    "description": selectedTour.longDesc,
+    "name": t('schema.tripName', lt.name),
+    "description": lt.longDesc,
     "image": selectedTour.cardImage ? `${SITE_URL}${selectedTour.cardImage}` : SITE_OG_IMAGE,
-    "touristType": "Private boat tour",
-    "itinerary": selectedTour.itinerary ? selectedTour.itinerary.map((stop, i) => ({
+    "touristType": t('schema.touristType'),
+    "itinerary": lt.itinerary ? lt.itinerary.map((stop, i) => ({
       "@type": "Place",
       "name": stop.place,
       "description": stop.note,
@@ -1716,7 +1753,7 @@ ${customerData.notes || 'No special requests'}
       "priceCurrency": "EUR",
       "availability": "https://schema.org/InStock",
       "validFrom": new Date().toISOString().split('T')[0],
-      "url": `${SITE_URL}/booking/${selectedTour.slug}`
+      "url": absUrl(`/booking/${selectedTour.slug}`, lang)
     }
   } : null;
 
@@ -1726,9 +1763,9 @@ ${customerData.notes || 'No special requests'}
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Sea Runner", "item": SITE_URL },
-      { "@type": "ListItem", "position": 2, "name": "Tours", "item": `${SITE_URL}/booking` },
-      { "@type": "ListItem", "position": 3, "name": selectedTour.name, "item": `${SITE_URL}/booking/${selectedTour.slug}` }
+      { "@type": "ListItem", "position": 1, "name": "Sea Runner", "item": lang === 'en' ? SITE_URL : absUrl('/', lang) },
+      { "@type": "ListItem", "position": 2, "name": t('schema.tours'), "item": absUrl('/booking', lang) },
+      { "@type": "ListItem", "position": 3, "name": lt.name, "item": absUrl(`/booking/${selectedTour.slug}`, lang) }
     ]
   } : null;
 
@@ -1760,13 +1797,13 @@ ${customerData.notes || 'No special requests'}
       {/* navbar condivisa con home/boat/booking */}
       <SharedNav />
       {/* titolo principale per google, invisibile (sr-only): nome del tour come scritto nell'immagine */}
-      <h1 className="sr-only">{selectedTour ? (selectedTour.imageTitle || selectedTour.name) : 'Private boat tours from La Spezia'}</h1>
+      <h1 className="sr-only">{selectedTour ? (lt.h1 || lt.imageTitle || lt.name) : t('booking.h1')}</h1>
 
       {/* barra step specifica del booking */}
       <div className="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3 md:gap-4 overflow-x-auto">
-            {['TOUR', 'DATE', 'DETAILS'].map((label, idx) => (
+            {[t('steps.tour'), t('steps.date'), t('steps.details')].map((label, idx) => (
               <div key={label} className="flex items-center gap-2 flex-shrink-0">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${currentStep >= idx+1 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-500'}`}>{idx + 1}</div>
                 <span className={`text-[10px] tracking-widest ${currentStep >= idx+1 ? 'text-amber-400' : 'text-slate-500'}`}>{label}</span>
@@ -1781,14 +1818,14 @@ ${customerData.notes || 'No special requests'}
       {currentStep === 1 && (
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center mb-12">
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">REQUEST A FREE QUOTE</p>
-            <h2 className="text-5xl text-white mb-4">Choose Your Tour</h2>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">{t('step1.kicker')}</p>
+            <h2 className="text-5xl text-white mb-4">{t('step1.title')}</h2>
             <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
-            <p className="text-slate-400 max-w-2xl mx-auto">Private boat tours along the Italian Riviera — tell us your preferences and we'll reply with a tailored quote.</p>
+            <p className="text-slate-400 max-w-2xl mx-auto">{t('step1.intro')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tours.map((tour) => (
+            {tours.map(tr).map((tour) => (
               <div key={tour.id} onClick={() => handleTourSelect(tour)}
                 className="group cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
@@ -1801,14 +1838,14 @@ ${customerData.notes || 'No special requests'}
                   <div className="flex items-center justify-between gap-3">
                     {tour.isCustom ? (
                       <div>
-                        <p className="text-[10px] text-slate-500 tracking-widest">PRICE</p>
-                        <p className="text-lg text-amber-400">On request</p>
+                        <p className="text-[10px] text-slate-500 tracking-widest">{t('card.price')}</p>
+                        <p className="text-lg text-amber-400">{t('card.onRequest')}</p>
                       </div>
                     ) : (
-                      <span className="text-[10px] text-slate-500 tracking-widest">Private · Flexible itinerary</span>
+                      <span className="text-[10px] text-slate-500 tracking-widest">{t('card.privateFlexible')}</span>
                     )}
                     <div className="border border-amber-400 text-amber-400 px-3 sm:px-4 py-2 text-[10px] sm:text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition whitespace-nowrap">
-                      CHECK PRICE →
+                      {t('card.checkPrice')}
                     </div>
                   </div>
                 </div>
@@ -1818,9 +1855,9 @@ ${customerData.notes || 'No special requests'}
 
           {/* link FAQ per rassicurare chi ha dubbi prima di scegliere */}
           <div className="text-center mt-14 sm:mt-16 pt-8 border-t border-slate-800">
-            <p className="text-slate-400 text-sm mb-3">Have questions before booking?</p>
-            <Link to="/#faq" className="inline-block text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
-              READ OUR FAQ →
+            <p className="text-slate-400 text-sm mb-3">{t('step1.faqQuestion')}</p>
+            <Link to={p('/#faq')} className="inline-block text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
+              {t('step1.faqLink')}
             </Link>
           </div>
         </div>
@@ -1829,31 +1866,31 @@ ${customerData.notes || 'No special requests'}
       {/* STEP 2 */}
       {currentStep === 2 && selectedTour && (
         <div className="max-w-5xl mx-auto px-4 py-12">
-          <button onClick={() => { navigate('/booking'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← CHANGE TOUR</button>
+          <button onClick={() => { navigate(p('/booking')); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">{t('step2.changeTour')}</button>
 
           {/* box rassicurazione: il cliente sta solo richiedendo un preventivo, niente obblighi */}
           <div className="mb-6 p-4 bg-amber-400/5 border border-amber-400/20 flex items-start gap-3">
             <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              <span className="text-amber-400">This is an availability request.</span> No payment is required. Captain Marco will get back to you within 24 hours to confirm and send a tailored quote.
+              <span className="text-amber-400">{t('step2.noticeStrong')}</span>{t('step2.noticeText')}
             </p>
           </div>
 
           <div className="mb-8">
-            <TourCardImage tour={selectedTour} large />
+            <TourCardImage tour={lt} large />
             <div className="bg-slate-900 border border-slate-800 border-t-0 p-8">
-              <p className="text-slate-300 leading-relaxed max-w-3xl mb-6">{selectedTour.longDesc}</p>
+              <p className="text-slate-300 leading-relaxed max-w-3xl mb-6">{lt.longDesc}</p>
               <div className="flex flex-wrap gap-4 text-sm text-slate-300 pt-4 border-t border-slate-800">
-                <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {selectedTour.duration}{selectedTour.fixedTime && ` (~${selectedTour.fixedTime}, flexible)`}</span>
-                <span className="flex items-center gap-1"><Users className="w-4 h-4 text-amber-400" /> 1-{selectedTour.maxPeople} guests</span>
+                <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {lt.duration}{selectedTour.fixedTime && t('step2.flexibleTime', selectedTour.fixedTime)}</span>
+                <span className="flex items-center gap-1"><Users className="w-4 h-4 text-amber-400" /> {t('step2.guestsRange', selectedTour.maxPeople)}</span>
               </div>
 
               {/* TIMELINE ITINERARIO */}
               {(() => {
                 // se il tour ha varianti (half-day-choice, sunset), mostro quella selezionata se presente
-                let activeItinerary = selectedTour.itinerary;
-                if (selectedTour.itineraryOptions && halfDayChoiceItinerary) {
-                  const opt = selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary);
+                let activeItinerary = lt.itinerary;
+                if (lt.itineraryOptions && halfDayChoiceItinerary) {
+                  const opt = lt.itineraryOptions.find(o => o.id === halfDayChoiceItinerary);
                   if (opt?.itinerary) activeItinerary = opt.itinerary;
                 }
                 if (!activeItinerary) return null;
@@ -1863,12 +1900,12 @@ ${customerData.notes || 'No special requests'}
                       <ItineraryTimeline
                         itinerary={activeItinerary}
                         accentColor={selectedTour.itineraryAccent || '#d4a355'}
-                        footnote={selectedTour.itineraryFootnote}
+                        footnote={lt.itineraryFootnote}
                       />
                     </div>
                     <div className="mt-4 p-3 bg-slate-800/50 border border-slate-700 text-xs text-slate-400 italic leading-relaxed flex items-start gap-2">
                       <Info className="w-3 h-3 mt-0.5 flex-shrink-0 text-amber-400/70" />
-                      <span>This is the standard itinerary. It may vary depending on guest preferences or weather conditions.</span>
+                      <span>{t('step2.itineraryNote')}</span>
                     </div>
                   </>
                 );
@@ -1877,21 +1914,21 @@ ${customerData.notes || 'No special requests'}
           </div>
 
           {/* WHAT'S INCLUDED */}
-          {selectedTour.includes && selectedTour.includes.length > 0 && (
+          {lt.includes && lt.includes.length > 0 && (
             <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
-              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Check className="w-3 h-3" /> WHAT'S INCLUDED</p>
+              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Check className="w-3 h-3" /> {t('step2.included')}</p>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2">
-                {selectedTour.includes.map((item, i) => (
+                {lt.includes.map((item, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-slate-300">
                     <Check className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
-              {selectedTour.notIncluded && (
+              {lt.notIncluded && (
                 <div className="mt-4 pt-4 border-t border-slate-800 flex items-start gap-2 text-xs text-slate-400">
                   <Info className="w-3 h-3 mt-0.5 flex-shrink-0 text-slate-500" />
-                  <span><span className="tracking-wider text-slate-500">NOT INCLUDED:</span> {selectedTour.notIncluded}</span>
+                  <span><span className="tracking-wider text-slate-500">{t('step2.notIncluded')}</span> {lt.notIncluded}</span>
                 </div>
               )}
             </div>
@@ -1900,9 +1937,9 @@ ${customerData.notes || 'No special requests'}
           {/* ITINERARY CHOICE — half-day-choice e sunset hanno entrambi itineraryOptions */}
           {selectedTour.itineraryOptions && selectedTour.itineraryOptions.length > 0 && (
             <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
-              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> CHOOSE YOUR ITINERARY</p>
+              <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> {t('step2.chooseItinerary')}</p>
               <div className="grid md:grid-cols-2 gap-3">
-                {selectedTour.itineraryOptions.map(opt => (
+                {lt.itineraryOptions.map(opt => (
                   <button key={opt.id} onClick={() => setHalfDayChoiceItinerary(opt.id)}
                     className={`text-left p-4 border transition ${halfDayChoiceItinerary === opt.id ? 'border-amber-400 bg-amber-400/5' : 'border-slate-700 hover:border-slate-600'}`}>
                     <p className={`text-base mb-1 ${halfDayChoiceItinerary === opt.id ? 'text-white' : 'text-slate-300'}`}>{opt.name}</p>
@@ -1917,25 +1954,25 @@ ${customerData.notes || 'No special requests'}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="bg-slate-900 border border-slate-800 p-6">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-amber-400 text-[10px] tracking-[0.3em] flex items-center gap-2"><Calendar className="w-3 h-3" /> SELECT DATE</p>
+                <p className="text-amber-400 text-[10px] tracking-[0.3em] flex items-center gap-2"><Calendar className="w-3 h-3" /> {t('step2.selectDate')}</p>
                 <div className="flex items-center gap-1">
                   <button onClick={() => changeCustomerMonth(-1)} className="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-sm">‹</button>
                   <button onClick={() => changeCustomerMonth(1)} className="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-sm">›</button>
                 </div>
               </div>
               <p className="text-center text-white text-base mb-3">
-                {customerCalendarMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                {customerCalendarMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}
               </p>
               {/* striscia di stato caricamento: visibile solo finché gcal non ha finito.
                   se 'synced' o 'error' (in error usiamo dati locali) la nascondiamo */}
               {(gcalStatus === 'idle' || gcalStatus === 'syncing') && (
                 <div className="mb-3 p-2.5 bg-amber-400/10 border border-amber-400/30 flex items-center gap-2.5">
                   <RefreshCw className="w-3.5 h-3.5 text-amber-400 animate-spin flex-shrink-0" />
-                  <p className="text-[11px] text-amber-400 leading-tight">Checking availability — please wait before selecting a date</p>
+                  <p className="text-[11px] text-amber-400 leading-tight">{t('step2.checkingBanner')}</p>
                 </div>
               )}
               <div className="grid grid-cols-7 gap-1 mb-1">
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                {t('step2.weekdays').map((d, i) => (
                   <div key={i} className="text-center text-[9px] tracking-widest text-slate-500 py-1">{d}</div>
                 ))}
               </div>
@@ -1957,7 +1994,7 @@ ${customerData.notes || 'No special requests'}
                         : day.isPast ? 'bg-slate-900/50 text-slate-700 cursor-not-allowed'
                         : 'bg-slate-900 text-slate-700 cursor-not-allowed line-through'
                       }`}
-                      title={isAvailabilityLoading ? 'Checking availability…' : (day.isDiscounted ? 'Special price available' : '')}>
+                      title={isAvailabilityLoading ? t('step2.checkingTitle') : (day.isDiscounted ? t('step2.specialPrice') : '')}>
                       {/* durante la sync mostriamo un piccolo orologio al posto del numero, o entrambi in piccolo */}
                       {isAvailabilityLoading ? (
                         <span className="text-[11px] text-slate-600">{day.dayNum}</span>
@@ -1985,7 +2022,7 @@ ${customerData.notes || 'No special requests'}
                 return (
                   <div className="mt-3 p-3 bg-slate-800/50 border border-slate-700 flex items-center justify-between gap-3">
                     <div className="text-[11px] text-slate-400 tracking-wider">
-                      {selectedDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase()}
+                      {selectedDate.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase()}
                     </div>
                     <div className="flex items-center gap-2 text-right">
                       {isDiscount && (
@@ -2004,26 +2041,26 @@ ${customerData.notes || 'No special requests'}
               })()}
 
               <div className="mt-3 space-y-1">
-                <p className="text-[10px] text-slate-500 tracking-wider">CROSSED OUT = UNAVAILABLE</p>
+                <p className="text-[10px] text-slate-500 tracking-wider">{t('step2.crossedOut')}</p>
                 {/* legenda "special price" tolta (ott 2026): il simbolo % resta sui giorni scontati, ma non si mostra in legenda */}
                 {/* indicatore sincronizzazione google calendar */}
                 <div className="flex items-center gap-2 pt-2 mt-2 border-t border-slate-800">
                   {gcalStatus === 'syncing' && (
                     <>
                       <RefreshCw className="w-3 h-3 text-slate-500 animate-spin" />
-                      <p className="text-[10px] text-slate-500 tracking-wider">UPDATING AVAILABILITY...</p>
+                      <p className="text-[10px] text-slate-500 tracking-wider">{t('step2.updating')}</p>
                     </>
                   )}
                   {gcalStatus === 'synced' && (
                     <>
                       <Check className="w-3 h-3 text-emerald-500" />
-                      <p className="text-[10px] text-emerald-500/80 tracking-wider">AVAILABILITY UP TO DATE</p>
+                      <p className="text-[10px] text-emerald-500/80 tracking-wider">{t('step2.upToDate')}</p>
                     </>
                   )}
                   {gcalStatus === 'error' && (
                     <>
                       <AlertCircle className="w-3 h-3 text-amber-500" />
-                      <p className="text-[10px] text-amber-500/80 tracking-wider">USING LOCAL BOOKINGS ONLY</p>
+                      <p className="text-[10px] text-amber-500/80 tracking-wider">{t('step2.localOnly')}</p>
                     </>
                   )}
                 </div>
@@ -2033,9 +2070,9 @@ ${customerData.notes || 'No special requests'}
             <div className="space-y-6">
               {selectedTour.slotType === 'half-day-choice' ? (
                 <div className="bg-slate-900 border border-slate-800 p-6">
-                  <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> TIME OF DAY</p>
+                  <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> {t('step2.timeOfDay')}</p>
                   <div className="space-y-2">
-                    {selectedTour.timeOfDay.map(td => {
+                    {lt.timeOfDay.map(td => {
                       // calcolo robusto: guardo direttamente cosa è prenotato nella selectedDate,
                       // senza dipendere dall'oggetto calendarDates (che può essere di un mese diverso)
                       let partBooked = false;
@@ -2072,18 +2109,18 @@ ${customerData.notes || 'No special requests'}
                 </div>
               ) : selectedTour.isCustom ? (
                 <div className="bg-slate-900 border border-slate-800 p-6">
-                  <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> SCHEDULE</p>
-                  <p className="text-slate-300 text-sm italic">Time to be agreed with skipper</p>
+                  <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Clock className="w-3 h-3" /> {t('step2.schedule')}</p>
+                  <p className="text-slate-300 text-sm italic">{t('step2.timeToAgree')}</p>
                 </div>
               ) : null}
 
               <div className="bg-slate-900 border border-slate-800 p-6">
-                <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Users className="w-3 h-3" /> GUESTS</p>
+                <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><Users className="w-3 h-3" /> {t('step2.guests')}</p>
                 <div className="flex items-center gap-4">
                   <button onClick={() => setNumPeople(Math.max(1, numPeople - 1))} className="w-12 h-12 border border-slate-700 text-white text-xl hover:border-amber-400 hover:text-amber-400 transition">−</button>
                   <div className="flex-1 text-center">
                     <div className="text-4xl text-white">{numPeople}</div>
-                    <div className="text-[10px] text-slate-500 tracking-wider">MAX {selectedTour.maxPeople}</div>
+                    <div className="text-[10px] text-slate-500 tracking-wider">{t('step2.max')} {selectedTour.maxPeople}</div>
                   </div>
                   <button onClick={() => setNumPeople(Math.min(selectedTour.maxPeople, numPeople + 1))} className="w-12 h-12 border border-slate-700 text-white text-xl hover:border-amber-400 hover:text-amber-400 transition">+</button>
                 </div>
@@ -2093,7 +2130,7 @@ ${customerData.notes || 'No special requests'}
 
           {/* MEETING POINT con "Other" */}
           <div className="bg-slate-900 border border-slate-800 p-6 mb-6">
-            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> MEETING POINT</p>
+            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2"><MapPin className="w-3 h-3" /> {t('step2.meetingPoint')}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {[...defaultPickupPoints, 'Other'].map(point => {
                 // Porto Mirabello va spezzato su 2 righe con "(La Spezia)" intero sotto
@@ -2103,7 +2140,7 @@ ${customerData.notes || 'No special requests'}
                     className={`px-3 py-2 text-sm transition leading-tight ${meetingPoint === point ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>
                     {isMirabello ? (
                       <>Porto Mirabello<br/><span className="text-xs opacity-80">(La Spezia)</span></>
-                    ) : point}
+                    ) : (point === 'Other' ? t('step2.other') : point)}
                   </button>
                 );
               })}
@@ -2112,8 +2149,8 @@ ${customerData.notes || 'No special requests'}
               <div className="mt-3">
                 <input type="text" value={customMeetingPoint} onChange={(e) => setCustomMeetingPoint(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none text-sm"
-                  placeholder="Please specify your preferred meeting point..." />
-                <p className="text-[10px] text-slate-500 tracking-wider mt-2">SKIPPER WILL CONFIRM FEASIBILITY</p>
+                  placeholder={t('step2.otherPlaceholder')} />
+                <p className="text-[10px] text-slate-500 tracking-wider mt-2">{t('step2.feasibility')}</p>
               </div>
             )}
           </div>
@@ -2143,20 +2180,20 @@ ${customerData.notes || 'No special requests'}
                 ? 'bg-amber-400 text-slate-950 hover:bg-amber-300' 
                 : 'bg-slate-800 text-slate-600 cursor-not-allowed'
             }`}>
-            CONTINUE TO DETAILS →
+            {t('step2.continue')}
           </button>
 
           {/* sezione 'altri tour' — visibile solo se ci sono altri tour non-custom da mostrare */}
           {tours.filter(t => t.id !== selectedTour.id && !t.isCustom).length > 0 && (
             <div className="mt-14 sm:mt-20 pt-10 border-t border-slate-800">
               <div className="text-center mb-8">
-                <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3">CHANGED YOUR MIND?</p>
-                <h3 className="text-xl sm:text-2xl text-white mb-2">Explore our other tours</h3>
+                <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3">{t('step2.changedMind')}</p>
+                <h3 className="text-xl sm:text-2xl text-white mb-2">{t('step2.otherTours')}</h3>
                 <div className="w-12 h-px bg-amber-400/50 mx-auto"></div>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tours.filter(t => t.id !== selectedTour.id && !t.isCustom).map(t => (
-                  <button key={t.id}
+                {tours.filter(ot => ot.id !== selectedTour.id && !ot.isCustom).map(tr).map(ot => (
+                  <button key={ot.id}
                     onClick={() => {
                       // reset delle scelte del tour precedente e switch al nuovo (via URL pulito)
                       setSelectedDate(null);
@@ -2164,25 +2201,25 @@ ${customerData.notes || 'No special requests'}
                       setHalfDayChoiceTime(null);
                       setMeetingPoint('Porto Mirabello (La Spezia)');
                       setCustomMeetingPoint('');
-                      navigate(`/booking/${t.slug}`);
+                      navigate(p(`/booking/${ot.slug}`));
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="text-left bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400 group">
-                    <TourCardImage tour={t} />
+                    <TourCardImage tour={ot} />
                     <div className="p-4">
-                      <p className="text-white text-sm mb-1" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{t.name}</p>
-                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{t.duration.toUpperCase()}</p>
+                      <p className="text-white text-sm mb-1" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{ot.name}</p>
+                      <p className="text-slate-500 text-[10px] tracking-widest mb-3">{ot.duration.toUpperCase()}</p>
                       <div className="inline-flex items-center gap-1 text-amber-400 text-[10px] tracking-widest group-hover:text-amber-300">
-                        VIEW TOUR →
+                        {t('step2.viewTour')}
                       </div>
                     </div>
                   </button>
                 ))}
               </div>
               <div className="text-center mt-8">
-                <button onClick={() => { navigate('/booking'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                <button onClick={() => { navigate(p('/booking')); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
-                  ← BACK TO ALL TOURS
+                  {t('step2.backToAll')}
                 </button>
               </div>
             </div>
@@ -2197,13 +2234,13 @@ ${customerData.notes || 'No special requests'}
             setCurrentStep(2); window.scrollTo({ top: 0, behavior: 'smooth' });
             // stesso comportamento del tasto indietro del browser (toglie #details)
             if (detailsPushed.current) navigate(-1); else navigate(bookingLocation.pathname, { replace: true });
-          }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">← BACK</button>
+          }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">{t('step3.back')}</button>
 
           <div className="text-center mb-8">
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LAST STEP — YOUR CONTACT INFO</p>
-            <h2 className="text-4xl text-white">Where should we reply?</h2>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">{t('step3.kicker')}</p>
+            <h2 className="text-4xl text-white">{t('step3.title')}</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto mt-4"></div>
-            <p className="text-slate-400 text-sm mt-4 max-w-md mx-auto">Leave us your details and we'll send you a tailored quote within 24 hours. No payment required at this stage.</p>
+            <p className="text-slate-400 text-sm mt-4 max-w-md mx-auto">{t('step3.intro')}</p>
           </div>
 
           {/* immagine del tour scelto: richiamo visivo di cosa si sta prenotando */}
@@ -2211,36 +2248,36 @@ ${customerData.notes || 'No special requests'}
             <div className="max-w-xs mx-auto mb-8">
               <div className="relative overflow-hidden rounded-lg border border-slate-800" style={{ backgroundColor: selectedTour.brandColor, aspectRatio: '3/2' }}>
                 {selectedTour.cardImage ? (
-                  <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour)}
+                  <img src={selectedTour.cardImageSmall || selectedTour.cardImage} alt={tourImageAlt(selectedTour, lang)}
                     className="w-full h-full"
                     style={{ objectFit: 'cover', objectPosition: 'center' }}
                     onError={(e) => { e.target.style.display = 'none'; }} />
                 ) : null}
               </div>
-              <p className="text-center text-slate-400 text-xs tracking-[0.2em] mt-2">{selectedTour.name.toUpperCase()}</p>
+              <p className="text-center text-slate-400 text-xs tracking-[0.2em] mt-2">{lt.name.toUpperCase()}</p>
             </div>
           )}
 
           <div className="bg-slate-900 border border-slate-800 p-6 space-y-5">
             <div>
-              <label className="block text-[10px] text-amber-400 tracking-widest mb-2">FULL NAME *</label>
+              <label className="block text-[10px] text-amber-400 tracking-widest mb-2">{t('step3.name')}</label>
               <input type="text" value={customerData.name} onChange={(e) => setCustomerData({ ...customerData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none" placeholder="Mario Rossi" />
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none" placeholder={t('step3.namePlaceholder')} />
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] text-amber-400 tracking-widest mb-2">EMAIL *</label>
+                <label className="block text-[10px] text-amber-400 tracking-widest mb-2">{t('step3.email')}</label>
                 <input type="email" value={customerData.email} onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none" placeholder="you@email.com" />
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none" placeholder={t('step3.emailPlaceholder')} />
               </div>
               <div>
-                <label className="block text-[10px] text-amber-400 tracking-widest mb-2">PHONE *</label>
+                <label className="block text-[10px] text-amber-400 tracking-widest mb-2">{t('step3.phone')}</label>
                 <input type="tel" value={customerData.phone} onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
                   className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none" placeholder="+39 333 123 4567" />
               </div>
             </div>
             <div>
-              <label className="text-[10px] text-amber-400 tracking-widest mb-2 flex items-center gap-2"><Globe className="w-3 h-3" /> PREFERRED LANGUAGE</label>
+              <label className="text-[10px] text-amber-400 tracking-widest mb-2 flex items-center gap-2"><Globe className="w-3 h-3" /> {t('step3.language')}</label>
               <div className="grid grid-cols-4 gap-2">
                 {[{code:'EN',label:'English'},{code:'IT',label:'Italiano'},{code:'FR',label:'Français'},{code:'DE',label:'Deutsch'}].map(lang => (
                   <button key={lang.code} onClick={() => setCustomerData({ ...customerData, language: lang.code })}
@@ -2251,62 +2288,62 @@ ${customerData.notes || 'No special requests'}
 
             {/* ALLERGIES & DIETARY */}
             <div className="border-t border-slate-800 pt-5">
-              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><AlertCircle className="w-3 h-3" /> DIETARY REQUIREMENTS</p>
+              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><AlertCircle className="w-3 h-3" /> {t('step3.dietary')}</p>
               <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-800/50 hover:bg-slate-800 transition">
                 <input type="checkbox" checked={customerData.hasAllergies}
                   onChange={(e) => setCustomerData({ ...customerData, hasAllergies: e.target.checked, allergiesDetails: e.target.checked ? customerData.allergiesDetails : '' })}
                   className="mt-1 w-4 h-4 accent-amber-400" />
-                <span className="text-sm text-slate-300">One or more guests have allergies or food intolerances</span>
+                <span className="text-sm text-slate-300">{t('step3.allergiesCheck')}</span>
               </label>
               {customerData.hasAllergies && (
                 <div className="mt-3">
-                  <label className="block text-[10px] text-slate-500 tracking-widest mb-2">PLEASE SPECIFY ALLERGIES OR INTOLERANCES *</label>
+                  <label className="block text-[10px] text-slate-500 tracking-widest mb-2">{t('step3.allergiesLabel')}</label>
                   <textarea value={customerData.allergiesDetails} onChange={(e) => setCustomerData({ ...customerData, allergiesDetails: e.target.value })}
                     className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none resize-none text-sm" rows="2"
-                    placeholder="e.g. gluten-free, nut allergy, vegetarian, lactose intolerant..." />
+                    placeholder={t('step3.allergiesPlaceholder')} />
                 </div>
               )}
             </div>
 
             {/* MOBILITY */}
             <div className="border-t border-slate-800 pt-5">
-              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><Accessibility className="w-3 h-3" /> MOBILITY</p>
+              <p className="text-[10px] text-amber-400 tracking-widest mb-3 flex items-center gap-2"><Accessibility className="w-3 h-3" /> {t('step3.mobility')}</p>
               <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-800/50 hover:bg-slate-800 transition">
                 <input type="checkbox" checked={customerData.reducedMobility}
                   onChange={(e) => setCustomerData({ ...customerData, reducedMobility: e.target.checked, mobilityDetails: e.target.checked ? customerData.mobilityDetails : '' })}
                   className="mt-1 w-4 h-4 accent-amber-400" />
-                <span className="text-sm text-slate-300">One or more guests have reduced mobility</span>
+                <span className="text-sm text-slate-300">{t('step3.mobilityCheck')}</span>
               </label>
               {customerData.reducedMobility && (
                 <div className="mt-3">
-                  <label className="block text-[10px] text-slate-500 tracking-widest mb-2">PLEASE SPECIFY *</label>
+                  <label className="block text-[10px] text-slate-500 tracking-widest mb-2">{t('step3.mobilityLabel')}</label>
                   <textarea value={customerData.mobilityDetails} onChange={(e) => setCustomerData({ ...customerData, mobilityDetails: e.target.value })}
                     className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none resize-none text-sm" rows="2"
-                    placeholder="e.g. wheelchair user, limited walking, needs assistance boarding..." />
+                    placeholder={t('step3.mobilityPlaceholder')} />
                 </div>
               )}
             </div>
 
             <div className="border-t border-slate-800 pt-5">
-              <label className="block text-[10px] text-amber-400 tracking-widest mb-2">SPECIAL REQUESTS {selectedTour?.isCustom && '*'}</label>
+              <label className="block text-[10px] text-amber-400 tracking-widest mb-2">{t('step3.requests')} {selectedTour?.isCustom && '*'}</label>
               <textarea value={customerData.notes} onChange={(e) => setCustomerData({ ...customerData, notes: e.target.value })}
                 className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white focus:border-amber-400 focus:outline-none resize-none" rows="3"
-                placeholder={selectedTour?.isCustom ? "Describe your dream itinerary..." : "Occasions, preferences, anything else..."} />
+                placeholder={selectedTour?.isCustom ? t('step3.requestsPlaceholderCustom') : t('step3.requestsPlaceholder')} />
             </div>
           </div>
 
           {/* RECAP con stima chiara e add-ons */}
           <div className="bg-slate-900 border border-amber-400/30 p-6 my-6">
-            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">YOUR REQUEST</p>
+            <p className="text-amber-400 text-[10px] tracking-[0.3em] mb-4">{t('recap.title')}</p>
             <div className="space-y-2 text-sm text-slate-300">
-              <div className="flex justify-between"><span>Tour</span><span className="text-white">{selectedTour?.name}</span></div>
+              <div className="flex justify-between"><span>{t('recap.tour')}</span><span className="text-white">{lt?.name}</span></div>
               {selectedTour?.itineraryOptions && halfDayChoiceItinerary && (
-                <div className="flex justify-between"><span>Itinerary</span><span className="text-white">{selectedTour.itineraryOptions.find(o => o.id === halfDayChoiceItinerary)?.name}</span></div>
+                <div className="flex justify-between"><span>{t('recap.itinerary')}</span><span className="text-white">{lt.itineraryOptions.find(o => o.id === halfDayChoiceItinerary)?.name}</span></div>
               )}
-              <div className="flex justify-between"><span>Date</span><span className="text-white">{selectedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
-              <div className="flex justify-between"><span>Time</span><span className="text-white">{getFinalTimeSlot()}</span></div>
-              <div className="flex justify-between"><span>Guests</span><span className="text-white">{numPeople}</span></div>
-              <div className="flex justify-between"><span>Meeting point</span><span className="text-white text-right">{getFinalMeetingPoint()}</span></div>
+              <div className="flex justify-between"><span>{t('recap.date')}</span><span className="text-white">{selectedDate?.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
+              <div className="flex justify-between"><span>{t('recap.time')}</span><span className="text-white">{displayTimeSlot()}</span></div>
+              <div className="flex justify-between"><span>{t('recap.guests')}</span><span className="text-white">{numPeople}</span></div>
+              <div className="flex justify-between"><span>{t('recap.meetingPoint')}</span><span className="text-white text-right">{displayMeetingPoint()}</span></div>
 
               {!selectedTour?.isCustom && (() => {
                 const effectivePrice = getEffectivePrice(selectedTour, selectedDate);
@@ -2315,7 +2352,7 @@ ${customerData.notes || 'No special requests'}
                 return (
                   <div className="pt-4 mt-4 border-t border-slate-700 space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Tour base</span>
+                      <span className="text-slate-400">{t('recap.tourBase')}</span>
                       <span className={isCustomPrice ? 'text-slate-500 line-through' : 'text-white'}>
                         €{selectedTour.basePrice.toLocaleString()}
                       </span>
@@ -2324,7 +2361,7 @@ ${customerData.notes || 'No special requests'}
                       <>
                         <div className="flex justify-between items-baseline gap-3">
                           <span className="text-amber-400 flex items-center gap-2 flex-wrap">
-                            Price for this date
+                            {t('recap.datePrice')}
                             {dateNote && (
                               <span className="text-[11px] text-amber-400/70 italic font-normal normal-case">
                                 — {dateNote}
@@ -2336,13 +2373,13 @@ ${customerData.notes || 'No special requests'}
                       </>
                     )}
                     <div className="flex justify-between pt-2 border-t border-slate-700/50">
-                      <span className="text-slate-300">Indicative price</span>
+                      <span className="text-slate-300">{t('recap.indicative')}</span>
                       <span className="text-white text-lg">≈ €{effectivePrice.toLocaleString()}</span>
                     </div>
                     <div className="mt-3 p-3 bg-amber-400/10 border border-amber-400/20">
                       <p className="text-[11px] text-amber-400 leading-relaxed flex items-start gap-2">
                         <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                        <span>This is an estimate. The final price will be confirmed by the skipper based on date, group size and requests — you will be contacted as soon as possible.</span>
+                        <span>{t('recap.estimateNote')}</span>
                       </p>
                     </div>
                   </div>
@@ -2353,7 +2390,7 @@ ${customerData.notes || 'No special requests'}
                   <div className="p-3 bg-amber-400/10 border border-amber-400/20">
                     <p className="text-[11px] text-amber-400 leading-relaxed flex items-start gap-2">
                       <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                      <span>For Tailored tours, the final price is confirmed by the skipper based on your requests.</span>
+                      <span>{t('recap.tailoredNote')}</span>
                     </p>
                   </div>
                 </div>
@@ -2367,19 +2404,19 @@ ${customerData.notes || 'No special requests'}
               <div className="flex items-start gap-3 mb-3">
                 <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-red-300 font-semibold text-sm mb-2">Unable to submit your request</p>
+                  <p className="text-red-300 font-semibold text-sm mb-2">{t('error.title')}</p>
                   {/* messaggio specifico se la causa è il filtro antispam */}
                   {submitError.message && submitError.message.toLowerCase().includes('spam') ? (
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                      Our system could not validate your request. Please review the details you entered <span className="text-amber-400">carefully</span> — make sure your <span className="text-amber-400">phone number</span> and <span className="text-amber-400">email address</span> are written correctly and in full, with no typos or missing characters, then try again. If the problem persists, contact us directly:
+                      {t('error.spam1')}<span className="text-amber-400">{t('error.carefully')}</span>{t('error.spam2')}<span className="text-amber-400">{t('error.phone')}</span>{t('error.and')}<span className="text-amber-400">{t('error.emailAddress')}</span>{t('error.spam3')}
                     </p>
                   ) : (
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                      Please contact us directly — we'd love to hear from you:
+                      {t('error.generic')}
                     </p>
                   )}
                   <div className="flex flex-col sm:flex-row gap-2 mb-4">
-                    <a href={whatsappLink(`Hi! I tried to submit a booking request for ${selectedTour?.name} on ${selectedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} but something went wrong. Can you help?`)}
+                    <a href={whatsappLink(t('error.whatsapp', lt?.name, selectedDate?.toLocaleDateString(locale, { day: 'numeric', month: 'long' })))}
                       target="_blank" rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-4 py-2 text-xs tracking-wider transition">
                       <WhatsAppIcon className="w-4 h-4" /> WHATSAPP
@@ -2393,7 +2430,7 @@ ${customerData.notes || 'No special requests'}
                   </div>
                   {/* dettaglio tecnico per diagnosi — utile quando marco/luca aprono il sito per capire cosa non va */}
                   <details className="mt-3">
-                    <summary className="text-[10px] text-slate-500 tracking-widest cursor-pointer hover:text-slate-400">TECHNICAL DETAILS (for support)</summary>
+                    <summary className="text-[10px] text-slate-500 tracking-widest cursor-pointer hover:text-slate-400">{t('error.technical')}</summary>
                     <pre className="mt-2 p-3 bg-slate-950 text-[10px] text-slate-400 overflow-x-auto whitespace-pre-wrap break-words">
 {`Time: ${submitError.timestamp}
 Error: ${submitError.message}
@@ -2411,7 +2448,7 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
               <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)}
                 className="mt-1 w-4 h-4 accent-amber-400 flex-shrink-0" />
               <span className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                I have read and accept the <Link to="/privacy" target="_blank" className="text-amber-400 hover:underline">Privacy Policy</Link>, and I consent to the processing of my personal data for the purpose of handling my booking request. <span className="text-red-400">*</span>
+                {t('consent.privacy1')}<Link to={p('/privacy')} target="_blank" className="text-amber-400 hover:underline">{t('consent.privacyLink')}</Link>{t('consent.privacy2')}<span className="text-red-400">*</span>
               </span>
             </label>
 
@@ -2421,7 +2458,7 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
                 <input type="checkbox" checked={healthConsent} onChange={(e) => setHealthConsent(e.target.checked)}
                   className="mt-1 w-4 h-4 accent-amber-400 flex-shrink-0" />
                 <span className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  I explicitly consent to the processing of the health-related information I am providing (allergies and/or reduced mobility), to be used exclusively to ensure my safety and comfort on board (GDPR art. 9.2.a). <span className="text-red-400">*</span>
+                  {t('consent.health')}<span className="text-red-400">*</span>
                 </span>
               </label>
             )}
@@ -2448,14 +2485,14 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
               (!(customerData.hasAllergies || customerData.reducedMobility) || healthConsent)
                 ? 'bg-amber-400 text-slate-950 hover:bg-amber-300' : 'bg-slate-800 text-slate-600 cursor-not-allowed'
             }`}>
-            REQUEST QUOTE
+            {t('step3.submit')}
           </button>
           {/* microdisclaimer che abbassa l'ansia da impegno */}
           <div className="mt-4 text-center space-y-1">
             <p className="text-[11px] text-slate-400 leading-relaxed">
-              You're not booking or paying yet — we'll contact you within 24 hours to confirm availability and send your final quote.
+              {t('step3.disclaimer')}
             </p>
-            <p className="text-[10px] text-slate-500 tracking-widest">CAPTAIN MARCO & PAOLA · LA SPEZIA</p>
+            <p className="text-[10px] text-slate-500 tracking-widest">{t('step3.signature')}</p>
           </div>
         </div>
       )}
@@ -2464,9 +2501,9 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
-          <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
+          <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">{t('footer.tagline')}</p>
           <p className="text-slate-400 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
-          <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+          <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">{t('footer.place')}</p>
           {/* accesso dashboard skipper: spostato qui dall'intestazione (ott 2026) */}
           <button onClick={() => setShowSkipperLogin(true)} className="inline-flex items-center gap-1.5 mt-6 text-[10px] text-slate-400 hover:text-amber-400 transition tracking-widest">
             <Lock className="w-3 h-3" /> Area riservata
@@ -2477,10 +2514,10 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
       {/* bottone whatsapp floating visibile in tutte le pagine cliente */}
       <WhatsAppFloatingButton message={
         currentStep === 1
-          ? 'Hi! I would like to know more about Sea Runner tours.'
+          ? t('wa.tours')
           : selectedTour
-            ? `Hi! I have a question about the ${selectedTour.name} tour.`
-            : 'Hi! I would like to know more about Sea Runner tours.'
+            ? t('wa.tourQuestion', lt.name)
+            : t('wa.tours')
       } />
     </div>
   );
@@ -2490,16 +2527,39 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
 // ============ NAVBAR CONDIVISA ============
 // mostrata in tutte le pagine tranne booking step 2/3 e dashboard skipper
 // (il booking ha già il suo header con gli step 1/2/3)
+// selettore lingua EN | IT: porta alla STESSA pagina nell'altra lingua
+function LanguageSwitcher({ className = '' }) {
+  const { lang, t, p } = useLang();
+  const { pathname, search, hash } = useLocation();
+  // dalla pagina di conferma si torna alla scelta tour (la conferma non ha senso ricaricata)
+  const base = stripLang(pathname) === '/booking/thank-you' ? p('/booking') : pathname;
+  return (
+    <div className={`flex items-center text-[11px] tracking-[0.2em] ${className}`} role="group" aria-label={t('nav.language')}>
+      {LANG_CODES.map((code, i) => (
+        <React.Fragment key={code}>
+          {i > 0 && <span className="text-slate-700" aria-hidden="true">|</span>}
+          <Link to={switchLangPath(base, search, hash, code)} hrefLang={LANGS[code].htmlLang} lang={LANGS[code].htmlLang}
+            title={LANGS[code].name} aria-current={code === lang ? 'true' : undefined}
+            className={`px-1.5 py-2 transition ${code === lang ? 'text-amber-400' : 'text-slate-500 hover:text-amber-400'}`}>
+            {LANGS[code].label}
+          </Link>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
 function SharedNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t, p } = useLang();
 
   const links = [
-    { to: '/', label: 'Home' },
-    { to: '/boat', label: 'The boat' },
-    { to: '/booking', label: 'Request a quote' },
-    { to: '/#faq', label: 'FAQ' }
+    { to: p('/'), label: t('nav.home') },
+    { to: p('/boat'), label: t('nav.boat') },
+    { to: p('/booking'), label: t('nav.quote') },
+    { to: p('/#faq'), label: t('nav.faq') }
   ];
 
   const go = (to) => {
@@ -2510,14 +2570,15 @@ function SharedNav() {
   return (
     <header className="border-b border-slate-800 bg-slate-950 sticky top-0 z-40" style={{ fontFamily: 'Georgia, serif' }}>
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
-        <Link to="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <Link to={p('/')} className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="flex-shrink-0"><SeaRunnerLogoCompact size="sm" /></div>
           <div className="min-w-0">
             <p className="text-white text-sm sm:text-lg tracking-[0.15em] sm:tracking-[0.2em] truncate">SEA RUNNER</p>
-            <p className="text-amber-400 text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em] truncate">PRIVATE BOAT TOURS</p>
+            <p className="text-amber-400 text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em] truncate">{t('nav.tagline')}</p>
           </div>
         </Link>
 
+        <div className="flex items-center gap-3 md:gap-6 flex-shrink-0">
         {/* nav desktop */}
         <nav className="hidden md:flex items-center gap-6">
           {links.map(l => (
@@ -2530,12 +2591,16 @@ function SharedNav() {
           ))}
         </nav>
 
+        {/* lingua (sempre visibile, anche da telefono) */}
+        <LanguageSwitcher />
+
         {/* menu hamburger mobile */}
         <button onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden text-slate-400 hover:text-amber-400 transition p-2.5 -m-2.5"
-          aria-label="Toggle menu">
+          aria-label={t('nav.toggle')}>
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
+        </div>
       </div>
 
       {/* dropdown mobile */}
@@ -2560,55 +2625,12 @@ function SharedNav() {
 
 // ============ FAQ SECTION ============
 // accordion espandibile con le domande più frequenti, riutilizzabile in home e booking
-const FAQ_ITEMS = [
-  {
-    q: 'Is food and drinks included on board?',
-    a: `Yes. Every tour includes an open bar and a light Italian aperitivo. On full day tours (Cinque Terre, Golfo dei Poeti, Portofino) we also serve a light Italian lunch on board. If you have allergies or dietary preferences, just let us know in advance and we'll adapt everything for you.`
-  },
-  {
-    q: 'What happens if the weather is bad?',
-    a: `Your safety always comes first. Captain Marco monitors the weather forecast very carefully and makes the final call on conditions. If the sea is not safe for the tour, we will either reschedule to another date at your convenience or fully refund you. No penalty, no stress.`
-  },
-  {
-    q: 'Can children and seniors come on board?',
-    a: `Absolutely. Our boat is family-friendly, safe and comfortable. Children's life jackets are on board, the swim platform makes it easy to get in and out of the water, and we provide shaded areas for the hottest hours of the day.`
-  },
-  {
-    q: 'Is the tour really private? Will other guests join?',
-    a: `Yes, it is 100% private. Only you and the people you choose to bring with you will be on board — never strangers, never shared tours. It's your own day at sea, your own pace.`
-  },
-  {
-    q: 'Can we customize the itinerary?',
-    a: `Yes. While each tour has a standard route, Captain Marco adapts it to the sea conditions and your preferences. Want to spend more time swimming in a certain cove? Stop longer at a village? Skip a stop? Just tell us — we build the day around you.`
-  },
-  {
-    q: 'Do we need any sailing experience to join?',
-    a: `Not at all. Our tours are suitable for everyone, from first-time sailors to experienced sea lovers. Captain Marco has held his nautical license for over 30 years and handles every situation professionally, making sure you can relax and enjoy the day with complete peace of mind.`
-  },
-  {
-    q: 'Are you authorized to enter the Cinque Terre marine park? Is the boat fully equipped for safety?',
-    a: `Yes and yes. We hold all the official authorizations required to navigate and anchor within the Cinque Terre Marine Protected Area. The boat is fully equipped with professional safety gear: AIS (real-time tracking system), distress signalling, life jackets for all guests, first aid kit, and all mandatory equipment — regularly inspected and up to date.`
-  },
-  {
-    q: 'Can we bring our own food and drinks on board?',
-    a: `Yes, in addition to what we serve on board, you are welcome to bring your own bottle of wine, champagne, a birthday cake or anything you'd like to make the day feel truly yours. Just let us know in advance so we can prepare everything properly.`
-  },
-  {
-    q: 'Can you organize the day for a special occasion?',
-    a: `Absolutely. Many guests choose us for marriage proposals, honeymoons, anniversaries and birthdays — a day at sea is the perfect stage for unforgettable moments. Let us know what you have in mind and we'll take care of the details: flowers, decorations, a cake, music, or a private moment at sunset.`
-  },
-  {
-    q: 'Is there a minimum number of guests?',
-    a: `No minimum. The tour is fully private whether you are 2 or 8 guests. For couples, a private boat is one of the most intimate ways to discover the coast — just the two of you, the sea, and the Italian Riviera.`
-  },
-  {
-    q: 'Can we bring our dog on board?',
-    a: `Yes, dogs are very welcome on board. If you're traveling with your four-legged companion, just let us know in advance so we can make sure everything is set up for their comfort too.`
-  }
-];
+// i testi delle domande sono nei file delle lingue (src/i18n/en.js, it.js → 'faq.items')
 
 function FAQSection({ id = 'faq' }) {
   const [openIndex, setOpenIndex] = useState(null);
+  const { t } = useLang();
+  const FAQ_ITEMS = t('faq.items');
 
   // schema FAQPage: google può usarlo per mostrare le domande direttamente nei risultati di ricerca.
   // ricerche "frequently asked" come "is the cinque terre tour private?" possono attivare un rich snippet
@@ -2635,8 +2657,8 @@ function FAQSection({ id = 'faq' }) {
       </Helmet>
       <div className="max-w-3xl mx-auto px-4">
         <div className="text-center mb-10 sm:mb-12">
-          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">GOOD TO KNOW</p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Frequently asked questions</h2>
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">{t('faq.kicker')}</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">{t('faq.title')}</h2>
           <div className="w-16 h-px bg-amber-400 mx-auto"></div>
         </div>
 
@@ -2688,6 +2710,7 @@ function TikTokIcon({ className = 'w-7 h-7' }) {
 }
 
 function SocialSection() {
+  const { t } = useLang();
   const socials = [
     { name: 'Instagram', handle: '@searunner_laspezia', url: 'https://www.instagram.com/searunner_laspezia/', Icon: InstagramIcon },
     { name: 'TikTok', handle: '@searunner.5terre', url: 'https://www.tiktok.com/@searunner.5terre', Icon: TikTokIcon }
@@ -2695,11 +2718,11 @@ function SocialSection() {
   return (
     <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
       <div className="max-w-3xl mx-auto px-4 text-center">
-        <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">FOLLOW THE JOURNEY</p>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">A daily glimpse of the Riviera</h2>
+        <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">{t('social.kicker')}</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">{t('social.title')}</h2>
         <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
         <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto mb-10">
-          Sunsets, hidden coves and behind-the-scenes from our days at sea. Follow us to see where Sea Runner sails next.
+          {t('social.text')}
         </p>
         <div className="grid sm:grid-cols-2 gap-4 max-w-lg mx-auto">
           {socials.map(({ name, handle, url, Icon }) => (
@@ -2772,6 +2795,7 @@ function HomeVideoSection() {
 }
 // ============ HOMEPAGE (route /) ============
 function HomePage() {
+  const { t, p, tr } = useLang();
   // dati strutturati JSON-LD per Google: dichiarano "questa è un'attività turistica nautica
   // con sede in italia, ecco prezzi/contatti/zona/recensioni". questi dati permettono a google
   // di mostrare rich snippets (stelle, prezzo da, indirizzo) direttamente nei risultati di ricerca.
@@ -2784,7 +2808,7 @@ function HomePage() {
     "@type": ["TravelAgency", "TouristInformationCenter"],
     "name": "Sea Runner",
     "alternateName": "Sea Runner 5 Terre Boat Tours",
-    "description": "Private boat tours from La Spezia along the Italian Riviera. Discover Cinque Terre, Portofino, Portovenere and the Golfo dei Poeti aboard our award-winning Cap Camarat 9.0 WA with Captain Marco and Paola — fully private charter, never shared. Departures from Porto Mirabello.",
+    "description": t('home.schemaDescription'),
     "url": SITE_URL,
     "image": SITE_OG_IMAGE,
     "logo": `${SITE_URL}/logo.webp`,
@@ -2830,8 +2854,8 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <SEOMetadata
-        title="Private Boat Tours Cinque Terre, Portofino & La Spezia"
-        description="Exclusive private boat tours along the Italian Riviera with Captain Marco and Paola. Cinque Terre, Portofino, Golfo dei Poeti — fully private, fully tailored. Departures from La Spezia."
+        title={t('home.seoTitle')}
+        description={t('home.seoDescription')}
         path="/"
       />
       <Helmet>
@@ -2858,21 +2882,21 @@ function HomePage() {
         }}></div>
 
         <div className="relative max-w-5xl mx-auto px-4 py-20 sm:py-24 md:py-32 text-center">
-          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] sm:tracking-[0.5em] mb-4 sm:mb-6">LA SPEZIA · ITALIAN RIVIERA</p>
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] sm:tracking-[0.5em] mb-4 sm:mb-6">{t('home.heroKicker')}</p>
           <h1 className="text-4xl sm:text-5xl md:text-7xl mb-5 sm:mb-6 leading-tight">
-            Private boat tours along the{' '}<br/>
-            <span style={{ fontFamily: '"Brush Script MT", "Lucida Handwriting", cursive', color: '#fbbf24', fontSize: '1.2em' }}>italian riviera</span>
+            {t('home.heroTitle')}{' '}<br/>
+            <span style={{ fontFamily: '"Brush Script MT", "Lucida Handwriting", cursive', color: '#fbbf24', fontSize: '1.2em' }}>{t('home.heroTitleScript')}</span>
           </h1>
           <div className="w-20 sm:w-24 h-px bg-amber-400 mx-auto mb-5 sm:mb-6"></div>
           <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2">
-            Cinque Terre, Golfo dei Poeti, Portofino. Exclusive day trips with Captain Marco and Paola.
+            {t('home.heroText')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/booking" className="bg-amber-400 text-slate-950 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-300 transition">
-              REQUEST A QUOTE
+            <Link to={p('/booking')} className="bg-amber-400 text-slate-950 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-300 transition">
+              {t('home.ctaQuote')}
             </Link>
-            <Link to="/boat" className="border border-amber-400 text-amber-400 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-400 hover:text-slate-950 transition">
-              DISCOVER THE BOAT
+            <Link to={p('/boat')} className="border border-amber-400 text-amber-400 px-6 sm:px-8 py-3 sm:py-4 tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm hover:bg-amber-400 hover:text-slate-950 transition">
+              {t('home.ctaBoat')}
             </Link>
           </div>
         </div>
@@ -2880,7 +2904,7 @@ function HomePage() {
         {/* indicatore scroll — una freccia discreta che "respira" per segnalare che c'è altro sotto */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-amber-400/70"
           style={{ animation: 'scrollBounce 2s ease-in-out infinite' }}>
-          <span className="text-[9px] tracking-[0.3em]">SCROLL</span>
+          <span className="text-[9px] tracking-[0.3em]">{t('home.scroll')}</span>
           <ChevronDown className="w-4 h-4" />
         </div>
         {/* keyframes inline per il bounce — così non serve toccare il css globale */}
@@ -2894,14 +2918,14 @@ function HomePage() {
 
       {/* INTRO */}
       <section className="max-w-4xl mx-auto px-4 py-14 sm:py-20 text-center">
-        <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">OUR STORY</p>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-5 sm:mb-6">A different way to see Liguria</h2>
+        <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">{t('home.storyKicker')}</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl mb-5 sm:mb-6">{t('home.storyTitle')}</h2>
         <div className="w-16 h-px bg-amber-400 mx-auto mb-6 sm:mb-8"></div>
         <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-5 sm:mb-6">
-          Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you and those you love, with the coastline unfolding at your own pace.
+          {t('home.storyText1')}
         </p>
         <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-          Swim in hidden coves the big boats never reach. Snorkel the marine reserve with a guide. Enjoy a light Italian lunch on board with local wine while the colourful villages drift by. Every day at sea is crafted around you.
+          {t('home.storyText2')}
         </p>
       </section>
 
@@ -2912,19 +2936,19 @@ function HomePage() {
             <div className="flex items-center justify-center gap-1 mb-4">
               {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />)}
             </div>
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">LOVED BY OUR GUESTS</p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Highly rated across the web</h2>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">{t('home.reviewsKicker')}</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">{t('home.reviewsTitle')}</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto mb-6"></div>
             <p className="text-slate-400 max-w-xl mx-auto">
-              Don't take our word for it, read what guests from all over the world have to say about their day at sea with us.
+              {t('home.reviewsText')}
             </p>
           </div>
 
           {/* platform rating cards con link veri */}
           <div className="grid sm:grid-cols-2 gap-4 mb-10 max-w-3xl mx-auto">
             {[
-              { name: 'Google', url: 'https://share.google/6jVbuTak13P75aq2Y', cta: 'Read on Google' },
-              { name: 'TripAdvisor', url: 'https://www.tripadvisor.it/AttractionProductReview-g187824-d25176464-Cinque_Terre_and_Portovenere_Private_Boat_Tour_from_La_Spezia-La_Spezia_Province_o.html', cta: 'Read on TripAdvisor' }
+              { name: 'Google', url: 'https://share.google/6jVbuTak13P75aq2Y', cta: t('home.readOnGoogle') },
+              { name: 'TripAdvisor', url: 'https://www.tripadvisor.it/AttractionProductReview-g187824-d25176464-Cinque_Terre_and_Portovenere_Private_Boat_Tour_from_La_Spezia-La_Spezia_Province_o.html', cta: t('home.readOnTripadvisor') }
             ].map(p => (
               <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
                 className="bg-slate-900 border border-slate-800 p-6 text-center hover:border-amber-400 transition block group">
@@ -2943,14 +2967,14 @@ function HomePage() {
       <section className="border-t border-slate-800 py-14 sm:py-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">EXCLUSIVE EXPERIENCES</p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Choose your tour</h2>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">{t('home.toursKicker')}</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">{t('home.toursTitle')}</h2>
             <div className="w-16 h-px bg-amber-400 mx-auto"></div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {initialTours.slice(0, 3).map(tour => (
-              <Link key={tour.id} to={`/booking/${tour.slug}`}
+            {initialTours.slice(0, 3).map(tr).map(tour => (
+              <Link key={tour.id} to={p(`/booking/${tour.slug}`)}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
                 <div className="p-5 sm:p-6">
@@ -2962,7 +2986,7 @@ function HomePage() {
                       <span className="flex items-center gap-1"><Users className="w-3 h-3" /> 1-{tour.maxPeople}</span>
                     </div>
                     <div className="border border-amber-400 text-amber-400 px-3 sm:px-4 py-2 text-[10px] sm:text-xs tracking-widest group-hover:bg-amber-400 group-hover:text-slate-950 transition whitespace-nowrap">
-                      CHECK PRICE →
+                      {t('card.checkPrice')}
                     </div>
                   </div>
                 </div>
@@ -2971,8 +2995,8 @@ function HomePage() {
           </div>
 
           <div className="text-center mt-10">
-            <Link to="/booking" className="text-amber-400 hover:text-amber-300 text-sm tracking-[0.3em] transition">
-              VIEW ALL TOURS →
+            <Link to={p('/booking')} className="text-amber-400 hover:text-amber-300 text-sm tracking-[0.3em] transition">
+              {t('home.viewAllTours')}
             </Link>
           </div>
         </div>
@@ -2982,21 +3006,21 @@ function HomePage() {
       <section className="border-t border-slate-800 py-14 sm:py-20 bg-slate-900/30">
         <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="aspect-[4/3] bg-slate-800 overflow-hidden relative" style={{ backgroundColor: '#0b3d7e' }}>
-            <img src="/boat-1.webp" alt="Sea Runner private boat at Tino island lighthouse — Cinque Terre coastline"
+            <img src="/boat-1.webp" alt={t('home.boatImageAlt')}
               className="w-full h-full"
               style={{ objectFit: 'cover', objectPosition: 'center' }}
               loading="lazy" />
           </div>
           <div>
-            <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">THE BOAT</p>
+            <p className="text-amber-400 text-xs tracking-[0.4em] mb-4">{t('home.boatKicker')}</p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4">Cap Camarat 9.0 WA</h2>
-            <p className="text-slate-400 italic text-sm mb-6">Best Boat of the Year · multiple awards</p>
+            <p className="text-slate-400 italic text-sm mb-6">{t('boat.awards')}</p>
             <div className="w-16 h-px bg-amber-400 mb-6"></div>
             <p className="text-slate-300 leading-relaxed mb-6">
-              Solar-powered silence at anchor. Smooth cruising thanks to an intelligent flap system. Extendable shade, bathroom on board, and everything you need for a full day of pleasure.
+              {t('home.boatText')}
             </p>
-            <Link to="/boat" className="inline-block border border-amber-400 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] hover:bg-amber-400 hover:text-slate-950 transition">
-              DISCOVER THE BOAT →
+            <Link to={p('/boat')} className="inline-block border border-amber-400 text-amber-400 px-6 py-3 text-xs tracking-[0.3em] hover:bg-amber-400 hover:text-slate-950 transition">
+              {t('home.boatCta')}
             </Link>
           </div>
         </div>
@@ -3008,11 +3032,11 @@ function HomePage() {
       {/* CONTACT STRIP */}
       <section className="border-t border-slate-800 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">GET IN TOUCH</p>
-          <h2 className="text-2xl sm:text-3xl mb-4 sm:mb-6">Questions before booking?</h2>
-          <p className="text-slate-400 text-sm sm:text-base mb-6 sm:mb-8">Marco and Paola reply personally, as soon as possible.</p>
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">{t('home.contactKicker')}</p>
+          <h2 className="text-2xl sm:text-3xl mb-4 sm:mb-6">{t('home.contactTitle')}</h2>
+          <p className="text-slate-400 text-sm sm:text-base mb-6 sm:mb-8">{t('home.contactText')}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-sm sm:max-w-none mx-auto">
-            <a href={whatsappLink('Hi! I would like to know more about Sea Runner tours.')} target="_blank" rel="noopener noreferrer"
+            <a href={whatsappLink(t('wa.tours'))} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-5 sm:px-6 py-3 text-xs tracking-[0.2em] sm:tracking-[0.3em] transition">
               <WhatsAppIcon className="w-4 h-4" /> WHATSAPP
             </a>
@@ -3048,6 +3072,8 @@ const BOAT_PHOTOS = [
 
 function BoatPhotoGallery() {
   const [index, setIndex] = useState(0);
+  const { t } = useLang();
+  const alts = t('boat.photoAlts'); // testi alternativi delle foto nella lingua della pagina
   const photos = BOAT_PHOTOS;
   const hasPhotos = photos.length > 0;
   const total = photos.length;
@@ -3061,7 +3087,7 @@ function BoatPhotoGallery() {
       <div className="mb-12 aspect-[16/9] bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: '#0b3d7e' }}>
         <Anchor className="w-32 h-32 text-amber-400/20" />
         <div className="absolute bottom-4 left-4 right-4 text-center">
-          <p className="text-white/50 text-xs tracking-widest italic">BOAT PHOTOS COMING SOON</p>
+          <p className="text-white/50 text-xs tracking-widest italic">{t('boat.photosComingSoon')}</p>
         </div>
       </div>
     );
@@ -3073,7 +3099,7 @@ function BoatPhotoGallery() {
           max-height scala in base al device per evitare che foto verticali diventino giganti su mobile */}
       <div className="bg-slate-900 border border-slate-800 relative overflow-hidden flex items-center justify-center"
         style={{ maxHeight: 'min(60vh, 550px)', minHeight: '240px' }}>
-        <img src={photos[index].src} alt={photos[index].alt || photos[index].caption || `Sea Runner boat photo ${index + 1}`}
+        <img src={photos[index].src} alt={alts[index] || photos[index].alt || photos[index].caption || t('boat.photoFallbackAlt', index + 1)}
           className="block w-auto h-auto max-w-full"
           style={{ maxHeight: 'min(60vh, 550px)' }}
           loading="lazy"
@@ -3090,12 +3116,12 @@ function BoatPhotoGallery() {
           <>
             <button onClick={prev}
               className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition z-10"
-              aria-label="Previous photo">
+              aria-label={t('boat.prevPhoto')}>
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button onClick={next}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950/60 hover:bg-slate-950/90 text-white flex items-center justify-center transition z-10"
-              aria-label="Next photo">
+              aria-label={t('boat.nextPhoto')}>
               <ChevronRight className="w-5 h-5" />
             </button>
             {/* dots indicatore */}
@@ -3103,7 +3129,7 @@ function BoatPhotoGallery() {
               {photos.map((_, i) => (
                 <button key={i} onClick={() => setIndex(i)}
                   className={`relative w-2 h-2 rounded-full transition after:content-[''] after:absolute after:-inset-3 ${i === index ? 'bg-amber-400 w-6' : 'bg-white/40 hover:bg-white/70'}`}
-                  aria-label={`Go to photo ${i + 1}`} />
+                  aria-label={t('boat.goToPhoto', i + 1)} />
               ))}
             </div>
           </>
@@ -3124,25 +3150,26 @@ function BoatPhotoGallery() {
 // (quando /plani.webp manca, mostriamo un placeholder pulito senza crash)
 function BoatLayoutSection() {
   const [imgError, setImgError] = useState(false);
+  const { t } = useLang();
   return (
     <section className="max-w-4xl mx-auto px-4 mb-16">
       <div className="text-center mb-8">
-        <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">BOAT LAYOUT</p>
-        <h3 className="text-2xl mb-2">How the boat is organized</h3>
+        <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">{t('boat.layoutKicker')}</p>
+        <h3 className="text-2xl mb-2">{t('boat.layoutTitle')}</h3>
         <div className="w-16 h-px bg-amber-400/50 mx-auto"></div>
       </div>
       <div className="bg-white p-6 md:p-10">
         {imgError ? (
           <div style={{ aspectRatio: '16/9' }} className="flex items-center justify-center bg-slate-100 text-slate-500 text-xs tracking-widest">
-            BOAT LAYOUT COMING SOON
+            {t('boat.layoutComingSoon')}
           </div>
         ) : (
-          <img src="/plani.webp" alt="Cap Camarat 9.0 WA Sea Runner — boat layout and floor plan"
+          <img src="/plani.webp" alt={t('boat.layoutAlt')}
             className="w-full h-auto"
             onError={() => setImgError(true)} />
         )}
       </div>
-      <p className="text-center text-[10px] text-slate-500 italic mt-3 tracking-wider">Official layout from Jeanneau</p>
+      <p className="text-center text-[10px] text-slate-500 italic mt-3 tracking-wider">{t('boat.layoutCredit')}</p>
     </section>
   );
 }
@@ -3150,6 +3177,7 @@ function BoatLayoutSection() {
 
 // ============ BOATPAGE (route /boat) ============
 function BoatPage() {
+  const { t, p, lang } = useLang();
   // breadcrumb structured data: dice a google la gerarchia del sito.
   // nei risultati di ricerca, l'URL viene sostituito dal percorso visivo "Sea Runner › The Boat".
   const breadcrumbSchema = {
@@ -3160,13 +3188,13 @@ function BoatPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Sea Runner",
-        "item": SITE_URL
+        "item": lang === 'en' ? SITE_URL : absUrl('/', lang)
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "The Boat",
-        "item": `${SITE_URL}/boat`
+        "name": t('boat.breadcrumb'),
+        "item": absUrl('/boat', lang)
       }
     ]
   };
@@ -3174,8 +3202,8 @@ function BoatPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <SEOMetadata
-        title="The Boat — Cap Camarat 9.0 WA, Award-Winning Yacht for Private Tours"
-        description="Discover Sea Runner's Cap Camarat 9.0 WA: silent solar power, smooth cruising, extendable bimini, bathroom on board. The award-winning vessel of our Cinque Terre and Portofino private tours."
+        title={t('boat.seoTitle')}
+        description={t('boat.seoDescription')}
         path="/boat"
       />
       <Helmet>
@@ -3188,12 +3216,12 @@ function BoatPage() {
       {/* HERO con titolo e nome modello */}
       <section className="max-w-5xl mx-auto px-4 pt-10 sm:pt-16 pb-8 sm:pb-10">
         <div className="text-center mb-8 sm:mb-10">
-          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">THE BOAT</p>
+          <p className="text-amber-400 text-[10px] sm:text-xs tracking-[0.4em] mb-3 sm:mb-4">{t('boat.kicker')}</p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl mb-3">Cap Camarat 9.0 WA</h1>
-          <p className="text-slate-400 italic text-xs sm:text-sm mb-4 sm:mb-5">Best Boat of the Year · multiple awards</p>
+          <p className="text-slate-400 italic text-xs sm:text-sm mb-4 sm:mb-5">{t('boat.awards')}</p>
           <div className="w-20 sm:w-24 h-px bg-amber-400 mx-auto mb-5 sm:mb-6"></div>
           <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed px-2">
-            An award-winning vessel, chosen for one reason only: it lets you feel the sea at its best.
+            {t('boat.intro')}
           </p>
         </div>
 
@@ -3206,19 +3234,19 @@ function BoatPage() {
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
             <Users className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
-            <p className="text-lg sm:text-2xl mb-1 leading-tight">up to 8</p>
-            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">GUESTS</p>
-            <p className="text-[8px] sm:text-[10px] text-slate-400 tracking-wider mt-1 sm:mt-2">+ crew</p>
+            <p className="text-lg sm:text-2xl mb-1 leading-tight">{t('boat.specGuestsValue')}</p>
+            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">{t('boat.specGuestsLabel')}</p>
+            <p className="text-[8px] sm:text-[10px] text-slate-400 tracking-wider mt-1 sm:mt-2">{t('boat.specGuestsNote')}</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
             <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
-            <p className="text-lg sm:text-2xl mb-1 leading-tight">Bathroom</p>
-            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">ON BOARD</p>
+            <p className="text-lg sm:text-2xl mb-1 leading-tight">{t('boat.specBathValue')}</p>
+            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">{t('boat.specBathLabel')}</p>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-3 sm:p-6 text-center">
             <Sun className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mx-auto mb-2 sm:mb-3" />
-            <p className="text-lg sm:text-2xl mb-1 leading-tight">Extendable</p>
-            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">BIMINI</p>
+            <p className="text-lg sm:text-2xl mb-1 leading-tight">{t('boat.specBiminiValue')}</p>
+            <p className="text-[9px] sm:text-xs text-slate-500 tracking-widest">{t('boat.specBiminiLabel')}</p>
           </div>
         </div>
       </section>
@@ -3228,37 +3256,37 @@ function BoatPage() {
         <div className="space-y-7 sm:space-y-10">
           {/* silenzio */}
           <div>
-            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SILENCE AT ANCHOR</p>
-            <h3 className="text-xl sm:text-2xl mb-3">Only the sound of the sea</h3>
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">{t('boat.silenceKicker')}</p>
+            <h3 className="text-xl sm:text-2xl mb-3">{t('boat.silenceTitle')}</h3>
             <p className="text-slate-300 leading-relaxed">
-              Solar panels keep our two fridges running all day long — even at anchor, with no generator noise and zero emissions. When the engines are off, the only soundtrack is the water.
+              {t('boat.silenceText')}
             </p>
           </div>
 
           {/* comfort navigazione */}
           <div className="pt-7 sm:pt-10 border-t border-slate-800">
-            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SMOOTH CRUISING</p>
-            <h3 className="text-xl sm:text-2xl mb-3">Steady on every wave</h3>
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">{t('boat.cruisingKicker')}</p>
+            <h3 className="text-xl sm:text-2xl mb-3">{t('boat.cruisingTitle')}</h3>
             <p className="text-slate-300 leading-relaxed">
-              An intelligent flap system adjusts the trim in real time, softening every movement. Twin Yamaha 225 HP engines deliver power when you need it, without ever feeling rushed.
+              {t('boat.cruisingText')}
             </p>
           </div>
 
           {/* ombra */}
           <div className="pt-7 sm:pt-10 border-t border-slate-800">
-            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">SHADE WHEN YOU WANT IT</p>
-            <h3 className="text-xl sm:text-2xl mb-3">Sun or shade, you decide</h3>
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">{t('boat.shadeKicker')}</p>
+            <h3 className="text-xl sm:text-2xl mb-3">{t('boat.shadeTitle')}</h3>
             <p className="text-slate-300 leading-relaxed">
-              An extendable bimini covers the entire rear deck when the sun is at its strongest, and retracts in seconds when you want to feel the breeze and the light on your skin.
+              {t('boat.shadeText')}
             </p>
           </div>
 
           {/* comfort bordo */}
           <div className="pt-7 sm:pt-10 border-t border-slate-800">
-            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">EVERYTHING YOU NEED</p>
-            <h3 className="text-xl sm:text-2xl mb-3">A proper home at sea</h3>
+            <p className="text-amber-400 text-xs tracking-[0.3em] mb-3">{t('boat.comfortKicker')}</p>
+            <h3 className="text-xl sm:text-2xl mb-3">{t('boat.comfortTitle')}</h3>
             <p className="text-slate-300 leading-relaxed">
-              Private bathroom on board, fresh water shower, Fusion bluetooth stereo to set the mood, generous swim platform, fridges always stocked. Nothing is missing for a full day of pleasure.
+              {t('boat.comfortText')}
             </p>
           </div>
         </div>
@@ -3270,9 +3298,9 @@ function BoatPage() {
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-4 mb-16">
         <div className="text-center border-t border-slate-800 pt-12">
-          <p className="text-slate-400 mb-6">Curious about prices and availability?</p>
-          <Link to="/booking" className="inline-block bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
-            REQUEST A QUOTE →
+          <p className="text-slate-400 mb-6">{t('boat.ctaText')}</p>
+          <Link to={p('/booking')} className="inline-block bg-amber-400 text-slate-950 px-8 py-4 tracking-[0.3em] text-sm hover:bg-amber-300 transition">
+            {t('boat.ctaButton')}
           </Link>
         </div>
       </section>
@@ -3285,14 +3313,15 @@ function BoatPage() {
 
 // ============ FOOTER CONDIVISO ============
 function SharedFooter() {
+  const { t, p } = useLang();
   return (
     <footer className="border-t border-slate-800 mt-20 py-10">
       <div className="max-w-7xl mx-auto px-4 text-center" style={{ fontFamily: 'Georgia, serif' }}>
         <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
         <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
-        <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">PRIVATE BOAT TOURS</p>
+        <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">{t('footer.tagline')}</p>
         <p className="text-slate-400 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
-        <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA</p>
+        <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">{t('footer.place')}</p>
 
         {/* info aziendali — d.lgs 70/2003 */}
         <div className="mt-6 pt-6 border-t border-slate-800/50">
@@ -3300,7 +3329,7 @@ function SharedFooter() {
             M B di Bulgheresi Marco · Via Buonviaggio 152/A, La Spezia · P.IVA IT 01096850118
           </p>
           <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-slate-400 tracking-widest">
-            <Link to="/privacy" className="hover:text-amber-400 transition">PRIVACY POLICY</Link>
+            <Link to={p('/privacy')} className="hover:text-amber-400 transition">{t('footer.privacy')}</Link>
           </div>
         </div>
       </div>
@@ -3470,6 +3499,7 @@ function loadGoogleAnalytics() {
 
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const { t, p } = useLang();
 
   useEffect(() => {
     // PRIMA di tutto: per default il tracciamento è NEGATO (GDPR / Consent Mode v2).
@@ -3514,17 +3544,17 @@ function CookieBanner() {
       {/* su telefono: testo breve e spazio a destra (pr-24) per lasciare visibile il pulsante WhatsApp */}
       <div className="max-w-6xl mx-auto pl-4 pr-24 sm:px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6">
         <p className="text-slate-300 text-xs sm:text-sm leading-relaxed flex-1">
-          <span className="sm:hidden">We use analytics cookies (Google Analytics) only with your consent. <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link></span>
-          <span className="hidden sm:inline">We use technical cookies necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used and improve it. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.</span>
+          <span className="sm:hidden">{t('cookie.short')}<Link to={p('/privacy')} className="text-amber-400 hover:underline">{t('cookie.privacyLink')}</Link></span>
+          <span className="hidden sm:inline">{t('cookie.long1')}<Link to={p('/privacy')} className="text-amber-400 hover:underline">{t('cookie.privacyLink')}</Link>{t('cookie.long2')}</span>
         </p>
         <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
           <button onClick={() => save('declined')}
             className="flex-1 sm:flex-initial px-4 py-2 text-xs tracking-widest text-slate-300 hover:text-white border border-slate-600 hover:border-slate-400 transition">
-            DECLINE
+            {t('cookie.decline')}
           </button>
           <button onClick={() => save('accepted')}
             className="flex-1 sm:flex-initial px-5 py-2 text-xs tracking-widest bg-amber-400 text-slate-950 hover:bg-amber-300 transition">
-            ACCEPT
+            {t('cookie.accept')}
           </button>
         </div>
       </div>
@@ -3538,22 +3568,23 @@ function CookieBanner() {
 // ============ PAGINA NON TROVATA (404) ============
 // mostrata per gli indirizzi che non esistono. Vercel restituisce anche il codice 404 vero (vedi vercel.json + vite.config.js, che crea dist/404.html)
 function NotFoundPage() {
+  const { t, p } = useLang();
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col" style={{ fontFamily: 'Georgia, serif' }}>
       <Helmet>
-        <title>Page not found | Sea Runner</title>
+        <title>{t('notFound.metaTitle')}</title>
         <meta name="robots" content="noindex" />
       </Helmet>
       <SharedNav />
       <div className="flex-1 flex items-center justify-center px-4 py-24">
         <div className="text-center max-w-lg">
           <p className="text-amber-400 text-xs tracking-[0.4em] mb-3">404</p>
-          <h1 className="text-4xl sm:text-5xl mb-4">Page not found</h1>
+          <h1 className="text-4xl sm:text-5xl mb-4">{t('notFound.title')}</h1>
           <div className="w-24 h-px bg-amber-400 mx-auto mb-6"></div>
-          <p className="text-slate-300 mb-8">The page you are looking for doesn't exist. Discover our private boat tours instead.</p>
+          <p className="text-slate-300 mb-8">{t('notFound.text')}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/" className="px-6 py-3 border border-slate-600 text-sm tracking-widest hover:border-amber-400 transition">HOME</Link>
-            <Link to="/booking" className="px-6 py-3 bg-amber-400 text-slate-950 text-sm tracking-widest hover:bg-amber-300 transition">OUR TOURS</Link>
+            <Link to={p('/')} className="px-6 py-3 border border-slate-600 text-sm tracking-widest hover:border-amber-400 transition">{t('notFound.home')}</Link>
+            <Link to={p('/booking')} className="px-6 py-3 bg-amber-400 text-slate-950 text-sm tracking-widest hover:bg-amber-300 transition">{t('notFound.tours')}</Link>
           </div>
         </div>
       </div>
@@ -3582,6 +3613,12 @@ function ScrollToTop() {
   return null;
 }
 
+// imposta <html lang="…"> su ogni pagina in base alla lingua dell'indirizzo
+function HtmlLang() {
+  const { htmlLang } = useLang();
+  return <Helmet><html lang={htmlLang} /></Helmet>;
+}
+
 // contenuto interno dell'app, indipendente dal tipo di router.
 // così lo stesso blocco di route funziona sia col BrowserRouter (browser)
 // sia col StaticRouter (durante il prerender in fase di build).
@@ -3594,15 +3631,25 @@ function AppRoutes() {
         <meta name="google-site-verification" content="zpjKX-1DmcXTbp_XSXR0ilbmUl4t5G3SIlHYlPLoONQ" />
       </Helmet>
       <ScrollToTop />
+      <HtmlLang />
       {/* <main>: contenitore principale della pagina (accessibilità / struttura HTML), non cambia la grafica */}
       <main>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/boat" element={<BoatPage />} />
-        <Route path="/booking" element={<BookingApp />} />
-        <Route path="/booking/thank-you" element={<BookingApp />} />
-        <Route path="/booking/:slug" element={<BookingApp />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
+        {/* stesse pagine per ogni lingua: inglese senza prefisso, italiano sotto /it (francese in futuro sotto /fr).
+            ricordarsi di aggiungere i nuovi indirizzi anche in vercel.json */}
+        {LANG_CODES.map(code => {
+          const pre = LANGS[code].prefix;
+          return (
+            <React.Fragment key={code}>
+              <Route path={pre || '/'} element={<HomePage />} />
+              <Route path={`${pre}/boat`} element={<BoatPage />} />
+              <Route path={`${pre}/booking`} element={<BookingApp />} />
+              <Route path={`${pre}/booking/thank-you`} element={<BookingApp />} />
+              <Route path={`${pre}/booking/:slug`} element={<BookingApp />} />
+              <Route path={`${pre}/privacy`} element={<PrivacyPage />} />
+            </React.Fragment>
+          );
+        })}
         {/* indirizzi inesistenti: pagina "non trovata" (prima mostravano la home) */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
