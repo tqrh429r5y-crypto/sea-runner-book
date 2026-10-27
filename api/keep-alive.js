@@ -12,6 +12,15 @@ const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdW1rcW5venpwbHN0eWF5b3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzMxOTgsImV4cCI6MjA5MjM0OTE5OH0.kXbtEw056YEHQAIQNKyrUMKv32T52wfQ-8Np144pHWg';
 
 export default async function handler(req, res) {
+  // protezione facoltativa: se in Vercel → Settings → Environment Variables esiste CRON_SECRET,
+  // Vercel Cron la manda da solo nell'intestazione Authorization e chi non la conosce riceve 401.
+  // Se CRON_SECRET non è impostata, la funzione resta aperta come prima (è comunque innocua).
+  const secret = process.env.CRON_SECRET;
+  if (secret && req.headers.authorization !== `Bearer ${secret}`) {
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(401).json({ ok: false, error: 'Unauthorized' });
+    return;
+  }
   try {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/tours?select=id&limit=1`, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },

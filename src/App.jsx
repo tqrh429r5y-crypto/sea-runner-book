@@ -2405,13 +2405,13 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
             </div>
           )}
 
-          {/* CONSENSO PRIVACY (obbligatorio, GDPR art. 13) */}
+          {/* PRESA VISIONE INFORMATIVA (obbligatoria, art. 13 GDPR). Non è un "consenso": la base giuridica è il contratto (art. 6.1.b) */}
           <div className="mb-4 p-4 bg-slate-900/50 border border-slate-800 space-y-3">
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)}
                 className="mt-1 w-4 h-4 accent-amber-400 flex-shrink-0" />
               <span className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                I have read and accept the <Link to="/privacy" target="_blank" className="text-amber-400 hover:underline">Privacy Policy</Link>, and I consent to the processing of my personal data for the purpose of handling my booking request. <span className="text-red-400">*</span>
+                I have read the <Link to="/privacy" target="_blank" className="text-amber-400 hover:underline">Privacy Policy</Link> and understand that my data will be used to handle my booking request. <span className="text-red-400">*</span>
               </span>
             </label>
 
@@ -3313,127 +3313,170 @@ function SharedFooter() {
 
 
 // ============ PRIVACY POLICY PAGE (route /privacy) ============
+// informativa ex art. 13 GDPR, in inglese e in italiano (pulsante in alto per cambiare lingua).
+// se cambia qualcosa nel modo in cui il sito tratta i dati (nuovi fornitori, nuovi campi del modulo),
+// aggiornare ENTRAMBE le lingue e la data PRIVACY_LAST_UPDATED.
+const PRIVACY_LAST_UPDATED = { en: 'October 2026', it: 'ottobre 2026' };
+
 function PrivacyPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  // lingua: ?lang=it / ?lang=en nell'indirizzo; altrimenti italiano se il browser è in italiano
+  const params = new URLSearchParams(location.search);
+  const browserIt = typeof navigator !== 'undefined' && /^it\b/i.test(navigator.language || '');
+  const lang = params.get('lang') === 'it' || (!params.get('lang') && browserIt) ? 'it' : 'en';
+  const it = lang === 'it';
+  const setLang = (l) => navigate(`/privacy?lang=${l}`, { replace: true });
+
+  const A = ({ href, children }) => <a href={href} className="text-amber-400 hover:underline">{children}</a>;
+  const Ext = ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">{children}</a>;
+  const B = ({ children }) => <strong className="text-white">{children}</strong>;
+  const H2 = ({ children }) => <h2 className="text-xl sm:text-2xl text-white mb-3">{children}</h2>;
+  const Basis = ({ children }) => <span className="text-slate-400 italic">{children}</span>;
+  const mail = <A href="mailto:searunnerprenotazioni@gmail.com">searunnerprenotazioni@gmail.com</A>;
+
   return (
     <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <Helmet>
-        <title>Privacy Policy | Sea Runner</title>
-        <meta name="description" content="Sea Runner privacy policy: how we handle your personal data in compliance with the GDPR." />
+        <title>{it ? 'Informativa privacy | Sea Runner' : 'Privacy Policy | Sea Runner'}</title>
+        <meta name="description" content={it ? 'Informativa privacy di Sea Runner: come trattiamo i tuoi dati personali nel rispetto del GDPR.' : 'Sea Runner privacy policy: how we handle your personal data in compliance with the GDPR.'} />
         <meta name="robots" content="noindex, follow" />
         <link rel="canonical" href={`${SITE_URL}/privacy`} />
       </Helmet>
       <SharedNav />
 
-      <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
-        <h1 className="text-3xl sm:text-4xl mb-3">Privacy Policy</h1>
-        <p className="text-slate-500 text-sm mb-10">Last updated: October 2026</p>
+      <section lang={lang} className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
+        {/* cambio lingua */}
+        <div className="flex justify-end gap-2 mb-6 text-xs tracking-widest">
+          <button type="button" onClick={() => setLang('en')} aria-pressed={!it}
+            className={`px-3 py-2 border transition ${!it ? 'border-amber-400 text-amber-400' : 'border-slate-700 text-slate-400 hover:text-white'}`}>ENGLISH</button>
+          <button type="button" onClick={() => setLang('it')} aria-pressed={it}
+            className={`px-3 py-2 border transition ${it ? 'border-amber-400 text-amber-400' : 'border-slate-700 text-slate-400 hover:text-white'}`}>ITALIANO</button>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl mb-3">{it ? 'Informativa privacy' : 'Privacy Policy'}</h1>
+        <p className="text-slate-500 text-sm mb-10">{it ? `Ultimo aggiornamento: ${PRIVACY_LAST_UPDATED.it}` : `Last updated: ${PRIVACY_LAST_UPDATED.en}`}</p>
 
         <div className="space-y-8 text-slate-300 leading-relaxed">
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">1. Data Controller</h2>
-            <p className="mb-3">The data controller responsible for processing your personal data is:</p>
+            <H2>{it ? '1. Titolare del trattamento' : '1. Data Controller'}</H2>
             <div className="bg-slate-900 border border-slate-800 p-4 text-sm">
-              <p><strong className="text-white">Sea Runner</strong> (also known as Sea Runner 5 Terre Boat Tours)</p>
-              <p>Operated by: Bulgheresi Marco (M B di Bulgheresi Marco)</p>
-              <p>VAT number: IT 01096850118</p>
-              <p>Registered (legal) address: Via Buonviaggio 152/A, La Spezia, Italy</p>
-              <p>Operational address (departures): Passeggiata Costantino Morin, Porto Mirabello, 19121 La Spezia, Italy</p>
-              <p className="mt-2">Operational email: <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:underline">searunnerprenotazioni@gmail.com</a></p>
-              <p>Phone: <a href="tel:+393488289438" className="text-amber-400 hover:underline">+39 348 828 9438</a></p>
-              <p className="mt-2 text-slate-400">For formal requests regarding your GDPR rights, you may also contact the certified email: <span className="text-amber-400">marco.bulgheresi@pec.it</span></p>
+              <p><B>M B di Bulgheresi Marco</B> {it ? '(marchio "Sea Runner", anche "Sea Runner 5 Terre Boat Tours")' : '(trading as "Sea Runner", also "Sea Runner 5 Terre Boat Tours")'}</p>
+              <p>{it ? 'P.IVA' : 'VAT number'}: IT 01096850118</p>
+              <p>{it ? 'Sede legale' : 'Registered address'}: Via Buonviaggio 152/A, La Spezia, Italy</p>
+              <p>{it ? 'Sede operativa (partenze)' : 'Operational address (departures)'}: Passeggiata Costantino Morin, Porto Mirabello, 19121 La Spezia, Italy</p>
+              <p className="mt-2">Email: {mail}</p>
+              <p>{it ? 'Telefono' : 'Phone'}: <A href="tel:+393488289438">+39 348 828 9438</A></p>
+              <p>PEC: <A href="mailto:marco.bulgheresi@pec.it">marco.bulgheresi@pec.it</A></p>
             </div>
+            <p className="mt-3 text-sm">{it
+              ? 'Non è stato nominato un Responsabile della protezione dei dati (DPO), perché non obbligatorio per la nostra attività. Per qualsiasi domanda sulla privacy scrivici agli indirizzi sopra.'
+              : 'We have not appointed a Data Protection Officer (DPO), as this is not required for our activity. For any privacy question, contact us at the addresses above.'}</p>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">2. Data We Collect</h2>
-            <p className="mb-3">When you submit a booking request through our website, we collect the following personal data:</p>
+            <H2>{it ? '2. Quali dati trattiamo' : '2. Data We Collect'}</H2>
+            <p className="mb-3 text-sm">{it ? 'Quando invii una richiesta di preventivo dal sito raccogliamo:' : 'When you send a quote request through our website, we collect:'}</p>
             <ul className="list-disc pl-6 space-y-1 text-sm">
-              <li><strong className="text-white">Identification data</strong>: full name</li>
-              <li><strong className="text-white">Contact data</strong>: email address, phone number</li>
-              <li><strong className="text-white">Preference data</strong>: preferred language, tour selection, date, number of guests, meeting point, special requests</li>
-              <li><strong className="text-white">Health data (optional)</strong>: food allergies and reduced mobility information, provided only if you voluntarily declare them to ensure your safety on board</li>
+              <li><B>{it ? 'Dati identificativi e di contatto' : 'Identification and contact data'}</B>: {it ? 'nome, email, telefono, lingua preferita' : 'name, email address, phone number, preferred language'}</li>
+              <li><B>{it ? 'Dati della richiesta' : 'Request data'}</B>: {it ? 'tour, data, orario, numero di ospiti, punto d\'incontro, note' : 'tour, date, time slot, number of guests, meeting point, notes'}</li>
+              <li><B>{it ? 'Dati relativi alla salute (facoltativi)' : 'Health data (optional)'}</B>: {it ? 'allergie/intolleranze alimentari e mobilità ridotta, solo se scegli di indicarli' : 'food allergies/intolerances and reduced mobility, only if you choose to provide them'}</li>
             </ul>
+            <p className="mt-3 text-sm">{it
+              ? 'Se la richiesta diventa una prenotazione, possiamo chiederti altri dati necessari al contratto e alla normativa (ad esempio indirizzo, luogo e data di nascita).'
+              : 'If your request becomes a booking, we may ask for further data required for the contract and by law (for example address, place and date of birth).'}</p>
+            <p className="mt-3 text-sm">{it
+              ? 'Nome, email, telefono e dati della richiesta sono necessari per risponderti: senza non possiamo gestire la richiesta. I dati sulla salute sono facoltativi; se non li fornisci non potremo adattare il tour a eventuali esigenze. Navigando il sito vengono inoltre trattati i dati tecnici descritti ai punti 4 e 7.'
+              : 'Name, email, phone and request data are necessary to reply to you: without them we cannot handle your request. Health data is optional; if you do not provide it we will not be able to adapt the tour to any special needs. Browsing the website also involves the technical data described in sections 4 and 7.'}</p>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">3. Purposes and Legal Basis</h2>
-            <p className="mb-3">We process your data for the following purposes:</p>
+            <H2>{it ? '3. Finalità e basi giuridiche' : '3. Purposes and Legal Basis'}</H2>
             <ul className="list-disc pl-6 space-y-2 text-sm">
-              <li><strong className="text-white">Booking management</strong> — to process your request, confirm availability, prepare your tour, and communicate with you about the booking. <span className="text-slate-400 italic">Legal basis: performance of a contract (GDPR art. 6.1.b).</span></li>
-              <li><strong className="text-white">On-board safety</strong> — if you share health information (allergies, reduced mobility), we use it exclusively to ensure your safety and comfort during the tour. <span className="text-slate-400 italic">Legal basis: your explicit consent (GDPR art. 9.2.a).</span></li>
-              <li><strong className="text-white">Legal obligations</strong> — to comply with Italian law regarding commercial transactions, tax, and maritime regulations. <span className="text-slate-400 italic">Legal basis: legal obligation (GDPR art. 6.1.c).</span></li>
+              <li><B>{it ? 'Gestire la richiesta e la prenotazione' : 'Handling your request and booking'}</B> — {it ? 'risponderti, verificare la disponibilità, preparare e svolgere il tour.' : 'replying to you, checking availability, preparing and running the tour.'} <Basis>{it ? 'Base giuridica: misure precontrattuali ed esecuzione del contratto (art. 6.1.b GDPR).' : 'Legal basis: pre-contractual steps and performance of a contract (GDPR art. 6.1.b).'}</Basis></li>
+              <li><B>{it ? 'Sicurezza e comfort a bordo' : 'Safety and comfort on board'}</B> — {it ? 'usare le informazioni su allergie e mobilità solo per questo scopo.' : 'using allergy and mobility information only for this purpose.'} <Basis>{it ? 'Base giuridica: il tuo consenso esplicito (art. 9.2.a GDPR), che puoi revocare in qualsiasi momento.' : 'Legal basis: your explicit consent (GDPR art. 9.2.a), which you can withdraw at any time.'}</Basis></li>
+              <li><B>{it ? 'Obblighi di legge' : 'Legal obligations'}</B> — {it ? 'adempimenti fiscali, contabili e della normativa nautica.' : 'tax, accounting and maritime law requirements.'} <Basis>{it ? 'Base giuridica: obbligo legale (art. 6.1.c GDPR).' : 'Legal basis: legal obligation (GDPR art. 6.1.c).'}</Basis></li>
+              <li><B>{it ? 'Funzionamento e sicurezza del sito' : 'Website operation and security'}</B> — {it ? 'log tecnici del server e cookie tecnici.' : 'technical server logs and technical cookies.'} <Basis>{it ? 'Base giuridica: legittimo interesse a un sito funzionante e sicuro (art. 6.1.f GDPR).' : 'Legal basis: legitimate interest in a working and secure website (GDPR art. 6.1.f).'}</Basis></li>
+              <li><B>{it ? 'Statistiche di visita' : 'Visit statistics'}</B> — {it ? 'Google Analytics, solo se accetti i cookie analitici.' : 'Google Analytics, only if you accept analytics cookies.'} <Basis>{it ? 'Base giuridica: il tuo consenso (art. 6.1.a GDPR).' : 'Legal basis: your consent (GDPR art. 6.1.a).'}</Basis></li>
             </ul>
+            <p className="mt-3 text-sm">{it
+              ? 'Non usiamo i tuoi dati per pubblicità o profilazione, non li vendiamo e non prendiamo decisioni automatizzate che ti riguardano.'
+              : 'We do not use your data for advertising or profiling, we do not sell it, and we do not make automated decisions about you.'}</p>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">4. Third Parties and Data Transfers</h2>
-            <p className="mb-3">We use the following third-party services to operate our booking system:</p>
+            <H2>{it ? '4. Fornitori di servizi e trasferimenti fuori dall\'UE' : '4. Service Providers and Transfers Outside the EU'}</H2>
+            <p className="mb-3 text-sm">{it
+              ? 'I dati sono trattati da noi (il titolare e i nostri collaboratori autorizzati) e dai seguenti fornitori, che agiscono come responsabili del trattamento per nostro conto o, dove indicato, come titolari autonomi:'
+              : 'Your data is handled by us (the controller and our authorised staff) and by the following providers, acting as processors on our behalf or, where stated, as independent controllers:'}</p>
             <ul className="list-disc pl-6 space-y-2 text-sm">
-              <li><strong className="text-white">Web3Forms</strong> (based in the United States) — used to deliver booking request emails from our website to our inbox. Data transferred: all booking form fields. Safeguards: standard contractual clauses (SCC) for extra-EU data transfer.</li>
-              <li><strong className="text-white">Supabase</strong> (Supabase Inc.) — database used to store a copy of booking requests (all booking form fields, including any health information you choose to provide) and our availability settings. Access is restricted to Sea Runner staff. Safeguards: standard contractual clauses (SCC) / EU-US Data Privacy Framework where applicable.</li>
-              <li><strong className="text-white">Google Workspace</strong> (Gmail, Google Calendar, Google Sheets, Google Drive — operated by Google Ireland Ltd., with data processing also in the United States) — used internally to receive booking emails, keep our booking records, prepare contracts and manage the tour calendar. The public availability calendar read by our website shows only "busy" time slots, never customer details. Safeguards: EU-US Data Privacy Framework.</li>
-              <li><strong className="text-white">WhatsApp</strong> (WhatsApp Ireland Ltd., Meta group) — only if you choose to contact us through the WhatsApp button; in that case WhatsApp's own privacy policy applies.</li>
-              <li><strong className="text-white">Vercel Inc.</strong> (based in the United States) — used to host our website. May collect standard server log data (IP address, browser type, access timestamps) for operational purposes. Safeguards: EU-US Data Privacy Framework.</li>
-              <li><strong className="text-white">Google Analytics</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used, <strong className="text-white">only with your consent</strong>, to collect statistics on how visitors use the website (pages viewed, approximate location, device and browser type), so we can improve it. Analytics cookies are not loaded until you accept them through our cookie banner. Safeguards: EU-US Data Privacy Framework. Legal basis: your consent (GDPR art. 6.1.a).</li>
+              <li><B>Web3Forms</B> (Web3Creative, {it ? 'India' : 'India'}) — {it ? 'consegna alla nostra casella email le richieste inviate dal modulo (tutti i campi del modulo). Garanzie: clausole contrattuali standard della Commissione UE.' : 'delivers the requests sent through the form to our email inbox (all form fields). Safeguards: EU Commission standard contractual clauses.'}</li>
+              <li><B>Supabase</B> (Supabase Pte. Ltd., Singapore, {it ? 'con supporto di Supabase Inc., USA' : 'with support from Supabase Inc., USA'}) — {it ? 'database che conserva una copia delle richieste (tutti i campi del modulo) e le nostre impostazioni di disponibilità e prezzi; accessibile solo al nostro personale. Garanzie: clausole contrattuali standard.' : 'database storing a copy of the requests (all form fields) and our availability and price settings; accessible only to our staff. Safeguards: standard contractual clauses.'}</li>
+              <li><B>Google Workspace</B> (Gmail, Calendar, {it ? 'Fogli, Drive' : 'Sheets, Drive'} — Google Ireland Ltd., {it ? 'con trattamenti anche negli USA' : 'with processing also in the USA'}) — {it ? 'uso interno: ricevere le email, tenere il registro delle prenotazioni, preparare i contratti, gestire il calendario dei tour. Il calendario pubblico letto dal sito mostra solo gli orari occupati, mai i dati dei clienti. Garanzie: EU-US Data Privacy Framework e clausole contrattuali standard.' : 'internal use: receiving emails, keeping our booking records, preparing contracts, managing the tour calendar. The public calendar read by the website shows only busy time slots, never customer details. Safeguards: EU-US Data Privacy Framework and standard contractual clauses.'}</li>
+              <li><B>Vercel</B> (Vercel Inc., USA) — {it ? 'ospita il sito; tratta i dati tecnici di navigazione (indirizzo IP, browser, data e ora delle visite) nei log del server. Garanzie: EU-US Data Privacy Framework.' : 'hosts the website; processes technical browsing data (IP address, browser, time of visit) in server logs. Safeguards: EU-US Data Privacy Framework.'}</li>
+              <li><B>Google Analytics</B> (Google Ireland Ltd., {it ? 'con trattamenti anche negli USA' : 'with processing also in the USA'}) — {it ? 'solo con il tuo consenso: statistiche su come viene usato il sito (pagine viste, dispositivo, browser, area geografica approssimativa). Garanzie: EU-US Data Privacy Framework.' : 'only with your consent: statistics on how the website is used (pages viewed, device, browser, approximate area). Safeguards: EU-US Data Privacy Framework.'}</li>
+              <li><B>WhatsApp</B> (WhatsApp Ireland Ltd.) — {it ? 'solo se scegli di scriverci con il pulsante WhatsApp: in quel caso WhatsApp tratta i dati come titolare autonomo, secondo la propria informativa.' : 'only if you choose to message us with the WhatsApp button: in that case WhatsApp processes the data as an independent controller, under its own privacy policy.'}</li>
             </ul>
-            <p className="mt-3 text-sm">We do not sell, rent, or share your personal data with any party beyond what is strictly required to provide our service.</p>
+            <p className="mt-3 text-sm">{it
+              ? 'I dati possono inoltre essere comunicati a consulenti (es. commercialista) e autorità, quando richiesto dalla legge. Puoi chiederci copia delle garanzie per i trasferimenti scrivendo agli indirizzi del punto 1.'
+              : 'Data may also be disclosed to advisers (e.g. our accountant) and authorities where required by law. You can ask us for a copy of the transfer safeguards by writing to the addresses in section 1.'}</p>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">5. Data Retention</h2>
+            <H2>{it ? '5. Per quanto tempo conserviamo i dati' : '5. How Long We Keep Your Data'}</H2>
             <ul className="list-disc pl-6 space-y-1 text-sm">
-              <li><strong className="text-white">Booking requests not converted into a confirmed tour</strong>: retained for up to 12 months, then deleted.</li>
-              <li><strong className="text-white">Confirmed bookings</strong>: retained for up to 10 years, as required by Italian tax and accounting law.</li>
-              <li><strong className="text-white">Health data (allergies, mobility)</strong>: deleted immediately after the tour takes place, unless needed to manage follow-up communications.</li>
-              <li><strong className="text-white">Server and access logs</strong>: retained by Vercel according to their standard policy.</li>
+              <li><B>{it ? 'Richieste che non diventano prenotazioni' : 'Requests that do not become bookings'}</B>: {it ? 'al massimo 12 mesi, poi le cancelliamo.' : 'up to 12 months, then we delete them.'}</li>
+              <li><B>{it ? 'Prenotazioni confermate' : 'Confirmed bookings'}</B>: {it ? 'fino a 10 anni, come richiesto dalla normativa fiscale e civilistica (art. 2220 c.c.).' : 'up to 10 years, as required by Italian tax and civil law (art. 2220 Civil Code).'}</li>
+              <li><B>{it ? 'Dati sulla salute' : 'Health data'}</B>: {it ? 'solo per il tempo necessario al tour; dopo il tour li cancelliamo, oppure prima se revochi il consenso.' : 'only for as long as needed for the tour; we delete it after the tour, or earlier if you withdraw your consent.'}</li>
+              <li><B>{it ? 'Dati tecnici e statistiche' : 'Technical data and statistics'}</B>: {it ? 'log del server secondo i tempi tecnici di Vercel; dati di Google Analytics al massimo 14 mesi.' : 'server logs according to Vercel\'s technical retention; Google Analytics data for up to 14 months.'}</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">6. Your Rights (GDPR)</h2>
-            <p className="mb-3">Under the General Data Protection Regulation (GDPR), you have the right to:</p>
+            <H2>{it ? '6. I tuoi diritti' : '6. Your Rights'}</H2>
+            <p className="mb-3 text-sm">{it ? 'In base al GDPR puoi in qualsiasi momento:' : 'Under the GDPR you can at any time:'}</p>
             <ul className="list-disc pl-6 space-y-1 text-sm">
-              <li><strong className="text-white">Access</strong> your personal data (art. 15)</li>
-              <li><strong className="text-white">Rectify</strong> inaccurate or incomplete data (art. 16)</li>
-              <li><strong className="text-white">Erase</strong> your data ("right to be forgotten", art. 17)</li>
-              <li><strong className="text-white">Restrict</strong> the processing of your data (art. 18)</li>
-              <li><strong className="text-white">Receive</strong> your data in a portable format (art. 20)</li>
-              <li><strong className="text-white">Object</strong> to processing (art. 21)</li>
-              <li><strong className="text-white">Withdraw consent</strong> at any time, for health data processing, without affecting prior processing</li>
+              <li>{it ? 'accedere ai tuoi dati (art. 15)' : 'access your data (art. 15)'}</li>
+              <li>{it ? 'farli correggere (art. 16)' : 'have it corrected (art. 16)'}</li>
+              <li>{it ? 'farli cancellare (art. 17)' : 'have it erased (art. 17)'}</li>
+              <li>{it ? 'limitarne il trattamento (art. 18)' : 'restrict its processing (art. 18)'}</li>
+              <li>{it ? 'riceverli in formato portabile (art. 20)' : 'receive it in a portable format (art. 20)'}</li>
+              <li>{it ? 'opporti al trattamento basato sul legittimo interesse (art. 21)' : 'object to processing based on legitimate interest (art. 21)'}</li>
+              <li>{it ? 'revocare i consensi che hai dato (dati sulla salute, cookie analitici) senza conseguenze sul trattamento già avvenuto (art. 7.3)' : 'withdraw any consent you gave (health data, analytics cookies), without affecting processing carried out before (art. 7.3)'}</li>
             </ul>
-            <p className="mt-3 text-sm">To exercise any of these rights, contact us at <a href="mailto:searunnerprenotazioni@gmail.com" className="text-amber-400 hover:underline">searunnerprenotazioni@gmail.com</a>. We will respond within 30 days.</p>
+            <p className="mt-3 text-sm">{it ? <>Per esercitarli scrivi a {mail} o alla PEC del punto 1. Rispondiamo entro un mese.</> : <>To exercise them, write to {mail} or to the certified email (PEC) in section 1. We reply within one month.</>}</p>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">7. Cookies</h2>
-            <p className="text-sm">
-              This website uses technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices — these do not require consent. With your explicit consent, it also uses analytics cookies (Google Analytics) to produce statistics on the use of the site; these are activated only after you click "Accept" on the cookie banner, and are never loaded if you decline. It does not use profiling or advertising cookies. Your choice is stored in your browser's local storage (key "sr-cookie-consent"). You can change it at any time through the "Cookie settings" link at the bottom of every page. If you are logged in to the staff area, a technical login token is also stored in your browser.
-            </p>
+            <H2>{it ? '7. Cookie e memoria del browser' : '7. Cookies and Browser Storage'}</H2>
+            <ul className="list-disc pl-6 space-y-2 text-sm">
+              <li><B>{it ? 'Tecnici (sempre attivi, non richiedono consenso)' : 'Technical (always on, no consent needed)'}</B>: {it ? 'la tua scelta sui cookie, salvata nella memoria del browser (chiave "sr-cookie-consent"); per il solo personale che entra nell\'Area riservata, il codice di accesso.' : 'your cookie choice, saved in your browser storage (key "sr-cookie-consent"); for staff logging in to the reserved area only, the login token.'}</li>
+              <li><B>{it ? 'Analitici (solo con il tuo consenso)' : 'Analytics (only with your consent)'}</B>: {it ? 'cookie di Google Analytics (_ga, _ga_*). Non vengono caricati finché non clicchi "Accept" nel banner e non vengono mai caricati se clicchi "Decline".' : 'Google Analytics cookies (_ga, _ga_*). They are not loaded until you click "Accept" on the banner, and never if you click "Decline".'}</li>
+            </ul>
+            <p className="mt-3 text-sm">{it
+              ? 'Non usiamo cookie pubblicitari o di profilazione. Puoi cambiare la tua scelta in qualsiasi momento con il link "Cookie settings" in fondo a ogni pagina.'
+              : 'We do not use advertising or profiling cookies. You can change your choice at any time with the "Cookie settings" link at the bottom of every page.'}</p>
+            <p className="mt-3"><button type="button" onClick={openCookieSettings} className="text-sm text-amber-400 hover:underline">{it ? 'Apri le impostazioni dei cookie' : 'Open cookie settings'}</button></p>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">8. Supervisory Authority</h2>
-            <p className="text-sm">If you believe your data is being processed unlawfully, you have the right to lodge a complaint with the Italian Data Protection Authority (<em>Garante per la protezione dei dati personali</em>):</p>
+            <H2>{it ? '8. Reclamo al Garante' : '8. Complaints'}</H2>
+            <p className="text-sm">{it
+              ? 'Se ritieni che i tuoi dati siano trattati in modo non conforme, puoi presentare reclamo al Garante per la protezione dei dati personali (o all\'autorità del Paese UE in cui vivi):'
+              : 'If you believe your data is processed unlawfully, you can lodge a complaint with the Italian Data Protection Authority (or with the authority of the EU country where you live):'}</p>
             <div className="bg-slate-900 border border-slate-800 p-4 mt-3 text-sm">
-              <p>Garante per la Protezione dei Dati Personali</p>
+              <p>Garante per la protezione dei dati personali</p>
               <p>Piazza Venezia 11, 00187 Roma, Italy</p>
-              <p>Website: <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">www.garanteprivacy.it</a></p>
+              <p><Ext href="https://www.garanteprivacy.it">www.garanteprivacy.it</Ext></p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">9. Applicable Law and Jurisdiction</h2>
-            <p className="text-sm">
-              This privacy policy is governed by Italian law and by the European GDPR regulation (EU 2016/679). The competent court for any dispute is the Court of La Spezia, Italy.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-xl sm:text-2xl text-white mb-3">10. Changes to This Policy</h2>
-            <p className="text-sm">
-              We may update this privacy policy from time to time. The date of the last revision is shown at the top of this page. Material changes will be communicated through our website.
-            </p>
+            <H2>{it ? '9. Modifiche' : '9. Changes'}</H2>
+            <p className="text-sm">{it
+              ? 'Possiamo aggiornare questa informativa; la data dell\'ultima versione è indicata in alto. Questa informativa è resa ai sensi degli artt. 13 e 14 del Regolamento UE 2016/679 (GDPR) e del D.Lgs. 196/2003.'
+              : 'We may update this policy; the date of the latest version is shown at the top. This policy is provided under articles 13 and 14 of Regulation (EU) 2016/679 (GDPR) and Italian Legislative Decree 196/2003.'}</p>
           </section>
 
         </div>
@@ -3554,13 +3597,14 @@ function CookieBanner() {
           <span className="sm:hidden">We use analytics cookies (Google Analytics) only with your consent. <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link></span>
           <span className="hidden sm:inline">We use technical cookies necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used and improve it. See our <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link> for details.</span>
         </p>
+        {/* i due pulsanti hanno lo stesso aspetto: rifiutare deve essere facile e visibile quanto accettare (Garante 2021) */}
         <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
           <button onClick={() => save('declined')}
-            className="flex-1 sm:flex-initial px-4 py-2 text-xs tracking-widest text-slate-300 hover:text-white border border-slate-600 hover:border-slate-400 transition">
+            className="flex-1 sm:flex-initial px-5 py-2 text-xs tracking-widest text-white border border-slate-400 hover:border-amber-400 hover:text-amber-400 transition">
             DECLINE
           </button>
           <button onClick={() => save('accepted')}
-            className="flex-1 sm:flex-initial px-5 py-2 text-xs tracking-widest bg-amber-400 text-slate-950 hover:bg-amber-300 transition">
+            className="flex-1 sm:flex-initial px-5 py-2 text-xs tracking-widest text-white border border-slate-400 hover:border-amber-400 hover:text-amber-400 transition">
             ACCEPT
           </button>
         </div>
