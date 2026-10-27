@@ -34,9 +34,9 @@ const it = {
 
   // --- prenotazione: SEO e dati per Google ---
   'booking.seoTitle': 'Preventivo gratuito — Tour privati in barca da La Spezia',
-  'booking.seoDescription': 'Richiedi un preventivo gratuito per un tour in barca completamente privato alle Cinque Terre, a Portofino o nel Golfo dei Poeti. Il Capitano Marco risponde entro 24 ore, nessun pagamento anticipato.',
+  'booking.seoDescription': 'Richiedi un preventivo gratuito per un tour in barca completamente privato alle Cinque Terre, a Portofino o nel Golfo dei Poeti. Il capitano Marco risponde entro 24 ore, nessun pagamento anticipato.',
   'booking.seoTitleTour': (tour) => `Giro in barca privato ${tour.seoName} — Preventivo gratuito`,
-  'booking.seoDescriptionTour': (tour) => `Richiedi un preventivo gratuito per il giro in barca privato ${tour.seoName}. ${tour.shortDesc} Nessun pagamento richiesto, risposta entro 24 ore dal Capitano Marco.`,
+  'booking.seoDescriptionTour': (tour) => `Richiedi un preventivo gratuito per il giro in barca privato ${tour.seoName}. ${tour.shortDesc} Nessun pagamento richiesto, risposta entro 24 ore dal capitano Marco.`,
   'booking.h1': 'Tour privati in barca da La Spezia',
   'schema.tripName': (name) => `${name} — Tour privato in barca`,
   'schema.touristType': 'Tour privato in barca',
@@ -50,7 +50,7 @@ const it = {
   // --- passo 1: scelta del tour ---
   'step1.kicker': 'RICHIEDI UN PREVENTIVO GRATUITO',
   'step1.title': 'Scegli il tuo tour',
-  'step1.intro': 'Tour privati in barca lungo la Riviera Ligure: raccontaci cosa desideri e ti risponderemo con un preventivo su misura.',
+  'step1.intro': 'Tour privati in barca lungo la Riviera Ligure: raccontaci cosa desideri e ti manderemo un preventivo su misura.',
   'card.price': 'PREZZO',
   'card.onRequest': 'Su richiesta',
   'card.privateFlexible': 'Privato · Itinerario flessibile',
@@ -61,10 +61,10 @@ const it = {
   // --- passo 2: data, orario, ospiti ---
   'step2.changeTour': '← CAMBIA TOUR',
   'step2.noticeStrong': 'Questa è una richiesta di disponibilità.',
-  'step2.noticeText': ' Non è richiesto alcun pagamento. Il Capitano Marco ti ricontatterà entro 24 ore per confermare e inviarti un preventivo su misura.',
+  'step2.noticeText': ' Non è richiesto alcun pagamento. Il capitano Marco ti ricontatterà entro 24 ore per confermare e inviarti un preventivo su misura.',
   'step2.flexibleTime': (time) => ` (~${time}, flessibile)`,
   'step2.guestsRange': (max) => `1-${max} ospiti`,
-  'step2.itineraryNote': "Questo è l'itinerario standard. Può variare in base alle preferenze degli ospiti o alle condizioni del meteo.",
+  'step2.itineraryNote': "Questo è l'itinerario tipo. Può variare in base alle preferenze degli ospiti o alle condizioni del meteo.",
   'step2.included': 'COSA È INCLUSO',
   'step2.notIncluded': 'NON INCLUSO:',
   'step2.chooseItinerary': 'SCEGLI IL TUO ITINERARIO',
@@ -76,7 +76,7 @@ const it = {
   'step2.crossedOut': 'BARRATO = NON DISPONIBILE',
   'step2.updating': 'AGGIORNAMENTO DISPONIBILITÀ...',
   'step2.upToDate': 'DISPONIBILITÀ AGGIORNATA',
-  'step2.localOnly': 'SOLO PRENOTAZIONI INTERNE',
+  'step2.localOnly': 'DISPONIBILITÀ DA CONFERMARE',
   'step2.timeOfDay': 'MOMENTO DELLA GIORNATA',
   'step2.schedule': 'ORARIO',
   'step2.timeToAgree': 'Orario da concordare con lo skipper',
@@ -86,7 +86,7 @@ const it = {
   'step2.other': 'Altro',
   'step2.otherPlaceholder': "Indica il punto d'incontro che preferisci...",
   'step2.feasibility': 'LO SKIPPER CONFERMERÀ LA FATTIBILITÀ',
-  'step2.continue': 'CONTINUA CON I DATI →',
+  'step2.continue': 'PROSEGUI →',
   'step2.changedMind': 'HAI CAMBIATO IDEA?',
   'step2.otherTours': 'Scopri gli altri tour',
   'step2.viewTour': 'VEDI IL TOUR →',
@@ -143,8 +143,8 @@ const it = {
   'error.technical': "DETTAGLI TECNICI (per l'assistenza)",
 
   // --- consensi privacy ---
-  'consent.privacy1': "Ho letto e accetto l'",
-  'consent.privacyLink': 'Informativa privacy',
+  'consent.privacy1': 'Ho letto e accetto la ',
+  'consent.privacyLink': 'Privacy Policy',
   'consent.privacy2': ' e acconsento al trattamento dei miei dati personali per la gestione della mia richiesta di prenotazione. ',
   'consent.health': 'Acconsento espressamente al trattamento dei dati relativi alla salute che sto fornendo (allergie e/o mobilità ridotta), da usare esclusivamente per garantire la sicurezza e il comfort a bordo (art. 9.2.a GDPR). ',
 
@@ -157,7 +157,7 @@ const it = {
   'thanks.metaTitle': 'Grazie — Richiesta ricevuta | Sea Runner',
   'thanks.kicker': 'RICHIESTA DI PREVENTIVO RICEVUTA',
   'thanks.title': 'Grazie,',
-  'thanks.body1': "La tua richiesta è stata inviata. Il Capitano Marco e Paola ti risponderanno entro 24 ore all'indirizzo ",
+  'thanks.body1': "La tua richiesta è stata inviata. Il capitano Marco e Paola ti risponderanno entro 24 ore all'indirizzo ",
   'thanks.body2': ' con la conferma della disponibilità e il tuo preventivo su misura. ',
   'thanks.noPayment': 'In questa fase non è richiesto alcun pagamento.',
   'thanks.reachUs': 'VUOI CONTATTARCI DIRETTAMENTE?',
@@ -166,14 +166,14 @@ const it = {
   'thanks.date': 'Data: ',
   'thanks.time': 'Orario: ',
   'thanks.guests': 'Ospiti: ',
-  'thanks.meeting': 'Incontro: ',
+  'thanks.meeting': "Punto d'incontro: ",
   'thanks.newBooking': 'NUOVA RICHIESTA',
-  'thanks.moreQuestions': 'Hai altre domande? Scrivici quando vuoi.',
+  'thanks.moreQuestions': 'Hai altre domande? Scrivici pure, ti rispondiamo volentieri.',
   'thanks.whatsapp': (tour, date) => `Ciao! Ho appena inviato una richiesta per il tour ${tour} del ${date}. Avrei una domanda...`,
   'thanks.whatsappButton': 'SCRIVICI SU WHATSAPP',
 
   // --- FAQ ---
-  'faq.kicker': 'BUONO A SAPERSI',
+  'faq.kicker': 'DA SAPERE',
   'faq.title': 'Domande frequenti',
   'faq.items': [
     {
@@ -182,7 +182,7 @@ const it = {
     },
     {
       q: 'Cosa succede se il tempo è brutto?',
-      a: `La vostra sicurezza viene sempre prima di tutto. Il Capitano Marco segue con grande attenzione le previsioni meteo e decide se le condizioni permettono di uscire. Se il mare non è sicuro per il tour, lo spostiamo a un'altra data a vostra scelta oppure vi rimborsiamo per intero. Nessuna penale, nessuno stress.`
+      a: `La vostra sicurezza viene sempre prima di tutto. Il capitano Marco segue con grande attenzione le previsioni meteo e decide se le condizioni permettono di uscire. Se il mare non è sicuro per il tour, lo spostiamo a un'altra data a vostra scelta oppure vi rimborsiamo per intero. Nessuna penale, nessuno stress.`
     },
     {
       q: 'Bambini e anziani possono salire a bordo?',
@@ -194,15 +194,15 @@ const it = {
     },
     {
       q: "Possiamo personalizzare l'itinerario?",
-      a: `Sì. Ogni tour ha un percorso standard, ma il Capitano Marco lo adatta alle condizioni del mare e alle vostre preferenze. Volete restare più a lungo a fare il bagno in una caletta? Fermarvi di più in un borgo? Saltare una tappa? Basta dircelo: costruiamo la giornata intorno a voi.`
+      a: `Sì. Ogni tour ha un percorso standard, ma il capitano Marco lo adatta alle condizioni del mare e alle vostre preferenze. Volete fermarvi più a lungo in una caletta? Passare più tempo in un borgo? Saltare una tappa? Basta dirlo: la giornata la costruiamo intorno a voi.`
     },
     {
       q: 'Serve esperienza di navigazione per partecipare?',
-      a: `Per niente. I nostri tour sono adatti a tutti, da chi sale in barca per la prima volta agli amanti del mare più esperti. Il Capitano Marco ha la patente nautica da oltre 30 anni e gestisce ogni situazione con professionalità, così potete rilassarvi e godervi la giornata in totale tranquillità.`
+      a: `Per niente. I nostri tour sono adatti a tutti, da chi sale in barca per la prima volta agli amanti del mare più esperti. Il capitano Marco ha la patente nautica da oltre 30 anni e gestisce ogni situazione con professionalità, così potete rilassarvi e godervi la giornata in totale tranquillità.`
     },
     {
       q: "Siete autorizzati a entrare nell'area marina protetta delle Cinque Terre? La barca è dotata di tutte le attrezzature di sicurezza?",
-      a: `Sì a entrambe le domande. Abbiamo tutte le autorizzazioni ufficiali per navigare e ancorare nell'Area Marina Protetta delle Cinque Terre. La barca è completamente equipaggiata con dotazioni di sicurezza professionali: AIS (sistema di localizzazione in tempo reale), segnalazione di soccorso, giubbotti di salvataggio per tutti gli ospiti, kit di primo soccorso e tutte le dotazioni obbligatorie, controllate regolarmente e sempre in regola.`
+      a: `Sì, a entrambe. Abbiamo tutte le autorizzazioni ufficiali per navigare e ancorare nell'Area Marina Protetta delle Cinque Terre. La barca è completamente equipaggiata con dotazioni di sicurezza professionali: AIS (sistema di localizzazione in tempo reale), segnalazione di soccorso, giubbotti di salvataggio per tutti gli ospiti, kit di primo soccorso e tutte le dotazioni obbligatorie, controllate regolarmente e sempre in regola.`
     },
     {
       q: 'Possiamo portare a bordo cibo e bevande nostri?',
@@ -225,26 +225,26 @@ const it = {
   // --- social ---
   'social.kicker': 'SEGUI IL VIAGGIO',
   'social.title': 'Ogni giorno, uno scorcio della Riviera',
-  'social.text': 'Tramonti, calette nascoste e il dietro le quinte delle nostre giornate in mare. Seguici per scoprire dove navigherà Sea Runner la prossima volta.',
+  'social.text': 'Tramonti, calette nascoste e il dietro le quinte delle nostre giornate in mare. Seguici per vedere dove ci porterà la prossima uscita.',
 
   // --- home ---
   'home.seoTitle': 'Tour privati in barca Cinque Terre, Portofino e La Spezia',
-  'home.seoDescription': 'Giri in barca privati lungo la Riviera Ligure con il Capitano Marco e Paola. Cinque Terre, Portofino, Golfo dei Poeti: solo voi a bordo, itinerario su misura. Partenze da La Spezia.',
-  'home.schemaDescription': 'Tour privati in barca da La Spezia lungo la Riviera Ligure. Cinque Terre, Portofino, Portovenere e il Golfo dei Poeti a bordo della pluripremiata Cap Camarat 9.0 WA con il Capitano Marco e Paola: barca completamente privata, mai condivisa. Partenze da Porto Mirabello.',
+  'home.seoDescription': 'Giri in barca privati lungo la Riviera Ligure con il capitano Marco e Paola. Cinque Terre, Portofino, Golfo dei Poeti: solo voi a bordo, itinerario su misura. Partenze da La Spezia.',
+  'home.schemaDescription': 'Tour privati in barca da La Spezia lungo la Riviera Ligure. Cinque Terre, Portofino, Portovenere e il Golfo dei Poeti a bordo della pluripremiata Cap Camarat 9.0 WA con il capitano Marco e Paola: barca completamente privata, mai condivisa. Partenze da Porto Mirabello.',
   'home.heroKicker': 'LA SPEZIA · RIVIERA LIGURE',
   'home.heroTitle': 'Tour privati in barca lungo la',
   'home.heroTitleScript': 'riviera ligure',
-  'home.heroText': 'Cinque Terre, Golfo dei Poeti, Portofino. Giornate esclusive in mare con il Capitano Marco e Paola.',
+  'home.heroText': 'Cinque Terre, Golfo dei Poeti, Portofino. Giornate esclusive in mare con il capitano Marco e Paola.',
   'home.ctaQuote': 'RICHIEDI UN PREVENTIVO',
   'home.ctaBoat': 'SCOPRI LA BARCA',
   'home.scroll': 'SCORRI',
   'home.storyKicker': 'LA NOSTRA STORIA',
   'home.storyTitle': 'Un altro modo di vivere la Liguria',
-  'home.storyText1': "Il Capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone che amate, con la costa che si svela ai vostri ritmi.",
-  'home.storyText2': "Bagni in calette nascoste dove le grandi barche non arrivano. Snorkeling nella riserva marina con una guida. Un pranzo leggero all'italiana a bordo con vino del territorio, mentre i borghi colorati scorrono davanti a voi. Ogni giornata in mare è costruita intorno a voi.",
+  'home.storyText1': "Il capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone che amate, con la costa che si svela ai vostri ritmi.",
+  'home.storyText2': "Bagni in calette nascoste dove le barche grandi non arrivano. Snorkeling nella riserva marina, accompagnati da chi la conosce bene. Un pranzo leggero all'italiana a bordo con vino del territorio, mentre i borghi colorati scorrono davanti a voi. Ogni giornata in mare è costruita intorno a voi.",
   'home.reviewsKicker': 'AMATI DAI NOSTRI OSPITI',
-  'home.reviewsTitle': 'Recensioni eccellenti sul web',
-  'home.reviewsText': 'Non fidarti solo delle nostre parole: leggi cosa raccontano gli ospiti di tutto il mondo della loro giornata in mare con noi.',
+  'home.reviewsTitle': 'Recensioni da cinque stelle',
+  'home.reviewsText': 'Non lo diciamo noi: leggi cosa raccontano gli ospiti di tutto il mondo della loro giornata in mare con noi.',
   'home.readOnGoogle': 'Leggi su Google',
   'home.readOnTripadvisor': 'Leggi su TripAdvisor',
   'home.toursKicker': 'ESPERIENZE ESCLUSIVE',
@@ -252,7 +252,7 @@ const it = {
   'home.viewAllTours': 'VEDI TUTTI I TOUR →',
   'home.boatImageAlt': "La barca privata Sea Runner al faro dell'isola del Tino, costa delle Cinque Terre",
   'home.boatKicker': 'LA BARCA',
-  'home.boatText': "Silenzio all'ancora grazie ai pannelli solari. Navigazione morbida grazie al sistema intelligente di flap. Tendalino estendibile, bagno a bordo e tutto il necessario per una giornata intera di piacere.",
+  'home.boatText': "Silenzio all'ancora con l'energia solare, navigazione morbida grazie ai flap intelligenti. Bimini estendibile, bagno a bordo e tutto il necessario per godersi una giornata intera in mare.",
   'home.boatCta': 'SCOPRI LA BARCA →',
   'home.contactKicker': 'CONTATTI',
   'home.contactTitle': 'Domande prima di prenotare?',
@@ -263,8 +263,8 @@ const it = {
   'boat.seoDescription': 'Scopri la Cap Camarat 9.0 WA di Sea Runner: silenziosa grazie ai pannelli solari, navigazione stabile, bimini estendibile, bagno a bordo. La barca pluripremiata dei nostri tour privati alle Cinque Terre e a Portofino.',
   'boat.breadcrumb': 'La barca',
   'boat.kicker': 'LA BARCA',
-  'boat.awards': "Barca dell'anno · numerosi premi",
-  'boat.intro': 'Una barca pluripremiata, scelta per un solo motivo: farvi vivere il mare al suo meglio.',
+  'boat.awards': "Barca dell'anno · pluripremiata",
+  'boat.intro': 'Una barca pluripremiata, scelta per un solo motivo: farvi vivere il mare nel modo migliore.',
   'boat.specGuestsValue': 'fino a 8',
   'boat.specGuestsLabel': 'OSPITI',
   'boat.specGuestsNote': '+ equipaggio',
@@ -277,15 +277,15 @@ const it = {
   'boat.silenceText': "I pannelli solari alimentano i nostri due frigoriferi per tutto il giorno, anche all'ancora, senza il rumore del generatore e a emissioni zero. Quando i motori sono spenti, l'unica colonna sonora è l'acqua.",
   'boat.cruisingKicker': 'NAVIGAZIONE MORBIDA',
   'boat.cruisingTitle': 'Stabile su ogni onda',
-  'boat.cruisingText': "Un sistema intelligente di flap regola l'assetto in tempo reale e ammorbidisce ogni movimento. I due motori Yamaha da 225 CV danno potenza quando serve, senza mai mettervi fretta.",
+  'boat.cruisingText': "I flap intelligenti correggono l'assetto in tempo reale e rendono morbido ogni movimento. I due motori Yamaha da 225 CV danno potenza quando serve, ma la giornata scorre senza fretta.",
   'boat.shadeKicker': 'OMBRA QUANDO SERVE',
   'boat.shadeTitle': 'Sole o ombra, decidete voi',
   'boat.shadeText': 'Un bimini estendibile copre tutto il pozzetto di poppa quando il sole è più forte e si ritrae in pochi secondi quando volete sentire la brezza e la luce sulla pelle.',
   'boat.comfortKicker': 'TUTTO QUELLO CHE SERVE',
   'boat.comfortTitle': 'Una vera casa sul mare',
-  'boat.comfortText': "Bagno privato a bordo, doccia con acqua dolce, stereo bluetooth Fusion per creare l'atmosfera, ampia plancia per i bagni, frigoriferi sempre pieni. Non manca nulla per una giornata intera di piacere.",
+  'boat.comfortText': "Bagno privato a bordo, doccia con acqua dolce, stereo bluetooth Fusion per creare l'atmosfera, ampia plancia per i bagni, frigoriferi sempre pieni. Non manca nulla per godersi una giornata intera in mare.",
   'boat.layoutKicker': 'PIANTA DELLA BARCA',
-  'boat.layoutTitle': 'Come è organizzata la barca',
+  'boat.layoutTitle': "Com'è organizzata la barca",
   'boat.layoutComingSoon': 'PIANTA IN ARRIVO',
   'boat.layoutAlt': 'Cap Camarat 9.0 WA Sea Runner — pianta e disposizione degli spazi',
   'boat.layoutCredit': 'Pianta ufficiale Jeanneau',
@@ -326,12 +326,12 @@ const it = {
   tours: {
     'cinque-terre': {
       name: 'Cinque Terre',
-      subtitle: 'Tour di una giornata',
+      subtitle: 'Giornata intera',
       duration: '7 ore',
       h1: 'Tour privato in barca alle Cinque Terre (giornata intera)',
       seoName: 'alle Cinque Terre',
       shortDesc: 'Tutti e cinque i borghi dal mare. Bagni, snorkeling e pranzo italiano a bordo.',
-      longDesc: "Navigherete lungo tutta la costa patrimonio UNESCO, davanti a Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Bagni in calette nascoste, snorkeling nell'area marina protetta e un pranzo leggero all'italiana a bordo, mentre i borghi colorati scorrono davanti a voi.",
+      longDesc: "Tutta la costa patrimonio UNESCO vista dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Bagni in calette nascoste, snorkeling nell'area marina protetta e un pranzo leggero all'italiana a bordo, mentre i borghi colorati scorrono davanti a voi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
@@ -348,12 +348,12 @@ const it = {
     },
     'golfo-poeti': {
       name: 'Golfo dei Poeti',
-      subtitle: 'Tour di una giornata',
+      subtitle: 'Giornata intera',
       duration: '7 ore',
       h1: 'Tour privato in barca nel Golfo dei Poeti (giornata intera)',
       seoName: 'nel Golfo dei Poeti',
-      shortDesc: "Il golfo di Byron. Portovenere, l'isola Palmaria, Lerici e la nascosta Tellaro.",
-      longDesc: "Alla scoperta del golfo che incantò Byron e Shelley. La Portovenere medievale, le isole selvagge di Palmaria e del Tino, l'elegante Lerici e il gioiello nascosto di Tellaro, con soste per i bagni e un pranzo leggero a bordo.",
+      shortDesc: "Il golfo amato da Byron. Portovenere, l'isola Palmaria, Lerici e il borgo segreto di Tellaro.",
+      longDesc: "Il golfo che incantò Byron e Shelley. La Portovenere medievale, le isole selvagge di Palmaria e del Tino, l'elegante Lerici e il gioiello nascosto di Tellaro, con soste per i bagni e un pranzo leggero a bordo.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
@@ -395,7 +395,7 @@ const it = {
       h1: 'Tour privato in barca di mezza giornata: Cinque Terre o Golfo dei Poeti',
       seoName: 'di mezza giornata',
       shortDesc: 'Scegli la costa e il momento: mattina, pomeriggio o sera.',
-      longDesc: "Una fuga più breve, con la stessa magia. Si sceglie tra il percorso delle Cinque Terre e il Golfo dei Poeti, poi la luce che si preferisce: la freschezza del mattino, il sole del pomeriggio o l'ora dorata della sera.",
+      longDesc: "Meno ore, la stessa magia. Scegli tra le Cinque Terre e il Golfo dei Poeti, poi la luce che preferisci: il fresco del mattino, il sole del pomeriggio o l'ora dorata della sera.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre',
@@ -435,7 +435,7 @@ const it = {
       h1: 'Tour privato in barca al tramonto',
       seoName: 'al tramonto',
       shortDesc: "Aperitivo in mare mentre la costa si tinge d'ambra e di rosa.",
-      longDesc: 'Il modo più romantico per chiudere la giornata. Si naviga nel Golfo dei Poeti mentre il sole scende dietro la Palmaria, con un aperitivo ligure e vini del territorio, e si lascia che i colori facciano il resto.',
+      longDesc: 'Il modo più romantico per chiudere la giornata: navigherete nel Golfo dei Poeti mentre il sole scende dietro la Palmaria, con un aperitivo ligure e i vini del territorio. Al resto pensano i colori del tramonto.',
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre al tramonto',
@@ -467,8 +467,8 @@ const it = {
       duration: 'Flessibile',
       h1: 'Tour privato in barca su misura',
       seoName: 'su misura',
-      shortDesc: 'Il vostro itinerario. Marco e Paola creano per voi la giornata in mare perfetta.',
-      longDesc: 'Destinazioni, durata e attività le scegliete voi. Il Capitano Marco e Paola costruiranno la giornata perfetta in base alle vostre preferenze.',
+      shortDesc: 'Un itinerario tutto vostro: Marco e Paola costruiscono con voi la giornata perfetta.',
+      longDesc: 'Destinazioni, durata e attività le scegliete voi. Il capitano Marco e Paola costruiranno la giornata perfetta in base alle vostre preferenze.',
       includes: ['Tutto su misura per voi']
     }
   },
