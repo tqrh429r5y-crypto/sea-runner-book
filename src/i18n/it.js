@@ -149,7 +149,7 @@ const it = {
   'consent.health': 'Acconsento espressamente al trattamento dei dati relativi alla salute che sto fornendo (allergie e/o mobilità ridotta), da usare esclusivamente per garantire la sicurezza e il comfort a bordo (art. 9.2.a GDPR). ',
 
   // --- invio ---
-  'step3.submit': 'RICHIEDI IL PREVENTIVO',
+  'step3.submit': 'INVIA LA RICHIESTA',
   'step3.disclaimer': 'Non stai ancora prenotando né pagando: ti contatteremo entro 24 ore per confermare la disponibilità e inviarti il preventivo definitivo.',
   'step3.signature': 'CAPITANO MARCO & PAOLA · LA SPEZIA',
 
@@ -234,16 +234,16 @@ const it = {
   'home.heroKicker': 'LA SPEZIA · RIVIERA LIGURE',
   'home.heroTitle': 'Tour privati in barca lungo la',
   'home.heroTitleScript': 'riviera ligure',
-  'home.heroText': 'Cinque Terre, Golfo dei Poeti, Portofino. Giornate esclusive in mare con il capitano Marco e Paola.',
+  'home.heroText': 'Cinque Terre, Portofino e il Golfo dei Poeti, senza nessun altro a bordo. Solo voi, il capitano Marco e Paola.',
   'home.ctaQuote': 'RICHIEDI UN PREVENTIVO',
   'home.ctaBoat': 'SCOPRI LA BARCA',
   'home.scroll': 'SCORRI',
   'home.storyKicker': 'LA NOSTRA STORIA',
-  'home.storyTitle': 'Un altro modo di vivere la Liguria',
+  'home.storyTitle': 'La Liguria vista dal mare',
   'home.storyText1': "Il capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone che amate, con la costa che si svela ai vostri ritmi.",
   'home.storyText2': "Bagni in calette nascoste dove le barche grandi non arrivano. Snorkeling nella riserva marina, accompagnati da chi la conosce bene. Un pranzo leggero all'italiana a bordo con vino del territorio, mentre i borghi colorati scorrono davanti a voi. Ogni giornata in mare è costruita intorno a voi.",
   'home.reviewsKicker': 'AMATI DAI NOSTRI OSPITI',
-  'home.reviewsTitle': 'Recensioni da cinque stelle',
+  'home.reviewsTitle': '5,0 su Google · oltre 100 recensioni',
   'home.reviewsText': 'Non lo diciamo noi: leggi cosa raccontano gli ospiti di tutto il mondo della loro giornata in mare con noi.',
   'home.readOnGoogle': 'Leggi su Google',
   'home.readOnTripadvisor': 'Leggi su TripAdvisor',
@@ -255,8 +255,8 @@ const it = {
   'home.boatText': "Silenzio all'ancora con l'energia solare, navigazione morbida grazie ai flap intelligenti. Bimini estendibile, bagno a bordo e tutto il necessario per godersi una giornata intera in mare.",
   'home.boatCta': 'SCOPRI LA BARCA →',
   'home.contactKicker': 'CONTATTI',
-  'home.contactTitle': 'Domande prima di prenotare?',
-  'home.contactText': 'Marco e Paola rispondono personalmente, il prima possibile.',
+  'home.contactTitle': 'Scrivete direttamente a Marco e Paola',
+  'home.contactText': 'Domande prima di prenotare? Rispondono personalmente, il prima possibile.',
 
   // --- pagina della barca ---
   'boat.seoTitle': 'La barca — Cap Camarat 9.0 WA, yacht pluripremiato per tour privati',

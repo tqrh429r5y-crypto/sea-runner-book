@@ -48,7 +48,7 @@ const en = {
 
   // --- passo 1: scelta del tour ---
   'step1.kicker': 'REQUEST A FREE QUOTE',
-  'step1.title': 'Choose Your Tour',
+  'step1.title': 'Choose your tour',
   'step1.intro': "Private boat tours along the Italian Riviera — tell us your preferences and we'll reply with a tailored quote.",
   'card.price': 'PRICE',
   'card.onRequest': 'On request',
@@ -148,7 +148,7 @@ const en = {
   'consent.health': 'I explicitly consent to the processing of the health-related information I am providing (allergies and/or reduced mobility), to be used exclusively to ensure my safety and comfort on board (GDPR art. 9.2.a). ',
 
   // --- invio ---
-  'step3.submit': 'REQUEST QUOTE',
+  'step3.submit': 'SEND MY REQUEST',
   'step3.disclaimer': "You're not booking or paying yet — we'll contact you within 24 hours to confirm availability and send your final quote.",
   'step3.signature': 'CAPTAIN MARCO & PAOLA · LA SPEZIA',
 
@@ -176,7 +176,7 @@ const en = {
   'faq.title': 'Frequently asked questions',
   'faq.items': [
     {
-      q: 'Is food and drinks included on board?',
+      q: 'Are food and drinks included on board?',
       a: `Yes. Every tour includes an open bar and a light Italian aperitivo. On full day tours (Cinque Terre, Golfo dei Poeti, Portofino) we also serve a light Italian lunch on board. If you have allergies or dietary preferences, just let us know in advance and we'll adapt everything for you.`
     },
     {
@@ -232,17 +232,17 @@ const en = {
   'home.schemaDescription': 'Private boat tours from La Spezia along the Italian Riviera. Discover Cinque Terre, Portofino, Portovenere and the Golfo dei Poeti aboard our award-winning Cap Camarat 9.0 WA with Captain Marco and Paola — fully private charter, never shared. Departures from Porto Mirabello.',
   'home.heroKicker': 'LA SPEZIA · ITALIAN RIVIERA',
   'home.heroTitle': 'Private boat tours along the',
-  'home.heroTitleScript': 'italian riviera',
-  'home.heroText': 'Cinque Terre, Golfo dei Poeti, Portofino. Exclusive day trips with Captain Marco and Paola.',
+  'home.heroTitleScript': 'Italian Riviera',
+  'home.heroText': 'Cinque Terre, Portofino and the Gulf of Poets, with nobody else on board. Just you, Captain Marco and Paola.',
   'home.ctaQuote': 'REQUEST A QUOTE',
   'home.ctaBoat': 'DISCOVER THE BOAT',
   'home.scroll': 'SCROLL',
   'home.storyKicker': 'OUR STORY',
-  'home.storyTitle': 'A different way to see Liguria',
+  'home.storyTitle': 'Liguria, seen from the sea',
   'home.storyText1': 'Captain Marco and Paola welcome you aboard for a fully private experience. No crowds, no fixed schedules. Just you and those you love, with the coastline unfolding at your own pace.',
   'home.storyText2': 'Swim in hidden coves the big boats never reach. Snorkel the marine reserve with a guide. Enjoy a light Italian lunch on board with local wine while the colourful villages drift by. Every day at sea is crafted around you.',
   'home.reviewsKicker': 'LOVED BY OUR GUESTS',
-  'home.reviewsTitle': 'Highly rated across the web',
+  'home.reviewsTitle': '5.0 on Google · 100+ reviews',
   'home.reviewsText': "Don't take our word for it, read what guests from all over the world have to say about their day at sea with us.",
   'home.readOnGoogle': 'Read on Google',
   'home.readOnTripadvisor': 'Read on TripAdvisor',
@@ -254,8 +254,8 @@ const en = {
   'home.boatText': 'Solar-powered silence at anchor. Smooth cruising thanks to an intelligent flap system. Extendable shade, bathroom on board, and everything you need for a full day of pleasure.',
   'home.boatCta': 'DISCOVER THE BOAT →',
   'home.contactKicker': 'GET IN TOUCH',
-  'home.contactTitle': 'Questions before booking?',
-  'home.contactText': 'Marco and Paola reply personally, as soon as possible.',
+  'home.contactTitle': 'Talk to Marco and Paola directly',
+  'home.contactText': 'Questions before booking? They reply personally, as soon as possible.',
 
   // --- pagina della barca ---
   'boat.seoTitle': 'The Boat — Cap Camarat 9.0 WA, Award-Winning Yacht for Private Tours',
@@ -318,6 +318,13 @@ const en = {
   'notFound.text': "The page you are looking for doesn't exist. Discover our private boat tours instead.",
   'notFound.home': 'HOME',
   'notFound.tours': 'OUR TOURS',
+
+  // ============ TOUR (solo correzioni di come il nome APPARE sul sito) ============
+  // Il nome originale in initialTours ('Golfo dei poeti') resta quello usato nelle email e letto dal gestionale 2027:
+  // qui cambia solo la scritta mostrata ai clienti.
+  tours: {
+    'golfo-poeti': { name: 'Golfo dei Poeti' }
+  },
 };
 
 export default en;

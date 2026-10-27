@@ -147,7 +147,7 @@ const fr = {
   'consent.health': "Je consens expressément au traitement des données de santé que je fournis (allergies et/ou mobilité réduite), utilisées exclusivement pour garantir ma sécurité et mon confort à bord (art. 9.2.a RGPD). ",
 
   // --- invio ---
-  'step3.submit': 'DEMANDER LE DEVIS',
+  'step3.submit': 'ENVOYER MA DEMANDE',
   'step3.disclaimer': 'Vous ne réservez et ne payez rien pour le moment : nous vous contacterons sous 24 heures pour confirmer la disponibilité et vous envoyer le devis définitif.',
   'step3.signature': 'CAPITAINE MARCO & PAOLA · LA SPEZIA',
 
@@ -232,16 +232,16 @@ const fr = {
   'home.heroKicker': 'LA SPEZIA · RIVIERA ITALIENNE',
   'home.heroTitle': 'Excursions privées en bateau sur la',
   'home.heroTitleScript': 'riviera italienne',
-  'home.heroText': 'Cinque Terre, Golfe des Poètes, Portofino. Des journées en mer exclusives avec le capitaine Marco et Paola.',
+  'home.heroText': "Les Cinque Terre, Portofino et le Golfe des Poètes, sans personne d'autre à bord. Juste vous, le capitaine Marco et Paola.",
   'home.ctaQuote': 'DEMANDER UN DEVIS',
   'home.ctaBoat': 'DÉCOUVRIR LE BATEAU',
   'home.scroll': 'DÉFILEZ',
   'home.storyKicker': 'NOTRE HISTOIRE',
-  'home.storyTitle': 'La Ligurie autrement',
+  'home.storyTitle': 'La Ligurie vue de la mer',
   'home.storyText1': "Le capitaine Marco et Paola vous accueillent à bord pour une expérience entièrement privée. Pas de foule, pas d'horaires fixes. Juste vous et ceux que vous aimez, avec la côte qui se dévoile à votre rythme.",
   'home.storyText2': "Baignade dans des criques cachées, inaccessibles aux grands bateaux. Snorkeling dans la réserve marine avec quelqu'un qui la connaît par cœur. Un déjeuner italien léger à bord avec du vin local, pendant que les villages colorés défilent devant vous. Chaque journée en mer est pensée autour de vous.",
   'home.reviewsKicker': 'NOS PASSAGERS EN PARLENT',
-  'home.reviewsTitle': 'Des avis cinq étoiles',
+  'home.reviewsTitle': '5,0 sur Google · plus de 100 avis',
   'home.reviewsText': 'Ne nous croyez pas sur parole : lisez ce que des passagers du monde entier racontent de leur journée en mer avec nous.',
   'home.readOnGoogle': 'Lire sur Google',
   'home.readOnTripadvisor': 'Lire sur TripAdvisor',
@@ -253,8 +253,8 @@ const fr = {
   'home.boatText': "Le silence au mouillage grâce à l'énergie solaire, une navigation tout en douceur avec des flaps intelligents. Bimini extensible, toilettes à bord et tout le nécessaire pour profiter d'une journée entière en mer.",
   'home.boatCta': 'DÉCOUVRIR LE BATEAU →',
   'home.contactKicker': 'CONTACT',
-  'home.contactTitle': 'Des questions avant de réserver ?',
-  'home.contactText': 'Marco et Paola vous répondent personnellement, dans les plus brefs délais.',
+  'home.contactTitle': 'Écrivez directement à Marco et Paola',
+  'home.contactText': 'Des questions avant de réserver ? Ils vous répondent personnellement, dans les plus brefs délais.',
 
   // --- pagina della barca ---
   'boat.seoTitle': 'Le bateau — Cap Camarat 9.0 WA, yacht primé pour excursions privées',
