@@ -3301,6 +3301,9 @@ function SharedFooter() {
           </p>
           <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-slate-400 tracking-widest">
             <Link to="/privacy" className="hover:text-amber-400 transition">PRIVACY POLICY</Link>
+            <span aria-hidden="true">·</span>
+            {/* riapre il banner cookie per cambiare la scelta (linee guida Garante 2021) */}
+            <button type="button" onClick={openCookieSettings} className="hover:text-amber-400 transition tracking-widest">COOKIE SETTINGS</button>
           </div>
         </div>
       </div>
@@ -3323,7 +3326,7 @@ function PrivacyPage() {
 
       <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl mb-3">Privacy Policy</h1>
-        <p className="text-slate-500 text-sm mb-10">Last updated: June 2026</p>
+        <p className="text-slate-500 text-sm mb-10">Last updated: October 2026</p>
 
         <div className="space-y-8 text-slate-300 leading-relaxed">
 
@@ -3368,9 +3371,11 @@ function PrivacyPage() {
             <p className="mb-3">We use the following third-party services to operate our booking system:</p>
             <ul className="list-disc pl-6 space-y-2 text-sm">
               <li><strong className="text-white">Web3Forms</strong> (based in the United States) — used to deliver booking request emails from our website to our inbox. Data transferred: all booking form fields. Safeguards: standard contractual clauses (SCC) for extra-EU data transfer.</li>
-              <li><strong className="text-white">Google Calendar</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used to manage tour availability. No personal customer data is transferred to Google Calendar; only internal scheduling information is stored. Safeguards: EU-US Data Privacy Framework.</li>
+              <li><strong className="text-white">Supabase</strong> (Supabase Inc.) — database used to store a copy of booking requests (all booking form fields, including any health information you choose to provide) and our availability settings. Access is restricted to Sea Runner staff. Safeguards: standard contractual clauses (SCC) / EU-US Data Privacy Framework where applicable.</li>
+              <li><strong className="text-white">Google Workspace</strong> (Gmail, Google Calendar, Google Sheets, Google Drive — operated by Google Ireland Ltd., with data processing also in the United States) — used internally to receive booking emails, keep our booking records, prepare contracts and manage the tour calendar. The public availability calendar read by our website shows only "busy" time slots, never customer details. Safeguards: EU-US Data Privacy Framework.</li>
+              <li><strong className="text-white">WhatsApp</strong> (WhatsApp Ireland Ltd., Meta group) — only if you choose to contact us through the WhatsApp button; in that case WhatsApp's own privacy policy applies.</li>
               <li><strong className="text-white">Vercel Inc.</strong> (based in the United States) — used to host our website. May collect standard server log data (IP address, browser type, access timestamps) for operational purposes. Safeguards: EU-US Data Privacy Framework.</li>
-              <li><strong className="text-white">Google Analytics</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used, <strong className="text-white">only with your consent</strong>, to collect anonymous statistics on how visitors use the website (pages viewed, approximate location, device and browser type), so we can improve it. Analytics cookies are not loaded until you accept them through our cookie banner. Safeguards: EU-US Data Privacy Framework. Legal basis: your consent (GDPR art. 6.1.a).</li>
+              <li><strong className="text-white">Google Analytics</strong> (operated by Google Ireland Ltd., with data processing in the United States) — used, <strong className="text-white">only with your consent</strong>, to collect statistics on how visitors use the website (pages viewed, approximate location, device and browser type), so we can improve it. Analytics cookies are not loaded until you accept them through our cookie banner. Safeguards: EU-US Data Privacy Framework. Legal basis: your consent (GDPR art. 6.1.a).</li>
             </ul>
             <p className="mt-3 text-sm">We do not sell, rent, or share your personal data with any party beyond what is strictly required to provide our service.</p>
           </section>
@@ -3403,7 +3408,7 @@ function PrivacyPage() {
           <section>
             <h2 className="text-xl sm:text-2xl text-white mb-3">7. Cookies</h2>
             <p className="text-sm">
-              This website uses technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices — these do not require consent. With your explicit consent, it also uses analytics cookies (Google Analytics) to produce anonymous statistics on the use of the site; these are activated only after you click "Accept" on the cookie banner, and are never loaded if you decline. It does not use profiling or advertising cookies. You can change your choice at any time by clearing your browser's local storage, which will make the cookie banner appear again.
+              This website uses technical cookies strictly necessary for its proper functioning and preference cookies to remember your consent choices — these do not require consent. With your explicit consent, it also uses analytics cookies (Google Analytics) to produce statistics on the use of the site; these are activated only after you click "Accept" on the cookie banner, and are never loaded if you decline. It does not use profiling or advertising cookies. Your choice is stored in your browser's local storage (key "sr-cookie-consent"). You can change it at any time through the "Cookie settings" link at the bottom of every page. If you are logged in to the staff area, a technical login token is also stored in your browser.
             </p>
           </section>
 
@@ -3468,8 +3473,32 @@ function loadGoogleAnalytics() {
   gtag('config', GA_MEASUREMENT_ID);
 }
 
+// riapre il banner cookie (link "Cookie settings" nel footer) per cambiare la scelta in qualsiasi momento
+function openCookieSettings() {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('sr-open-cookie-settings'));
+}
+
+// cancella i cookie di Google Analytics (_ga, _ga_XXXX) quando l'utente revoca il consenso
+function clearAnalyticsCookies() {
+  if (typeof document === 'undefined') return;
+  const host = window.location.hostname;
+  const domains = ['', host, '.' + host, '.' + host.replace(/^www\./, '')];
+  document.cookie.split(';').map(c => c.split('=')[0].trim()).filter(n => n === '_ga' || n.startsWith('_ga_') || n === '_gid').forEach(name => {
+    domains.forEach(d => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${d ? `; domain=${d}` : ''}`;
+    });
+  });
+}
+
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
+
+  // link "Cookie settings" nel footer → mostra di nuovo il banner
+  useEffect(() => {
+    const open = () => setVisible(true);
+    window.addEventListener('sr-open-cookie-settings', open);
+    return () => window.removeEventListener('sr-open-cookie-settings', open);
+  }, []);
 
   useEffect(() => {
     // PRIMA di tutto: per default il tracciamento è NEGATO (GDPR / Consent Mode v2).
@@ -3503,6 +3532,14 @@ function CookieBanner() {
   const save = (value) => {
     try { localStorage.setItem('sr-cookie-consent', value); } catch {}
     if (value === 'accepted') loadGoogleAnalytics();
+    if (value === 'declined' && window.__gaLoaded) {
+      // consenso revocato dopo averlo dato: blocca Analytics, cancella i suoi cookie
+      // e ricarica la pagina, così lo script di Google non resta attivo
+      if (window.gtag) window.gtag('consent', 'update', { analytics_storage: 'denied' });
+      clearAnalyticsCookies();
+      window.location.reload();
+      return;
+    }
     setVisible(false);
   };
 
