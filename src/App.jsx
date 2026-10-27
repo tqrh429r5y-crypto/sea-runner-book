@@ -3355,6 +3355,8 @@ function PrivacyPage() {
   const { lang, t } = useLang();
   // L(inglese, italiano, francese) → il testo nella lingua della pagina
   const L = (en, it, fr) => (lang === 'it' ? it : lang === 'fr' ? fr : en);
+  // in francese i due punti vogliono uno spazio prima (non divisibile, così non vanno a capo da soli)
+  const C = lang === 'fr' ? '\u00a0:' : ':';
 
   const A = ({ href, children }) => <a href={href} className="text-amber-400 hover:underline">{children}</a>;
   const Ext = ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">{children}</a>;
@@ -3381,7 +3383,7 @@ function PrivacyPage() {
 
       <section className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
         <h1 className="text-3xl sm:text-4xl mb-3">{L('Privacy Policy', 'Informativa privacy', 'Politique de confidentialité')}</h1>
-        <p className="text-slate-500 text-sm mb-10">{L('Last updated', 'Ultimo aggiornamento', 'Dernière mise à jour')}: {PRIVACY_LAST_UPDATED[lang] || PRIVACY_LAST_UPDATED.en}</p>
+        <p className="text-slate-500 text-sm mb-10">{L('Last updated', 'Ultimo aggiornamento', 'Dernière mise à jour')}{C} {PRIVACY_LAST_UPDATED[lang] || PRIVACY_LAST_UPDATED.en}</p>
 
         <div className="space-y-8 text-slate-300 leading-relaxed">
 
@@ -3389,12 +3391,12 @@ function PrivacyPage() {
             <H2>{L('1. Data Controller', '1. Titolare del trattamento', '1. Responsable du traitement')}</H2>
             <div className="bg-slate-900 border border-slate-800 p-4 text-sm">
               <p><B>M B di Bulgheresi Marco</B> {L('(trading as "Sea Runner", also "Sea Runner 5 Terre Boat Tours")', '(marchio "Sea Runner", anche "Sea Runner 5 Terre Boat Tours")', '(sous le nom « Sea Runner », aussi « Sea Runner 5 Terre Boat Tours »)')}</p>
-              <p>{L('VAT number', 'P.IVA', 'N° de TVA')}: IT 01096850118</p>
-              <p>{L('Registered address', 'Sede legale', 'Siège social')}: Via Buonviaggio 152/A, La Spezia, Italy</p>
-              <p>{L('Operational address (departures)', 'Sede operativa (partenze)', 'Adresse opérationnelle (départs)')}: Passeggiata Costantino Morin, Porto Mirabello, 19121 La Spezia, Italy</p>
-              <p className="mt-2">Email: {mail}</p>
-              <p>{L('Phone', 'Telefono', 'Téléphone')}: <A href="tel:+393488289438">+39 348 828 9438</A></p>
-              <p>PEC ({L('certified email', 'posta certificata', 'e-mail certifié')}): <A href="mailto:marco.bulgheresi@pec.it">marco.bulgheresi@pec.it</A></p>
+              <p>{L('VAT number', 'P.IVA', 'N° de TVA')}{C} IT 01096850118</p>
+              <p>{L('Registered address', 'Sede legale', 'Siège social')}{C} Via Buonviaggio 152/A, La Spezia, Italy</p>
+              <p>{L('Operational address (departures)', 'Sede operativa (partenze)', 'Adresse opérationnelle (départs)')}{C} Passeggiata Costantino Morin, Porto Mirabello, 19121 La Spezia, Italy</p>
+              <p className="mt-2">{L('Email', 'Email', 'E-mail')}{C} {mail}</p>
+              <p>{L('Phone', 'Telefono', 'Téléphone')}{C} <A href="tel:+393488289438">+39 348 828 9438</A></p>
+              <p>PEC ({L('certified email', 'posta certificata', 'e-mail certifié')}){C} <A href="mailto:marco.bulgheresi@pec.it">marco.bulgheresi@pec.it</A></p>
             </div>
             <p className="mt-3 text-sm">{L(
               'We have not appointed a Data Protection Officer (DPO), as this is not required for our activity. For any privacy question, contact us at the addresses above.',
@@ -3406,9 +3408,9 @@ function PrivacyPage() {
             <H2>{L('2. Data We Collect', '2. Quali dati trattiamo', '2. Données que nous collectons')}</H2>
             <p className="mb-3 text-sm">{L('When you send a quote request through our website, we collect:', 'Quando invii una richiesta di preventivo dal sito raccogliamo:', 'Lorsque vous envoyez une demande de devis via notre site, nous collectons :')}</p>
             <ul className="list-disc pl-6 space-y-1 text-sm">
-              <li><B>{L('Identification and contact data', 'Dati identificativi e di contatto', "Données d'identification et de contact")}</B>: {L('name, email address, phone number, preferred language', 'nome, email, telefono, lingua preferita', 'nom, adresse e-mail, numéro de téléphone, langue préférée')}</li>
-              <li><B>{L('Request data', 'Dati della richiesta', 'Données de la demande')}</B>: {L('tour, date, time slot, number of guests, meeting point, notes', "tour, data, orario, numero di ospiti, punto d'incontro, note", 'excursion, date, créneau horaire, nombre de passagers, point de rendez-vous, remarques')}</li>
-              <li><B>{L('Health data (optional)', 'Dati relativi alla salute (facoltativi)', 'Données de santé (facultatives)')}</B>: {L('food allergies/intolerances and reduced mobility, only if you choose to provide them', 'allergie/intolleranze alimentari e mobilità ridotta, solo se scegli di indicarli', 'allergies/intolérances alimentaires et mobilité réduite, uniquement si vous choisissez de les indiquer')}</li>
+              <li><B>{L('Identification and contact data', 'Dati identificativi e di contatto', "Données d'identification et de contact")}</B>{C} {L('name, email address, phone number, preferred language', 'nome, email, telefono, lingua preferita', 'nom, adresse e-mail, numéro de téléphone, langue préférée')}</li>
+              <li><B>{L('Request data', 'Dati della richiesta', 'Données de la demande')}</B>{C} {L('tour, date, time slot, number of guests, meeting point, notes', "tour, data, orario, numero di ospiti, punto d'incontro, note", 'excursion, date, créneau horaire, nombre de passagers, point de rendez-vous, remarques')}</li>
+              <li><B>{L('Health data (optional)', 'Dati relativi alla salute (facoltativi)', 'Données de santé (facultatives)')}</B>{C} {L('food allergies/intolerances and reduced mobility, only if you choose to provide them', 'allergie/intolleranze alimentari e mobilità ridotta, solo se scegli di indicarli', 'allergies/intolérances alimentaires et mobilité réduite, uniquement si vous choisissez de les indiquer')}</li>
             </ul>
             <p className="mt-3 text-sm">{L(
               'If your request becomes a booking, we may ask for further data required for the contract and by law (for example address, place and date of birth).',
@@ -3446,7 +3448,7 @@ function PrivacyPage() {
                 'delivers the requests sent through the form to our email inbox (all form fields). Safeguards: EU Commission standard contractual clauses.',
                 'consegna alla nostra casella email le richieste inviate dal modulo (tutti i campi del modulo). Garanzie: clausole contrattuali standard della Commissione UE.',
                 'achemine vers notre boîte e-mail les demandes envoyées via le formulaire (tous les champs du formulaire). Garanties : clauses contractuelles types de la Commission européenne.')}</li>
-              <li><B>Supabase</B> (Supabase Pte. Ltd., Singapore, {L('with support from Supabase Inc., USA', 'con supporto di Supabase Inc., USA', 'avec le support de Supabase Inc., États-Unis')}) — {L(
+              <li><B>Supabase</B> (Supabase Pte. Ltd., {L('Singapore', 'Singapore', 'Singapour')}, {L('with support from Supabase Inc., USA', 'con supporto di Supabase Inc., USA', 'avec le support de Supabase Inc., États-Unis')}) — {L(
                 'database storing a copy of the requests (all form fields) and our availability and price settings; the database is hosted in the EU (Ireland) and is accessible only to our staff. Safeguards for any access from outside the EU: standard contractual clauses.',
                 "database che conserva una copia delle richieste (tutti i campi del modulo) e le nostre impostazioni di disponibilità e prezzi; il database si trova nell'UE (Irlanda) ed è accessibile solo al nostro personale. Garanzie per eventuali accessi da fuori UE: clausole contrattuali standard.",
                 "base de données conservant une copie des demandes (tous les champs du formulaire) et nos réglages de disponibilités et de prix ; elle est hébergée dans l'UE (Irlande) et accessible uniquement à notre personnel. Garanties pour tout accès depuis l'extérieur de l'UE : clauses contractuelles types.")}</li>
@@ -3476,10 +3478,10 @@ function PrivacyPage() {
           <section>
             <H2>{L('5. How Long We Keep Your Data', '5. Per quanto tempo conserviamo i dati', '5. Durée de conservation')}</H2>
             <ul className="list-disc pl-6 space-y-1 text-sm">
-              <li><B>{L('Requests that do not become bookings', 'Richieste che non diventano prenotazioni', 'Demandes qui ne deviennent pas des réservations')}</B>: {L('up to 12 months, then we delete them.', 'al massimo 12 mesi, poi le cancelliamo.', "jusqu'à 12 mois, puis nous les supprimons.")}</li>
-              <li><B>{L('Confirmed bookings', 'Prenotazioni confermate', 'Réservations confirmées')}</B>: {L('up to 10 years, as required by Italian tax and civil law (art. 2220 Civil Code).', 'fino a 10 anni, come richiesto dalla normativa fiscale e civilistica (art. 2220 c.c.).', "jusqu'à 10 ans, comme l'exige le droit fiscal et civil italien (art. 2220 du Code civil).")}</li>
-              <li><B>{L('Health data', 'Dati sulla salute', 'Données de santé')}</B>: {L('only for as long as needed for the tour; we delete it after the tour, or earlier if you withdraw your consent.', 'solo per il tempo necessario al tour; dopo il tour li cancelliamo, oppure prima se revochi il consenso.', "uniquement le temps nécessaire à l'excursion ; nous les supprimons après l'excursion, ou plus tôt si vous retirez votre consentement.")}</li>
-              <li><B>{L('Technical data and statistics', 'Dati tecnici e statistiche', 'Données techniques et statistiques')}</B>: {L("server logs according to Vercel's technical retention; Google Analytics data for up to 14 months.", 'log del server secondo i tempi tecnici di Vercel; dati di Google Analytics al massimo 14 mesi.', "journaux du serveur selon la durée technique de Vercel ; données Google Analytics jusqu'à 14 mois.")}</li>
+              <li><B>{L('Requests that do not become bookings', 'Richieste che non diventano prenotazioni', 'Demandes qui ne deviennent pas des réservations')}</B>{C} {L('up to 12 months, then we delete them.', 'al massimo 12 mesi, poi le cancelliamo.', "jusqu'à 12 mois, puis nous les supprimons.")}</li>
+              <li><B>{L('Confirmed bookings', 'Prenotazioni confermate', 'Réservations confirmées')}</B>{C} {L('up to 10 years, as required by Italian tax and civil law (art. 2220 Civil Code).', 'fino a 10 anni, come richiesto dalla normativa fiscale e civilistica (art. 2220 c.c.).', "jusqu'à 10 ans, comme l'exige le droit fiscal et civil italien (art. 2220 du Code civil).")}</li>
+              <li><B>{L('Health data', 'Dati sulla salute', 'Données de santé')}</B>{C} {L('only for as long as needed for the tour; we delete it after the tour, or earlier if you withdraw your consent.', 'solo per il tempo necessario al tour; dopo il tour li cancelliamo, oppure prima se revochi il consenso.', "uniquement le temps nécessaire à l'excursion ; nous les supprimons après l'excursion, ou plus tôt si vous retirez votre consentement.")}</li>
+              <li><B>{L('Technical data and statistics', 'Dati tecnici e statistiche', 'Données techniques et statistiques')}</B>{C} {L("server logs according to Vercel's technical retention; Google Analytics data for up to 14 months.", 'log del server secondo i tempi tecnici di Vercel; dati di Google Analytics al massimo 14 mesi.', "journaux du serveur selon la durée technique de Vercel ; données Google Analytics jusqu'à 14 mois.")}</li>
             </ul>
           </section>
 
@@ -3504,11 +3506,11 @@ function PrivacyPage() {
           <section>
             <H2>{L('7. Cookies and Browser Storage', '7. Cookie e memoria del browser', '7. Cookies et stockage du navigateur')}</H2>
             <ul className="list-disc pl-6 space-y-2 text-sm">
-              <li><B>{L('Technical (always on, no consent needed)', 'Tecnici (sempre attivi, non richiedono consenso)', 'Techniques (toujours actifs, sans consentement)')}</B>: {L(
+              <li><B>{L('Technical (always on, no consent needed)', 'Tecnici (sempre attivi, non richiedono consenso)', 'Techniques (toujours actifs, sans consentement)')}</B>{C} {L(
                 'your cookie choice, saved in your browser storage (key "sr-cookie-consent"); for staff logging in to the reserved area only, the login token.',
                 'la tua scelta sui cookie, salvata nella memoria del browser (chiave "sr-cookie-consent"); per il solo personale che entra nell\'Area riservata, il codice di accesso.',
                 'votre choix concernant les cookies, enregistré dans le stockage du navigateur (clé « sr-cookie-consent ») ; pour le seul personnel qui se connecte à l\'espace réservé, le jeton de connexion.')}</li>
-              <li><B>{L('Analytics (only with your consent)', 'Analitici (solo con il tuo consenso)', 'Analytiques (uniquement avec votre consentement)')}</B>: {L(
+              <li><B>{L('Analytics (only with your consent)', 'Analitici (solo con il tuo consenso)', 'Analytiques (uniquement avec votre consentement)')}</B>{C} {L(
                 `Google Analytics cookies (_ga, _ga_*). They are not loaded until you click "${accept}" on the banner, and never if you click "${decline}".`,
                 `cookie di Google Analytics (_ga, _ga_*). Non vengono caricati finché non clicchi "${accept}" nel banner e non vengono mai caricati se clicchi "${decline}".`,
                 `cookies Google Analytics (_ga, _ga_*). Ils ne sont chargés que si vous cliquez sur « ${accept} » dans le bandeau, et jamais si vous cliquez sur « ${decline} ».`)}</li>
