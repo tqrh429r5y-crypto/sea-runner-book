@@ -254,8 +254,8 @@ const fr = {
   'home.boatText': "Le silence au mouillage grâce à l'énergie solaire, une navigation tout en douceur avec des flaps intelligents. Bimini extensible, toilettes à bord et tout le nécessaire pour profiter d'une journée entière en mer.",
   'home.boatCta': 'DÉCOUVRIR LE BATEAU →',
   'home.contactKicker': 'CONTACT',
-  'home.contactTitle': 'Écrivez directement à Marco et Paola',
-  'home.contactText': 'Des questions avant de réserver ? Ils vous répondent personnellement, dans les plus brefs délais.',
+  'home.contactTitle': 'Écrivez-nous directement',
+  'home.contactText': 'Une question avant de réserver ? Nous vous répondons nous-mêmes, Marco et Paola, au plus vite.',
 
   // --- pagina della barca ---
   'boat.seoTitle': 'Le bateau — Cap Camarat 9.0 WA, yacht primé pour excursions privées',
@@ -332,7 +332,7 @@ const fr = {
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: 'Passage panoramique devant le village' },
-        { place: 'Monasteroli — Campiglia', note: 'Côte sauvage et arrêt baignade' },
+        { place: 'Monesteroli — Campiglia', note: 'Côte sauvage et arrêt baignade' },
         { place: 'Riomaggiore', note: 'Le premier des cinq villages' },
         { place: 'Manarola', note: 'Snorkeling dans une eau cristalline' },
         { place: 'Corniglia', note: 'Le village perché vu de la mer' },

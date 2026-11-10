@@ -353,7 +353,7 @@ const initialTours = [
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'Scenic cruise past the village' },
-      { place: 'Monasteroli — Campiglia', note: 'Hidden coastline & swim stop' },
+      { place: 'Monesteroli — Campiglia', note: 'Hidden coastline & swim stop' },
       { place: 'Riomaggiore', note: 'First of the Five Lands' },
       { place: 'Manarola', note: 'Snorkeling in crystal waters' },
       { place: 'Corniglia', note: 'The clifftop village from the sea' },

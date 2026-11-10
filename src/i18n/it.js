@@ -203,7 +203,7 @@ const it = {
     },
     {
       q: "Siete autorizzati a entrare nell'area marina protetta delle Cinque Terre? La barca è dotata di tutte le attrezzature di sicurezza?",
-      a: `Sì, a entrambe. Abbiamo tutte le autorizzazioni ufficiali per navigare e ancorare nell'Area Marina Protetta delle Cinque Terre. La barca è completamente equipaggiata con dotazioni di sicurezza professionali: AIS (sistema di localizzazione in tempo reale), segnalazione di soccorso, giubbotti di salvataggio per tutti gli ospiti, kit di primo soccorso e tutte le dotazioni obbligatorie, controllate regolarmente e sempre in regola.`
+      a: `Sì, a tutte e due le domande. Abbiamo tutte le autorizzazioni ufficiali per navigare e ancorare nell'Area Marina Protetta delle Cinque Terre. La barca è completamente equipaggiata con dotazioni di sicurezza professionali: AIS (sistema di localizzazione in tempo reale), segnalatori di soccorso, giubbotti di salvataggio per tutti gli ospiti, kit di primo soccorso e tutte le dotazioni obbligatorie, controllate regolarmente e sempre in regola.`
     },
     {
       q: 'Possiamo portare a bordo cibo e bevande nostri?',
@@ -241,11 +241,11 @@ const it = {
   'home.scroll': 'SCORRI',
   'home.storyKicker': 'LA NOSTRA STORIA',
   'home.storyTitle': 'La Liguria vista dal mare',
-  'home.storyText1': "Il capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone che amate, con la costa che si svela ai vostri ritmi.",
+  'home.storyText1': "Il capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone che amate, con la costa che si svela al vostro ritmo.",
   'home.storyText2': "Bagni in calette nascoste dove le barche grandi non arrivano. Snorkeling nella riserva marina, accompagnati da chi la conosce bene. Un pranzo leggero all'italiana a bordo con vino del territorio, mentre i borghi colorati scorrono davanti a voi. Ogni giornata in mare è costruita intorno a voi.",
   'home.reviewsKicker': 'AMATI DAI NOSTRI OSPITI',
   'home.reviewsTitle': '5,0 su Google · oltre 100 recensioni',
-  'home.reviewsText': 'Non lo diciamo noi: leggi cosa raccontano gli ospiti di tutto il mondo della loro giornata in mare con noi.',
+  'home.reviewsText': 'Non lo diciamo noi: leggi cosa raccontano della loro giornata in mare gli ospiti arrivati da tutto il mondo.',
   'home.readOnGoogle': 'Leggi su Google',
   'home.readOnTripadvisor': 'Leggi su TripAdvisor',
   'home.toursKicker': 'ESPERIENZE ESCLUSIVE',
@@ -253,11 +253,11 @@ const it = {
   'home.viewAllTours': 'VEDI TUTTI I TOUR →',
   'home.boatImageAlt': "La barca privata Sea Runner al faro dell'isola del Tino, costa delle Cinque Terre",
   'home.boatKicker': 'LA BARCA',
-  'home.boatText': "Silenzio all'ancora con l'energia solare, navigazione morbida grazie ai flap intelligenti. Bimini estendibile, bagno a bordo e tutto il necessario per godersi una giornata intera in mare.",
+  'home.boatText': "Silenzio in rada grazie ai pannelli solari, navigazione morbida grazie ai flap automatici. Bimini estendibile, bagno a bordo e tutto il necessario per godersi una giornata intera in mare.",
   'home.boatCta': 'SCOPRI LA BARCA →',
   'home.contactKicker': 'CONTATTI',
-  'home.contactTitle': 'Scrivete direttamente a Marco e Paola',
-  'home.contactText': 'Domande prima di prenotare? Rispondono personalmente, il prima possibile.',
+  'home.contactTitle': 'Scrivici direttamente',
+  'home.contactText': 'Hai qualche domanda prima di prenotare? Ti rispondiamo noi, Marco e Paola, il prima possibile.',
 
   // --- pagina della barca ---
   'boat.seoTitle': 'La barca — Cap Camarat 9.0 WA, yacht pluripremiato per tour privati',
@@ -278,7 +278,7 @@ const it = {
   'boat.silenceText': "I pannelli solari alimentano i nostri due frigoriferi per tutto il giorno, anche all'ancora, senza il rumore del generatore e a emissioni zero. Quando i motori sono spenti, l'unica colonna sonora è l'acqua.",
   'boat.cruisingKicker': 'NAVIGAZIONE MORBIDA',
   'boat.cruisingTitle': 'Stabile su ogni onda',
-  'boat.cruisingText': "I flap intelligenti correggono l'assetto in tempo reale e rendono morbido ogni movimento. I due motori Yamaha da 225 CV danno potenza quando serve, ma la giornata scorre senza fretta.",
+  'boat.cruisingText': "I flap automatici correggono l'assetto in tempo reale e rendono morbido ogni movimento. I due motori Yamaha da 225 CV danno potenza quando serve, ma la giornata scorre senza fretta.",
   'boat.shadeKicker': 'OMBRA QUANDO SERVE',
   'boat.shadeTitle': 'Sole o ombra, decidete voi',
   'boat.shadeText': 'Un bimini estendibile copre tutto il pozzetto di poppa quando il sole è più forte e si ritrae in pochi secondi quando volete sentire la brezza e la luce sulla pelle.',
@@ -336,7 +336,7 @@ const it = {
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
-        { place: 'Monasteroli — Campiglia', note: 'Costa selvaggia e sosta per un bagno' },
+        { place: 'Monesteroli — Campiglia', note: 'Costa selvaggia e sosta per un bagno' },
         { place: 'Riomaggiore', note: 'La prima delle Cinque Terre' },
         { place: 'Manarola', note: 'Snorkeling in acque cristalline' },
         { place: 'Corniglia', note: 'Il borgo sulla scogliera visto dal mare' },
