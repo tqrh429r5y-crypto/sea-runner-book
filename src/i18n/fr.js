@@ -327,8 +327,8 @@ const fr = {
       duration: '7 heures',
       h1: 'Excursion privée en bateau aux Cinque Terre (journée complète)',
       seoName: 'aux Cinque Terre',
-      shortDesc: "Les cinq villages vus de la mer, avec des arrêts baignade, du snorkeling et le déjeuner à bord.",
-      longDesc: "Une journée entière le long de la côte des Cinque Terre, classée à l'UNESCO : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso vus de la mer. Nous nous arrêtons dans les plus belles criques pour la baignade, faisons du snorkeling dans l'aire marine protégée et déjeunons à bord avec des produits locaux. À Vernazza et à Monterosso, vous avez le temps de descendre à terre.",
+      shortDesc: "Les cinq villages vus de la mer, avec arrêts baignade, snorkeling et déjeuner servi à bord.",
+      longDesc: "Une journée entière consacrée aux Cinque Terre, classées à l'UNESCO, à découvrir depuis la mer : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso. Baignade dans les plus belles criques, snorkeling dans les eaux de l'aire marine protégée et déjeuner léger servi à bord, avec des produits typiques de Ligurie. À Vernazza et à Monterosso, vous aurez le temps de descendre à terre et de flâner dans les ruelles.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: 'Passage panoramique devant le village' },
@@ -349,8 +349,8 @@ const fr = {
       duration: '7 heures',
       h1: 'Excursion privée en bateau dans le Golfe des Poètes (journée complète)',
       seoName: 'dans le Golfe des Poètes',
-      shortDesc: "Portovenere, les îles Palmaria et Tino, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
-      longDesc: "Une journée dans le golfe qui a inspiré Byron et Shelley. D'abord Portovenere, village médiéval classé à l'UNESCO, puis le tour des îles Palmaria, Tino et Tinetto avec des arrêts baignade et snorkeling. On traverse ensuite le golfe vers San Terenzo et Lerici, avec son château, jusqu'au petit village de Tellaro. Déjeuner léger à bord.",
+      shortDesc: "Portovenere, les îles, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
+      longDesc: "Le golfe qui a charmé Byron et Shelley, le temps d'une journée rien qu'à vous. De Portovenere la médiévale, classée à l'UNESCO, aux îles Palmaria, Tino et Tinetto, avec arrêts baignade et snorkeling dans une eau limpide. Puis la traversée vers San Terenzo et Lerici, dominée par son château, jusqu'au petit village de Tellaro. Déjeuner léger servi à bord.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: "Village classé à l'UNESCO • Temps libre à terre" },
@@ -371,8 +371,8 @@ const fr = {
       duration: '10 heures',
       h1: 'Excursion privée en bateau à Portofino (journée complète)',
       seoName: 'à Portofino',
-      shortDesc: "Portofino, l'abbaye de San Fruttuoso et, au retour, les Cinque Terre vues de la mer.",
-      longDesc: "Une longue journée pour rejoindre Portofino en longeant la Riviera du Levant. Arrêt à San Fruttuoso et son abbaye au bord de l'eau, puis à Portofino, où vous avez du temps libre pour vous promener et déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, sur le chemin du retour, les Cinque Terre vues de la mer.",
+      shortDesc: "Portofino et l'abbaye de San Fruttuoso, avec les Cinque Terre sur la route du retour.",
+      longDesc: "Une journée le long de la Riviera du Levant, jusqu'à l'un des ports les plus célèbres au monde. Première escale à San Fruttuoso et son abbaye au bord de l'eau, puis Portofino, avec du temps libre pour une promenade et le déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, au retour, la côte des Cinque Terre vue de la mer.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Côte ligure', note: 'Navigation panoramique le long de la riviera' },
@@ -391,8 +391,8 @@ const fr = {
       duration: '4 heures',
       h1: 'Excursion privée en bateau à la demi-journée : Cinque Terre ou Golfe des Poètes',
       seoName: 'à la demi-journée',
-      shortDesc: "Les Cinque Terre ou le Golfe des Poètes en quatre heures : le matin, l'après-midi ou le soir.",
-      longDesc: "Quatre heures en mer, idéal si vous avez peu de temps. Choisissez la zone, Cinque Terre ou Golfe des Poètes, et le moment de la journée : matin, après-midi ou soir. Avec des arrêts baignade et l'apéritif à bord.",
+      shortDesc: "Les Cinque Terre ou le Golfe des Poètes en quatre heures, le matin, l'après-midi ou en soirée.",
+      longDesc: "Quatre heures en mer, idéales si vous avez peu de temps mais souhaitez vivre un moment d'exception. Choisissez votre cap, Cinque Terre ou Golfe des Poètes, et le moment qui vous convient : la fraîcheur du matin, l'après-midi ou le début de soirée. Avec arrêts baignade et apéritif servi à bord.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre',
@@ -431,8 +431,8 @@ const fr = {
       duration: '3 h 30',
       h1: 'Excursion privée en bateau au coucher du soleil',
       seoName: 'au coucher du soleil',
-      shortDesc: "L'apéritif en bateau pendant que le soleil se couche sur la côte.",
-      longDesc: "La façon la plus romantique de finir la journée : trois heures et demie en bateau avec un apéritif ligure et des vins locaux, pendant que le soleil se couche sur la mer. Vous pouvez choisir les Cinque Terre ou le Golfe des Poètes.",
+      shortDesc: "Un apéritif en bateau pendant que le soleil se couche sur la côte.",
+      longDesc: "La façon la plus élégante de terminer la journée : trois heures et demie en bateau, avec un apéritif ligure et une sélection de vins locaux, pendant que le soleil descend sur la mer. Le cap, c'est vous qui le choisissez : Cinque Terre ou Golfe des Poètes.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre au coucher du soleil',
@@ -464,8 +464,8 @@ const fr = {
       duration: 'Flexible',
       h1: 'Excursion privée en bateau sur mesure',
       seoName: 'sur mesure',
-      shortDesc: "Un itinéraire rien qu'à vous, que nous préparons ensemble.",
-      longDesc: "Destinations, durée, activités : c'est vous qui choisissez, et nous vous aidons à organiser la journée selon vos envies.",
+      shortDesc: "Un itinéraire dessiné sur mesure, avec vous.",
+      longDesc: "Dites-nous ce qui vous ferait plaisir : destinations, durée et activités se décident ensemble, pour une journée entièrement sur mesure.",
       includes: ['Tout sur mesure pour vous']
     }
   },
