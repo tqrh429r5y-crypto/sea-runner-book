@@ -49,7 +49,7 @@ const fr = {
   // --- passo 1: scelta del tour ---
   'step1.kicker': 'DEMANDEZ UN DEVIS GRATUIT',
   'step1.title': 'Choisissez votre excursion',
-  'step1.intro': 'Excursions privées en bateau le long de la Riviera italienne : dites-nous ce qui vous ferait plaisir, nous vous enverrons un devis sur mesure.',
+  'step1.intro': "Excursions privées en bateau le long de la Riviera italienne. Dites-nous ce qui vous ferait plaisir : nous vous enverrons un devis sur mesure.",
   'card.price': 'PRIX',
   'card.onRequest': 'Sur demande',
   'card.privateFlexible': 'Privé · Itinéraire flexible',
@@ -60,15 +60,15 @@ const fr = {
   // --- passo 2: data, orario, ospiti ---
   'step2.changeTour': "← CHANGER D'EXCURSION",
   'step2.noticeStrong': 'Il s’agit d’une demande de disponibilité.',
-  'step2.noticeText': ' Aucun paiement n’est demandé. Le capitaine Marco vous recontactera sous 24 heures pour confirmer et vous envoyer un devis sur mesure.',
+  'step2.noticeText': " Aucun paiement n’est demandé : sous 24 heures, le capitaine Marco vous contactera pour confirmer la disponibilité et vous envoyer un devis sur mesure.",
   'step2.flexibleTime': (time) => ` (~${time}, flexible)`,
   'step2.guestsRange': (max) => `1 à ${max} personnes`,
-  'step2.itineraryNote': "Voici l'itinéraire type. Il peut varier selon les envies des passagers ou les conditions météo.",
+  'step2.itineraryNote': "Voici l'itinéraire indicatif : il peut être adapté à vos envies et à l'état de la mer.",
   'step2.included': 'CE QUI EST INCLUS',
   'step2.notIncluded': 'NON INCLUS :',
   'step2.chooseItinerary': 'CHOISISSEZ VOTRE ITINÉRAIRE',
   'step2.selectDate': 'CHOISISSEZ LA DATE',
-  'step2.checkingBanner': 'Vérification des disponibilités en cours : merci de patienter avant de choisir une date',
+  'step2.checkingBanner': "Nous vérifions les disponibilités : merci de patienter un instant avant de choisir une date",
   'step2.weekdays': ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
   'step2.checkingTitle': 'Vérification des disponibilités…',
   'step2.specialPrice': 'Prix spécial disponible',
@@ -86,7 +86,7 @@ const fr = {
   'step2.otherPlaceholder': 'Indiquez le point de rendez-vous souhaité...',
   'step2.feasibility': 'LE SKIPPER CONFIRMERA LA FAISABILITÉ',
   'step2.continue': 'CONTINUER →',
-  'step2.changedMind': 'VOUS HÉSITEZ ENCORE ?',
+  'step2.changedMind': "ENVIE DE COMPARER ?",
   'step2.otherTours': 'Découvrez nos autres excursions',
   'step2.viewTour': "VOIR L'EXCURSION →",
   'step2.backToAll': '← TOUTES LES EXCURSIONS',
@@ -94,8 +94,8 @@ const fr = {
   // --- passo 3: dati del cliente ---
   'step3.back': '← RETOUR',
   'step3.kicker': 'DERNIÈRE ÉTAPE : VOS COORDONNÉES',
-  'step3.title': 'Où pouvons-nous vous répondre ?',
-  'step3.intro': 'Laissez-nous vos coordonnées et nous vous enverrons un devis sur mesure sous 24 heures. Aucun paiement n’est demandé à ce stade.',
+  'step3.title': "Comment pouvons-nous vous contacter ?",
+  'step3.intro': "Laissez-nous vos coordonnées : vous recevrez un devis sur mesure sous 24 heures. Aucun paiement n’est demandé à ce stade.",
   'step3.name': 'NOM ET PRÉNOM *',
   'step3.namePlaceholder': 'Marie Dupont',
   'step3.email': 'E-MAIL *',
@@ -111,8 +111,8 @@ const fr = {
   'step3.mobilityLabel': 'MERCI DE PRÉCISER *',
   'step3.mobilityPlaceholder': "ex. fauteuil roulant, difficultés à marcher, besoin d'aide pour monter à bord...",
   'step3.requests': 'DEMANDES PARTICULIÈRES',
-  'step3.requestsPlaceholderCustom': 'Décrivez l’itinéraire de vos rêves...',
-  'step3.requestsPlaceholder': 'Occasion spéciale, préférences, toute autre demande...',
+  'step3.requestsPlaceholderCustom': "Racontez-nous la journée dont vous rêvez...",
+  'step3.requestsPlaceholder': "Occasion spéciale, préférences ou toute autre demande...",
 
   // --- riepilogo della richiesta ---
   'recap.title': 'VOTRE DEMANDE',
@@ -125,7 +125,7 @@ const fr = {
   'recap.tourBase': "Prix de base de l'excursion",
   'recap.datePrice': 'Prix pour cette date',
   'recap.indicative': 'Prix indicatif',
-  'recap.estimateNote': 'Il s’agit d’une estimation. Le prix final sera confirmé par le skipper selon la date, le nombre de passagers et vos demandes : nous vous recontacterons au plus vite.',
+  'recap.estimateNote': "Ce prix est indicatif : le prix définitif vous sera confirmé par le skipper selon la date, le nombre de passagers et vos demandes.",
   'recap.tailoredNote': 'Pour les excursions sur mesure, le prix final est confirmé par le skipper selon vos demandes.',
 
   // --- errore di invio ---
@@ -137,7 +137,7 @@ const fr = {
   'error.and': ' et votre ',
   'error.emailAddress': 'adresse e-mail',
   'error.spam3': ' sont écrits correctement et en entier, sans faute ni caractère manquant, puis réessayez. Si le problème persiste, contactez-nous directement :',
-  'error.generic': 'Contactez-nous directement, nous vous répondrons avec plaisir :',
+  'error.generic': "Contactez-nous directement, nous serons ravis de vous aider :",
   'error.whatsapp': (tour, date) => `Bonjour ! J'ai essayé d'envoyer une demande pour l'excursion ${tour} du ${date} mais quelque chose n'a pas fonctionné. Pouvez-vous m'aider ?`,
   'error.technical': "DÉTAILS TECHNIQUES (pour l'assistance)",
 
@@ -156,7 +156,7 @@ const fr = {
   'thanks.metaTitle': 'Merci — Demande reçue | Sea Runner',
   'thanks.kicker': 'DEMANDE DE DEVIS REÇUE',
   'thanks.title': 'Merci,',
-  'thanks.body1': 'Votre demande a bien été envoyée. Le capitaine Marco et Paola vous répondront sous 24 heures à l’adresse ',
+  'thanks.body1': "Votre demande nous est bien parvenue. Sous 24 heures, nous vous répondrons à l’adresse ",
   'thanks.body2': ' avec la confirmation de disponibilité et votre devis sur mesure. ',
   'thanks.noPayment': 'Aucun paiement n’est demandé à ce stade.',
   'thanks.reachUs': 'BESOIN DE NOUS JOINDRE DIRECTEMENT ?',
@@ -167,7 +167,7 @@ const fr = {
   'thanks.guests': 'Passagers : ',
   'thanks.meeting': 'Rendez-vous : ',
   'thanks.newBooking': 'NOUVELLE DEMANDE',
-  'thanks.moreQuestions': "D'autres questions ? N'hésitez pas à nous écrire.",
+  'thanks.moreQuestions': "Pour toute autre question, écrivez-nous : nous serons ravis de vous aider.",
   'thanks.whatsapp': (tour, date) => `Bonjour ! Je viens d'envoyer une demande pour l'excursion ${tour} du ${date}. J'ai une question...`,
   'thanks.whatsappButton': 'ÉCRIVEZ-NOUS SUR WHATSAPP',
 
@@ -177,54 +177,54 @@ const fr = {
   'faq.items': [
     {
       q: 'Les repas et les boissons sont-ils inclus à bord ?',
-      a: `Oui. Chaque excursion comprend un open bar et un apéritif italien léger. Pour les excursions à la journée (Cinque Terre, Golfe des Poètes, Portofino), nous servons aussi un déjeuner italien léger à bord. Si vous avez des allergies ou des préférences alimentaires, prévenez-nous à l'avance et nous adapterons tout pour vous.`
+      a: `Oui. Chaque excursion comprend un open bar et un apéritif avec des produits typiques. Pour les excursions à la journée (Cinque Terre, Golfe des Poètes, Portofino), un déjeuner léger est également servi à bord. En cas d'allergies ou de préférences alimentaires, il suffit de nous prévenir à l'avance : nous adapterons le menu à vos besoins.`
     },
     {
       q: 'Que se passe-t-il en cas de mauvais temps ?',
-      a: `Votre sécurité passe toujours en premier. Le capitaine Marco suit la météo de très près et décide si les conditions permettent de sortir. Si la mer n'est pas sûre pour l'excursion, nous la reportons à une autre date de votre choix ou nous vous remboursons intégralement. Aucune pénalité, aucun stress.`
+      a: `Votre sécurité passe avant tout. Le capitaine Marco suit attentivement les prévisions et évalue si l'état de la mer permet de sortir. Si ce n'est pas le cas, nous reportons l'excursion à une autre date de votre choix ou nous vous remboursons intégralement, sans aucune pénalité.`
     },
     {
       q: 'Les enfants et les personnes âgées peuvent-ils monter à bord ?',
-      a: `Bien sûr. Notre bateau est adapté aux familles, sûr et confortable. Des gilets de sauvetage pour enfants sont à bord, la plateforme de bain permet d'entrer et sortir de l'eau facilement, et des zones d'ombre sont prévues pour les heures les plus chaudes de la journée.`
+      a: `Bien sûr. Le bateau est sûr, confortable et adapté aux familles : gilets de sauvetage pour enfants à bord, plateforme de bain pour entrer et sortir de l'eau facilement et zones d'ombre pour les heures les plus chaudes.`
     },
     {
       q: "L'excursion est-elle vraiment privée ? D'autres passagers peuvent-ils se joindre à nous ?",
-      a: `Oui, elle est 100 % privée. Seuls vous et les personnes que vous choisissez d'emmener serez à bord : jamais d'inconnus, jamais d'excursion partagée. C'est votre journée en mer, à votre rythme.`
+      a: `Oui, à 100 %. À bord, il n'y aura que vous et les personnes que vous aurez choisies : aucun inconnu, aucune excursion partagée. La journée vous appartient, à votre rythme.`
     },
     {
       q: "Peut-on personnaliser l'itinéraire ?",
-      a: `Oui. Chaque excursion suit un parcours standard, mais le capitaine Marco l'adapte à l'état de la mer et à vos envies. Envie de rester plus longtemps dans une crique ? De vous attarder dans un village ? De sauter une étape ? Il suffit de nous le dire : la journée se construit autour de vous.`
+      a: `Oui. Chaque excursion suit un itinéraire de référence, que le capitaine Marco adapte à l'état de la mer et à vos envies. Un arrêt plus long dans une crique, plus de temps dans un village, une étape en moins : il suffit de demander.`
     },
     {
       q: "Faut-il avoir de l'expérience en navigation ?",
-      a: `Pas du tout. Nos excursions conviennent à tous, de ceux qui montent sur un bateau pour la première fois aux amoureux de la mer les plus expérimentés. Le capitaine Marco a son permis bateau depuis plus de 30 ans et gère chaque situation avec professionnalisme, pour que vous puissiez vous détendre et profiter de la journée en toute sérénité.`
+      a: `Aucune. Nos excursions s'adressent à tous, de ceux qui montent sur un bateau pour la première fois aux passionnés de mer. Le capitaine Marco a son permis bateau depuis plus de 30 ans et gère chaque situation avec expérience : il ne vous reste qu'à vous détendre et profiter de la journée.`
     },
     {
       q: 'Êtes-vous autorisés à naviguer dans le parc marin des Cinque Terre ? Le bateau est-il entièrement équipé pour la sécurité ?',
-      a: `Oui, et oui. Nous disposons de toutes les autorisations officielles pour naviguer et mouiller dans l'Aire marine protégée des Cinque Terre. Le bateau est entièrement équipé de matériel de sécurité professionnel : AIS (système de suivi en temps réel), signaux de détresse, gilets de sauvetage pour tous les passagers, trousse de premiers secours et tout l'équipement obligatoire, contrôlé régulièrement et toujours à jour.`
+      a: `Oui. Nous disposons de toutes les autorisations officielles pour naviguer et mouiller dans l'Aire marine protégée des Cinque Terre, et le bateau est doté d'un équipement de sécurité professionnel : AIS (localisation en temps réel), signaux de détresse, gilets de sauvetage pour tous les passagers, trousse de premiers secours et tout l'équipement obligatoire, contrôlé régulièrement.`
     },
     {
       q: 'Peut-on apporter nos propres boissons et aliments à bord ?',
-      a: `Oui. En plus de ce que nous servons à bord, vous pouvez apporter votre bouteille de vin ou de champagne, un gâteau d'anniversaire ou tout ce qui rendra la journée vraiment la vôtre. Prévenez-nous simplement à l'avance pour que nous puissions tout préparer au mieux.`
+      a: `Bien sûr. En plus de ce que nous servons à bord, vous pouvez apporter une bouteille de vin ou de champagne, un gâteau d'anniversaire ou tout ce qui rendra la journée unique. Prévenez-nous à l'avance : nous préparerons tout au mieux.`
     },
     {
       q: 'Pouvez-vous organiser la journée pour une occasion spéciale ?',
-      a: `Bien sûr. De nombreux passagers nous choisissent pour une demande en mariage, un voyage de noces, un anniversaire de mariage ou un anniversaire : une journée en mer est le cadre idéal pour des moments inoubliables. Dites-nous ce que vous imaginez et nous nous occupons des détails : fleurs, décoration, gâteau, musique ou un moment rien qu'à vous au coucher du soleil.`
+      a: `Avec plaisir. De nombreux passagers nous choisissent pour une demande en mariage, un voyage de noces, un anniversaire de mariage ou un anniversaire : la mer est le cadre idéal pour un moment inoubliable. Dites-nous ce que vous imaginez et nous nous occupons des détails : fleurs, décoration, gâteau, musique ou un moment rien qu'à vous au coucher du soleil.`
     },
     {
       q: 'Y a-t-il un nombre minimum de passagers ?',
-      a: `Aucun minimum. L'excursion est entièrement privée, que vous soyez 2 ou 8. Pour un couple, un bateau privé est l'une des façons les plus intimes de découvrir la côte : rien que vous deux, la mer et la Riviera italienne.`
+      a: `Non. L'excursion est toujours privée, que vous soyez 2 ou 8. Pour un couple, c'est l'une des façons les plus intimes de découvrir la côte : vous deux, la mer et la Riviera italienne.`
     },
     {
       q: 'Peut-on venir avec notre chien ?',
-      a: `Oui, les chiens sont les bienvenus à bord. Si vous voyagez avec votre compagnon à quatre pattes, prévenez-nous à l'avance pour que tout soit prêt pour son confort aussi.`
+      a: `Oui, les chiens sont les bienvenus à bord. Prévenez-nous à l'avance : nous veillerons à ce que tout soit prêt pour leur confort aussi.`
     }
   ],
 
   // --- social ---
   'social.kicker': 'SUIVEZ LE VOYAGE',
-  'social.title': 'Chaque jour, un aperçu de la Riviera',
-  'social.text': 'Couchers de soleil, criques cachées et coulisses de nos journées en mer. Suivez-nous pour voir où nous mènera la prochaine sortie.',
+  'social.title': "La Riviera, jour après jour",
+  'social.text': "Couchers de soleil, criques cachées et coulisses de nos journées en mer. Suivez-nous pour ne pas manquer la prochaine sortie.",
 
   // --- home ---
   'home.seoTitle': 'Excursions privées en bateau Cinque Terre, Portofino et La Spezia',
@@ -233,14 +233,14 @@ const fr = {
   'home.heroKicker': 'LA SPEZIA · RIVIERA ITALIENNE',
   'home.heroTitle': 'Excursions privées en bateau sur la',
   'home.heroTitleScript': 'riviera italienne',
-  'home.heroText': "Les Cinque Terre, Portofino et le Golfe des Poètes, sans personne d'autre à bord. Juste vous, le capitaine Marco et Paola.",
+  'home.heroText': "Les Cinque Terre, Portofino et le Golfe des Poètes, à bord d'un bateau rien que pour vous, avec le capitaine Marco et Paola.",
   'home.ctaQuote': 'DEMANDER UN DEVIS',
   'home.ctaBoat': 'DÉCOUVRIR LE BATEAU',
   'home.scroll': 'DÉFILEZ',
   'home.storyKicker': 'NOTRE HISTOIRE',
   'home.storyTitle': 'La Ligurie vue de la mer',
-  'home.storyText1': "Le capitaine Marco et Paola vous accueillent à bord pour une expérience entièrement privée. Pas de foule, pas d'horaires fixes. Juste vous et ceux que vous aimez, avec la côte qui se dévoile à votre rythme.",
-  'home.storyText2': "Baignade dans des criques cachées, inaccessibles aux grands bateaux. Snorkeling dans la réserve marine avec quelqu'un qui la connaît par cœur. Un déjeuner italien léger à bord avec du vin local, avec vue sur les villages. Chaque journée en mer est pensée autour de vous.",
+  'home.storyText1': "Nous sommes Marco et Paola, et nous vous accueillons à bord pour une expérience entièrement privée. Pas de foule, pas d'horaires imposés : juste vous et vos proches, à la découverte de la côte à votre rythme.",
+  'home.storyText2': "Des criques cachées, inaccessibles aux grands bateaux. Du snorkeling dans l'aire marine protégée, avec ceux qui la connaissent depuis toujours. Un déjeuner léger servi à bord, avec des produits typiques et des vins de Ligurie, face aux villages colorés. Chaque journée est pensée sur mesure pour vous.",
   'home.reviewsKicker': 'NOS PASSAGERS EN PARLENT',
   'home.reviewsTitle': '5,0 sur Google · plus de 100 avis',
   'home.reviewsText': 'Ne nous croyez pas sur parole : lisez ce que des passagers du monde entier racontent de leur journée en mer avec nous.',
@@ -251,7 +251,7 @@ const fr = {
   'home.viewAllTours': 'VOIR TOUTES LES EXCURSIONS →',
   'home.boatImageAlt': "Le bateau privé Sea Runner devant le phare de l'île du Tino, côte des Cinque Terre",
   'home.boatKicker': 'LE BATEAU',
-  'home.boatText': "Le silence au mouillage grâce à l'énergie solaire, une navigation tout en douceur avec des flaps intelligents. Bimini extensible, toilettes à bord et tout le nécessaire pour profiter d'une journée entière en mer.",
+  'home.boatText': "Le silence au mouillage grâce aux panneaux solaires, une navigation stable et douce grâce aux flaps automatiques. Bimini extensible, toilettes à bord et tout le confort pour profiter pleinement d'une journée en mer.",
   'home.boatCta': 'DÉCOUVRIR LE BATEAU →',
   'home.contactKicker': 'CONTACT',
   'home.contactTitle': 'Écrivez-nous directement',
@@ -263,7 +263,7 @@ const fr = {
   'boat.breadcrumb': 'Le bateau',
   'boat.kicker': 'LE BATEAU',
   'boat.awards': "Bateau de l'année · plusieurs fois primé",
-  'boat.intro': 'Un bateau primé, choisi pour une seule raison : vous faire vivre la mer sous son plus beau jour.',
+  'boat.intro': "Un bateau primé, choisi pour une seule raison : vous offrir la mer sous son plus beau jour.",
   'boat.specGuestsValue': "jusqu'à 8",
   'boat.specGuestsLabel': 'PASSAGERS',
   'boat.specGuestsNote': '+ équipage',
@@ -273,18 +273,18 @@ const fr = {
   'boat.specBiminiLabel': 'EXTENSIBLE',
   'boat.silenceKicker': 'SILENCE AU MOUILLAGE',
   'boat.silenceTitle': 'Rien que le bruit de la mer',
-  'boat.silenceText': "Des panneaux solaires alimentent nos deux réfrigérateurs toute la journée, même au mouillage, sans bruit de générateur et sans émissions. Moteurs coupés, la seule bande-son est celle de l'eau.",
+  'boat.silenceText': "Les panneaux solaires alimentent les deux réfrigérateurs toute la journée, même au mouillage : pas de générateur, pas de bruit, zéro émission. Moteurs coupés, on n'entend plus que la mer.",
   'boat.cruisingKicker': 'NAVIGATION EN DOUCEUR',
   'boat.cruisingTitle': 'Stable, vague après vague',
-  'boat.cruisingText': "Des flaps intelligents corrigent l'assiette en temps réel et adoucissent chaque mouvement. Deux moteurs Yamaha de 225 ch donnent de la puissance quand il le faut, sans que la journée ne devienne une course.",
+  'boat.cruisingText': "Les flaps automatiques corrigent l'assiette en temps réel pour une navigation stable et confortable. Les deux moteurs Yamaha de 225 ch offrent toute la puissance nécessaire, mais à bord, on prend son temps.",
   'boat.shadeKicker': "DE L'OMBRE QUAND VOUS VOULEZ",
   'boat.shadeTitle': 'Soleil ou ombre, à vous de choisir',
-  'boat.shadeText': 'Un bimini extensible couvre tout le pont arrière quand le soleil tape le plus fort, et se replie en quelques secondes quand vous voulez sentir la brise et la lumière sur votre peau.',
+  'boat.shadeText': "Le bimini extensible couvre tout le pont arrière aux heures les plus chaudes et se replie en quelques secondes quand vous avez envie de soleil et de brise.",
   'boat.comfortKicker': 'TOUT LE NÉCESSAIRE',
-  'boat.comfortTitle': 'Une vraie maison sur la mer',
-  'boat.comfortText': "Toilettes privées à bord, douche d'eau douce, chaîne Fusion bluetooth pour l'ambiance, grande plateforme de bain, réfrigérateurs toujours remplis. Rien ne manque pour profiter d'une journée entière en mer.",
+  'boat.comfortTitle': "Tout le confort, même en mer",
+  'boat.comfortText': "Toilettes privées, douche d'eau douce, système audio bluetooth Fusion, grande plateforme de bain et réfrigérateurs toujours bien remplis : tout ce qu'il faut pour une journée entière en mer.",
   'boat.layoutKicker': 'PLAN DU BATEAU',
-  'boat.layoutTitle': "L'organisation du bateau",
+  'boat.layoutTitle': "Les espaces à bord",
   'boat.layoutComingSoon': 'PLAN BIENTÔT DISPONIBLE',
   'boat.layoutAlt': 'Cap Camarat 9.0 WA Sea Runner — plan et aménagement du bateau',
   'boat.layoutCredit': 'Plan officiel Jeanneau',
