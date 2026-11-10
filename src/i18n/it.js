@@ -179,7 +179,7 @@ const it = {
   'faq.items': [
     {
       q: 'Cibo e bevande sono inclusi a bordo?',
-      a: `Sì. Ogni tour include open bar e un aperitivo leggero all'italiana. Nei tour di una giornata intera (Cinque Terre, Golfo dei Poeti, Portofino) serviamo anche un pranzo leggero a bordo. Se avete allergie o preferenze alimentari, avvisateci in anticipo e adatteremo tutto per voi.`
+      a: `Sì. Ogni tour include open bar e un aperitivo con prodotti tipici. Nei tour di una giornata intera (Cinque Terre, Golfo dei Poeti, Portofino) serviamo anche un pranzo leggero a bordo. Se avete allergie o preferenze alimentari, avvisateci in anticipo e adatteremo tutto per voi.`
     },
     {
       q: 'Cosa succede se il tempo è brutto?',
@@ -195,7 +195,7 @@ const it = {
     },
     {
       q: "Possiamo personalizzare l'itinerario?",
-      a: `Sì. Ogni tour ha un percorso standard, ma il capitano Marco lo adatta alle condizioni del mare e alle vostre preferenze. Volete fermarvi più a lungo in una caletta? Passare più tempo in un borgo? Saltare una tappa? Basta dirlo: la giornata la costruiamo intorno a voi.`
+      a: `Sì. Ogni tour ha un percorso standard, ma il capitano Marco lo adatta alle condizioni del mare e alle vostre preferenze. Volete fermarvi più a lungo in una caletta? Passare più tempo in un borgo? Saltare una tappa? Basta dirlo: la giornata la decidete voi.`
     },
     {
       q: 'Serve esperienza di navigazione per partecipare?',
@@ -207,11 +207,11 @@ const it = {
     },
     {
       q: 'Possiamo portare a bordo cibo e bevande nostri?',
-      a: `Sì. Oltre a quello che serviamo a bordo, potete portare la vostra bottiglia di vino o di champagne, una torta di compleanno o qualsiasi cosa renda la giornata davvero vostra. Avvisateci in anticipo, così prepariamo tutto al meglio.`
+      a: `Sì. Oltre a quello che serviamo a bordo, potete portare la vostra bottiglia di vino o di champagne, una torta di compleanno o tutto quello che serve per rendere speciale la giornata. Avvisateci in anticipo, così prepariamo tutto al meglio.`
     },
     {
       q: "Potete organizzare la giornata per un'occasione speciale?",
-      a: `Certamente. Molti ospiti ci scelgono per proposte di matrimonio, viaggi di nozze, anniversari e compleanni: una giornata in mare è il palcoscenico perfetto per momenti indimenticabili. Raccontateci cosa avete in mente e penseremo noi ai dettagli: fiori, decorazioni, una torta, la musica o un momento tutto vostro al tramonto.`
+      a: `Certamente. Molti ospiti ci scelgono per proposte di matrimonio, viaggi di nozze, anniversari e compleanni: una giornata in mare è l'occasione perfetta per un momento da ricordare. Raccontateci cosa avete in mente e penseremo noi ai dettagli: fiori, decorazioni, una torta, la musica o un momento tutto vostro al tramonto.`
     },
     {
       q: 'C’è un numero minimo di ospiti?',
@@ -224,7 +224,7 @@ const it = {
   ],
 
   // --- social ---
-  'social.kicker': 'SEGUI IL VIAGGIO',
+  'social.kicker': 'SEGUICI',
   'social.title': 'Ogni giorno, uno scorcio della Riviera',
   'social.text': 'Tramonti, calette nascoste e il dietro le quinte delle nostre giornate in mare. Seguici per vedere dove ci porterà la prossima uscita.',
 
@@ -241,8 +241,8 @@ const it = {
   'home.scroll': 'SCORRI',
   'home.storyKicker': 'LA NOSTRA STORIA',
   'home.storyTitle': 'La Liguria vista dal mare',
-  'home.storyText1': "Il capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone che amate, con la costa che si svela al vostro ritmo.",
-  'home.storyText2': "Bagni in calette nascoste dove le barche grandi non arrivano. Snorkeling nella riserva marina, accompagnati da chi la conosce bene. Un pranzo leggero all'italiana a bordo con vino del territorio, mentre i borghi colorati scorrono davanti a voi. Ogni giornata in mare è costruita intorno a voi.",
+  'home.storyText1': "Il capitano Marco e Paola vi accolgono a bordo per un'esperienza completamente privata. Niente folla, niente orari fissi. Solo voi e le persone a cui tenete, alla scoperta della costa con i vostri tempi.",
+  'home.storyText2': "Bagni in calette nascoste, dove le barche grandi non possono arrivare. Snorkeling nell'area marina protetta con chi la conosce da sempre. Pranzo leggero a bordo con prodotti tipici e vino locale, con vista sui borghi. Ogni giornata è organizzata su misura per voi.",
   'home.reviewsKicker': 'AMATI DAI NOSTRI OSPITI',
   'home.reviewsTitle': '5,0 su Google · oltre 100 recensioni',
   'home.reviewsText': 'Non lo diciamo noi: leggi cosa raccontano della loro giornata in mare gli ospiti arrivati da tutto il mondo.',
@@ -275,16 +275,16 @@ const it = {
   'boat.specBiminiLabel': 'ESTENDIBILE',
   'boat.silenceKicker': "SILENZIO ALL'ANCORA",
   'boat.silenceTitle': 'Solo il suono del mare',
-  'boat.silenceText': "I pannelli solari alimentano i nostri due frigoriferi per tutto il giorno, anche all'ancora, senza il rumore del generatore e a emissioni zero. Quando i motori sono spenti, l'unica colonna sonora è l'acqua.",
+  'boat.silenceText': "I pannelli solari alimentano i nostri due frigoriferi per tutto il giorno, anche all'ancora, senza il rumore del generatore e a emissioni zero. A motori spenti si sente solo il mare.",
   'boat.cruisingKicker': 'NAVIGAZIONE MORBIDA',
   'boat.cruisingTitle': 'Stabile su ogni onda',
   'boat.cruisingText': "I flap automatici correggono l'assetto in tempo reale e rendono morbido ogni movimento. I due motori Yamaha da 225 CV danno potenza quando serve, ma la giornata scorre senza fretta.",
   'boat.shadeKicker': 'OMBRA QUANDO SERVE',
   'boat.shadeTitle': 'Sole o ombra, decidete voi',
-  'boat.shadeText': 'Un bimini estendibile copre tutto il pozzetto di poppa quando il sole è più forte e si ritrae in pochi secondi quando volete sentire la brezza e la luce sulla pelle.',
+  'boat.shadeText': 'Un bimini estendibile copre tutto il pozzetto di poppa quando il sole è più forte e si ritrae in pochi secondi quando volete godervi il sole e la brezza.',
   'boat.comfortKicker': 'TUTTO QUELLO CHE SERVE',
   'boat.comfortTitle': 'Una vera casa sul mare',
-  'boat.comfortText': "Bagno privato a bordo, doccia con acqua dolce, stereo bluetooth Fusion per creare l'atmosfera, ampia plancia per i bagni, frigoriferi sempre pieni. Non manca nulla per godersi una giornata intera in mare.",
+  'boat.comfortText': "Bagno privato a bordo, doccia con acqua dolce, impianto audio bluetooth Fusion, ampia plancia per i bagni, frigoriferi sempre pieni. Non manca nulla per godersi una giornata intera in mare.",
   'boat.layoutKicker': 'PIANTA DELLA BARCA',
   'boat.layoutTitle': "Com'è organizzata la barca",
   'boat.layoutComingSoon': 'PIANTA IN ARRIVO',
@@ -331,8 +331,8 @@ const it = {
       duration: '7 ore',
       h1: 'Tour privato in barca alle Cinque Terre (giornata intera)',
       seoName: 'alle Cinque Terre',
-      shortDesc: 'Tutti e cinque i borghi dal mare. Bagni, snorkeling e pranzo italiano a bordo.',
-      longDesc: "Tutta la costa patrimonio UNESCO vista dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Bagni in calette nascoste, snorkeling nell'area marina protetta e un pranzo leggero all'italiana a bordo, mentre i borghi colorati scorrono davanti a voi.",
+      shortDesc: "Tutti e cinque i borghi visti dal mare, con soste per il bagno, snorkeling e pranzo a bordo.",
+      longDesc: "Una giornata intera lungo la costa delle Cinque Terre, patrimonio UNESCO: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso visti dal mare. Ci fermiamo a fare il bagno nelle calette più belle, facciamo snorkeling nell'area marina protetta e pranziamo a bordo con prodotti tipici. A Vernazza e a Monterosso c'è il tempo per scendere a terra.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
@@ -345,7 +345,7 @@ const it = {
         { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
       ],
       itineraryFootnote: 'Circa 7 ore • Orari flessibili',
-      includes: ["Pranzo leggero all'italiana", 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
+      includes: ['Pranzo leggero con prodotti tipici', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
     },
     'golfo-poeti': {
       name: 'Golfo dei Poeti',
@@ -353,21 +353,21 @@ const it = {
       duration: '7 ore',
       h1: 'Tour privato in barca nel Golfo dei Poeti (giornata intera)',
       seoName: 'nel Golfo dei Poeti',
-      shortDesc: "Il golfo amato da Byron. Portovenere, l'isola Palmaria, Lerici e il borgo segreto di Tellaro.",
-      longDesc: "Il golfo che incantò Byron e Shelley. La Portovenere medievale, le isole selvagge di Palmaria e del Tino, l'elegante Lerici e il gioiello nascosto di Tellaro, con soste per i bagni e un pranzo leggero a bordo.",
+      shortDesc: "Portovenere, le isole Palmaria e Tino, Lerici e Tellaro: il golfo che ha incantato Byron e Shelley.",
+      longDesc: "Una giornata nel golfo che ha ispirato Byron e Shelley. Si parte da Portovenere, borgo medievale patrimonio UNESCO, poi il giro delle isole Palmaria, Tino e Tinetto con soste per il bagno e lo snorkeling. Si attraversa il golfo verso San Terenzo e Lerici, con il suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero a bordo.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
         { place: 'Palmaria', note: 'Grotta Azzurra • Snorkeling' },
         { place: 'Tino', note: "L'isola dell'antico monastero" },
         { place: 'Tinetto', note: "Giro panoramico attorno all'isolotto" },
-        { place: 'San Terenzo', note: 'Un affascinante borgo sul mare' },
+        { place: 'San Terenzo', note: 'Il borgo dei pescatori e il castello' },
         { place: 'Lerici', note: 'Sosta pranzo • Vista sul castello' },
-        { place: 'Tellaro', note: 'Il gioiello nascosto del Golfo' },
+        { place: 'Tellaro', note: 'Il piccolo borgo sul mare' },
         { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
       ],
       itineraryFootnote: 'Circa 7 ore • Orari flessibili',
-      includes: ["Pranzo leggero all'italiana", 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
+      includes: ['Pranzo leggero con prodotti tipici', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
     },
     'portofino': {
       name: 'Portofino',
@@ -375,8 +375,8 @@ const it = {
       duration: '10 ore',
       h1: 'Tour privato in barca a Portofino (giornata intera)',
       seoName: 'a Portofino',
-      shortDesc: "Tutta la Riviera. Portofino, l'abbazia di San Fruttuoso e le Cinque Terre al ritorno.",
-      longDesc: "Una lunga giornata lungo la Riviera di Levante fino al porto più famoso d'Italia. Sosta all'abbazia medievale di San Fruttuoso, approdo a Portofino con tempo libero a terra, snorkeling nell'Area Marina Protetta e, sulla via del ritorno, navigazione davanti alle Cinque Terre.",
+      shortDesc: "Portofino, l'abbazia di San Fruttuoso e, al ritorno, le Cinque Terre viste dal mare.",
+      longDesc: "Una giornata lunga per arrivare fino a Portofino lungo la Riviera di Levante. Ci fermiamo a San Fruttuoso, con la sua abbazia sul mare, poi a Portofino, dove avete tempo libero per passeggiare e pranzare al ristorante. Bagno e snorkeling nell'area marina protetta e, sulla via del ritorno, le Cinque Terre viste dal mare.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Costa ligure', note: 'Navigazione panoramica lungo la riviera' },
@@ -395,8 +395,8 @@ const it = {
       duration: '4 ore',
       h1: 'Tour privato in barca di mezza giornata: Cinque Terre o Golfo dei Poeti',
       seoName: 'di mezza giornata',
-      shortDesc: 'Scegli la costa e il momento: mattina, pomeriggio o sera.',
-      longDesc: "Meno ore, la stessa magia. Scegli tra le Cinque Terre e il Golfo dei Poeti, poi la luce che preferisci: il fresco del mattino, il sole del pomeriggio o l'ora dorata della sera.",
+      shortDesc: "Cinque Terre o Golfo dei Poeti in quattro ore: di mattina, di pomeriggio o di sera.",
+      longDesc: "Quattro ore in mare, ideali se avete poco tempo. Scegliete la zona, Cinque Terre o Golfo dei Poeti, e il momento della giornata: mattina, pomeriggio o sera. Con soste per il bagno e aperitivo a bordo.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre',
@@ -416,7 +416,7 @@ const it = {
             { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
             { place: 'Palmaria', note: 'Grotta Azzurra • Snorkeling' },
             { place: 'Lerici', note: 'Vista sul castello • Tempo a terra' },
-            { place: 'Tellaro', note: 'Gioiello nascosto • Ultima tappa' },
+            { place: 'Tellaro', note: 'Piccolo borgo sul mare • Ultima tappa' },
             { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
           ]
         }
@@ -427,22 +427,22 @@ const it = {
         afternoon: { label: 'Pomeriggio' },
         evening: { label: 'Sera' }
       },
-      includes: ['Aperitivo italiano', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare']
+      includes: ['Aperitivo con prodotti tipici', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare']
     },
     'sunset': {
       name: 'Tour al tramonto',
-      subtitle: "Aperitivo all'ora dorata",
+      subtitle: 'Aperitivo al tramonto',
       duration: '3 ore e mezza',
       h1: 'Tour privato in barca al tramonto',
       seoName: 'al tramonto',
-      shortDesc: "Aperitivo in mare mentre la costa si tinge d'ambra e di rosa.",
-      longDesc: 'Il modo più romantico per chiudere la giornata: navigherete nel Golfo dei Poeti mentre il sole scende dietro la Palmaria, con un aperitivo ligure e i vini del territorio. Al resto pensano i colori del tramonto.',
+      shortDesc: "Aperitivo in barca mentre il sole tramonta sulla costa.",
+      longDesc: "Il modo più romantico per chiudere la giornata: tre ore e mezza in barca con un aperitivo ligure e i vini del territorio, mentre il sole tramonta sul mare. Potete scegliere le Cinque Terre o il Golfo dei Poeti.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre al tramonto',
           itinerary: [
             { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-            { place: 'Portovenere', note: "I primi riflessi dell'ora dorata" },
+            { place: 'Portovenere', note: 'Le prime luci del tramonto' },
             { place: 'Riomaggiore', note: 'Il tramonto sulle scogliere' },
             { place: 'Manarola', note: 'Aperitivo • Ultima tappa' },
             { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
@@ -452,7 +452,7 @@ const it = {
           name: 'Golfo dei Poeti al tramonto',
           itinerary: [
             { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-            { place: 'Portovenere', note: 'Il lungomare medievale al crepuscolo' },
+            { place: 'Portovenere', note: 'Il borgo medievale al tramonto' },
             { place: 'Palmaria', note: "Il sole che scende dietro l'isola" },
             { place: 'Lerici', note: 'Aperitivo con vista sul castello' },
             { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
@@ -460,16 +460,16 @@ const it = {
         }
       },
       itineraryFootnote: 'Circa 3 ore e mezza • Orari flessibili',
-      includes: ['Aperitivo italiano', 'Open bar con vini del territorio', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare']
+      includes: ['Aperitivo con prodotti tipici', 'Open bar con vini del territorio', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare']
     },
     'custom': {
       name: 'Su misura',
-      subtitle: 'La vostra giornata, a modo vostro',
+      subtitle: "La vostra giornata, come la volete voi",
       duration: 'Flessibile',
       h1: 'Tour privato in barca su misura',
       seoName: 'su misura',
-      shortDesc: 'Un itinerario tutto vostro: Marco e Paola costruiscono con voi la giornata perfetta.',
-      longDesc: 'Destinazioni, durata e attività le scegliete voi. Il capitano Marco e Paola costruiranno la giornata perfetta in base alle vostre preferenze.',
+      shortDesc: "Un itinerario tutto vostro, che decidiamo insieme.",
+      longDesc: "Destinazioni, durata e attività le scegliete voi: noi vi aiutiamo a organizzare la giornata come la desiderate.",
       includes: ['Tutto su misura per voi']
     }
   },

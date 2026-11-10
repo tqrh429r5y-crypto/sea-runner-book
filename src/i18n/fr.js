@@ -240,7 +240,7 @@ const fr = {
   'home.storyKicker': 'NOTRE HISTOIRE',
   'home.storyTitle': 'La Ligurie vue de la mer',
   'home.storyText1': "Le capitaine Marco et Paola vous accueillent à bord pour une expérience entièrement privée. Pas de foule, pas d'horaires fixes. Juste vous et ceux que vous aimez, avec la côte qui se dévoile à votre rythme.",
-  'home.storyText2': "Baignade dans des criques cachées, inaccessibles aux grands bateaux. Snorkeling dans la réserve marine avec quelqu'un qui la connaît par cœur. Un déjeuner italien léger à bord avec du vin local, pendant que les villages colorés défilent devant vous. Chaque journée en mer est pensée autour de vous.",
+  'home.storyText2': "Baignade dans des criques cachées, inaccessibles aux grands bateaux. Snorkeling dans la réserve marine avec quelqu'un qui la connaît par cœur. Un déjeuner italien léger à bord avec du vin local, avec vue sur les villages. Chaque journée en mer est pensée autour de vous.",
   'home.reviewsKicker': 'NOS PASSAGERS EN PARLENT',
   'home.reviewsTitle': '5,0 sur Google · plus de 100 avis',
   'home.reviewsText': 'Ne nous croyez pas sur parole : lisez ce que des passagers du monde entier racontent de leur journée en mer avec nous.',
@@ -327,8 +327,8 @@ const fr = {
       duration: '7 heures',
       h1: 'Excursion privée en bateau aux Cinque Terre (journée complète)',
       seoName: 'aux Cinque Terre',
-      shortDesc: 'Les cinq villages depuis la mer. Baignade, snorkeling, déjeuner italien à bord.',
-      longDesc: "Toute la côte classée à l'UNESCO vue depuis la mer : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso. Baignade dans des criques cachées, snorkeling dans la réserve marine et déjeuner italien léger à bord, tandis que les villages colorés défilent sous vos yeux.",
+      shortDesc: "Les cinq villages vus de la mer, avec des arrêts baignade, du snorkeling et le déjeuner à bord.",
+      longDesc: "Une journée entière le long de la côte des Cinque Terre, classée à l'UNESCO : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso vus de la mer. Nous nous arrêtons dans les plus belles criques pour la baignade, faisons du snorkeling dans l'aire marine protégée et déjeunons à bord avec des produits locaux. À Vernazza et à Monterosso, vous avez le temps de descendre à terre.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: 'Passage panoramique devant le village' },
@@ -349,8 +349,8 @@ const fr = {
       duration: '7 heures',
       h1: 'Excursion privée en bateau dans le Golfe des Poètes (journée complète)',
       seoName: 'dans le Golfe des Poètes',
-      shortDesc: "Le golfe cher à Byron. Portovenere, l'île Palmaria, Lerici et le village secret de Tellaro.",
-      longDesc: "Le golfe qui a enchanté Byron et Shelley. Portovenere la médiévale, les îles sauvages de Palmaria et du Tino, l'élégante Lerici et le joyau caché de Tellaro, avec des arrêts baignade et un déjeuner léger à bord.",
+      shortDesc: "Portovenere, les îles Palmaria et Tino, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
+      longDesc: "Une journée dans le golfe qui a inspiré Byron et Shelley. D'abord Portovenere, village médiéval classé à l'UNESCO, puis le tour des îles Palmaria, Tino et Tinetto avec des arrêts baignade et snorkeling. On traverse ensuite le golfe vers San Terenzo et Lerici, avec son château, jusqu'au petit village de Tellaro. Déjeuner léger à bord.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: "Village classé à l'UNESCO • Temps libre à terre" },
@@ -371,8 +371,8 @@ const fr = {
       duration: '10 heures',
       h1: 'Excursion privée en bateau à Portofino (journée complète)',
       seoName: 'à Portofino',
-      shortDesc: "Toute la Riviera. Portofino, l'abbaye de San Fruttuoso et les Cinque Terre au retour.",
-      longDesc: "Une longue journée le long de la Riviera du Levant jusqu'au port le plus célèbre d'Italie. Escale à l'abbaye médiévale de San Fruttuoso, arrêt à Portofino avec temps libre à terre, snorkeling dans l'Aire marine protégée, puis navigation devant les Cinque Terre sur le chemin du retour.",
+      shortDesc: "Portofino, l'abbaye de San Fruttuoso et, au retour, les Cinque Terre vues de la mer.",
+      longDesc: "Une longue journée pour rejoindre Portofino en longeant la Riviera du Levant. Arrêt à San Fruttuoso et son abbaye au bord de l'eau, puis à Portofino, où vous avez du temps libre pour vous promener et déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, sur le chemin du retour, les Cinque Terre vues de la mer.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Côte ligure', note: 'Navigation panoramique le long de la riviera' },
@@ -391,8 +391,8 @@ const fr = {
       duration: '4 heures',
       h1: 'Excursion privée en bateau à la demi-journée : Cinque Terre ou Golfe des Poètes',
       seoName: 'à la demi-journée',
-      shortDesc: 'Choisissez votre côte et votre moment : matin, après-midi ou soir.',
-      longDesc: "Moins d'heures, la même magie. Choisissez entre le parcours des Cinque Terre et le Golfe des Poètes, puis la lumière que vous préférez : la fraîcheur du matin, le soleil de l'après-midi ou l'heure dorée du soir.",
+      shortDesc: "Les Cinque Terre ou le Golfe des Poètes en quatre heures : le matin, l'après-midi ou le soir.",
+      longDesc: "Quatre heures en mer, idéal si vous avez peu de temps. Choisissez la zone, Cinque Terre ou Golfe des Poètes, et le moment de la journée : matin, après-midi ou soir. Avec des arrêts baignade et l'apéritif à bord.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre',
@@ -427,12 +427,12 @@ const fr = {
     },
     'sunset': {
       name: 'Coucher de soleil',
-      subtitle: "Apéritif à l'heure dorée",
+      subtitle: "Apéritif au coucher du soleil",
       duration: '3 h 30',
       h1: 'Excursion privée en bateau au coucher du soleil',
       seoName: 'au coucher du soleil',
-      shortDesc: "L'apéritif en mer pendant que la côte se teinte d'ambre et de rose.",
-      longDesc: "La façon la plus romantique de terminer la journée. Naviguez dans le Golfe des Poètes pendant que le soleil disparaît derrière Palmaria, savourez un apéritif ligure avec des vins locaux, et laissez les couleurs faire le reste.",
+      shortDesc: "L'apéritif en bateau pendant que le soleil se couche sur la côte.",
+      longDesc: "La façon la plus romantique de finir la journée : trois heures et demie en bateau avec un apéritif ligure et des vins locaux, pendant que le soleil se couche sur la mer. Vous pouvez choisir les Cinque Terre ou le Golfe des Poètes.",
       itineraryOptions: {
         cinque: {
           name: 'Cinque Terre au coucher du soleil',
@@ -460,12 +460,12 @@ const fr = {
     },
     'custom': {
       name: 'Sur mesure',
-      subtitle: 'Votre journée, à votre façon',
+      subtitle: "Votre journée, comme vous la voulez",
       duration: 'Flexible',
       h1: 'Excursion privée en bateau sur mesure',
       seoName: 'sur mesure',
-      shortDesc: 'Un itinéraire rien qu’à vous : Marco et Paola imaginent avec vous la journée idéale.',
-      longDesc: 'Choisissez les destinations, la durée et les activités. Le capitaine Marco et Paola organiseront la journée idéale selon vos envies.',
+      shortDesc: "Un itinéraire rien qu'à vous, que nous préparons ensemble.",
+      longDesc: "Destinations, durée, activités : c'est vous qui choisissez, et nous vous aidons à organiser la journée selon vos envies.",
       includes: ['Tout sur mesure pour vous']
     }
   },
