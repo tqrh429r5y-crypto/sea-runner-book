@@ -2502,7 +2502,7 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
           <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
           <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
           <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">{t('footer.tagline')}</p>
-          <p className="text-slate-400 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
+          <FooterContacts />
           <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">{t('footer.place')}</p>
           {/* accesso dashboard skipper: spostato qui dall'intestazione (ott 2026) */}
           <button onClick={() => setShowSkipperLogin(true)} className="inline-flex items-center gap-1.5 mt-6 text-[10px] text-slate-400 hover:text-amber-400 transition tracking-widest">
@@ -3316,6 +3316,17 @@ function BoatPage() {
 
 
 // ============ FOOTER CONDIVISO ============
+// telefono e Instagram del footer, cliccabili (usato da entrambi i footer: prenotazione e resto del sito)
+function FooterContacts() {
+  return (
+    <p className="text-slate-400 text-xs tracking-[0.3em]">
+      <a href="tel:+393488289438" className="hover:text-amber-400 transition">+39 348 828 9438</a>
+      {' • '}
+      <a href="https://www.instagram.com/searunner_laspezia/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition">@SEARUNNER_LASPEZIA</a>
+    </p>
+  );
+}
+
 function SharedFooter() {
   const { t, p } = useLang();
   return (
@@ -3324,7 +3335,7 @@ function SharedFooter() {
         <div className="flex justify-center mb-4"><SeaRunnerLogoCompact size="md" /></div>
         <p className="text-slate-300 text-sm tracking-[0.2em] mb-2">SEA RUNNER</p>
         <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">{t('footer.tagline')}</p>
-        <p className="text-slate-400 text-xs tracking-[0.3em]">+39 348 828 9438 • @SEARUNNER_LASPEZIA</p>
+        <FooterContacts />
         <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">{t('footer.place')}</p>
 
         {/* info aziendali — d.lgs 70/2003 */}
