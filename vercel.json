@@ -19,59 +19,131 @@
     },
     {
       "source": "/boat",
-      "destination": "/index.html"
+      "destination": "/boat/index.html"
     },
     {
       "source": "/booking",
-      "destination": "/index.html"
+      "destination": "/booking/index.html"
     },
     {
-      "source": "/booking/:path*",
-      "destination": "/index.html"
+      "source": "/booking/cinque-terre",
+      "destination": "/booking/cinque-terre/index.html"
     },
     {
-      "source": "/privacy",
-      "destination": "/index.html"
+      "source": "/booking/golfo-dei-poeti",
+      "destination": "/booking/golfo-dei-poeti/index.html"
+    },
+    {
+      "source": "/booking/portofino",
+      "destination": "/booking/portofino/index.html"
+    },
+    {
+      "source": "/booking/half-day",
+      "destination": "/booking/half-day/index.html"
+    },
+    {
+      "source": "/booking/sunset",
+      "destination": "/booking/sunset/index.html"
+    },
+    {
+      "source": "/booking/tailored",
+      "destination": "/booking/tailored/index.html"
     },
     {
       "source": "/it",
-      "destination": "/index.html"
+      "destination": "/it/index.html"
     },
     {
       "source": "/it/boat",
-      "destination": "/index.html"
+      "destination": "/it/boat/index.html"
     },
     {
       "source": "/it/booking",
-      "destination": "/index.html"
+      "destination": "/it/booking/index.html"
     },
     {
-      "source": "/it/booking/:path*",
-      "destination": "/index.html"
+      "source": "/it/booking/cinque-terre",
+      "destination": "/it/booking/cinque-terre/index.html"
     },
     {
-      "source": "/it/privacy",
-      "destination": "/index.html"
+      "source": "/it/booking/golfo-dei-poeti",
+      "destination": "/it/booking/golfo-dei-poeti/index.html"
+    },
+    {
+      "source": "/it/booking/portofino",
+      "destination": "/it/booking/portofino/index.html"
+    },
+    {
+      "source": "/it/booking/half-day",
+      "destination": "/it/booking/half-day/index.html"
+    },
+    {
+      "source": "/it/booking/sunset",
+      "destination": "/it/booking/sunset/index.html"
+    },
+    {
+      "source": "/it/booking/tailored",
+      "destination": "/it/booking/tailored/index.html"
     },
     {
       "source": "/fr",
-      "destination": "/index.html"
+      "destination": "/fr/index.html"
     },
     {
       "source": "/fr/boat",
-      "destination": "/index.html"
+      "destination": "/fr/boat/index.html"
     },
     {
       "source": "/fr/booking",
-      "destination": "/index.html"
+      "destination": "/fr/booking/index.html"
+    },
+    {
+      "source": "/fr/booking/cinque-terre",
+      "destination": "/fr/booking/cinque-terre/index.html"
+    },
+    {
+      "source": "/fr/booking/golfo-dei-poeti",
+      "destination": "/fr/booking/golfo-dei-poeti/index.html"
+    },
+    {
+      "source": "/fr/booking/portofino",
+      "destination": "/fr/booking/portofino/index.html"
+    },
+    {
+      "source": "/fr/booking/half-day",
+      "destination": "/fr/booking/half-day/index.html"
+    },
+    {
+      "source": "/fr/booking/sunset",
+      "destination": "/fr/booking/sunset/index.html"
+    },
+    {
+      "source": "/fr/booking/tailored",
+      "destination": "/fr/booking/tailored/index.html"
+    },
+    {
+      "source": "/booking/:path*",
+      "destination": "/shell.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/shell.html"
+    },
+    {
+      "source": "/it/booking/:path*",
+      "destination": "/shell.html"
+    },
+    {
+      "source": "/it/privacy",
+      "destination": "/shell.html"
     },
     {
       "source": "/fr/booking/:path*",
-      "destination": "/index.html"
+      "destination": "/shell.html"
     },
     {
       "source": "/fr/privacy",
-      "destination": "/index.html"
+      "destination": "/shell.html"
     }
   ],
   "crons": [

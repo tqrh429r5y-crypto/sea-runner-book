@@ -530,8 +530,11 @@ function BookingApp() {
   // così il sito non appare vuoto se supabase è lento.
   const [toursLoading, setToursLoading] = useState(true);
   const [mode, setMode] = useState('customer');
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedTour, setSelectedTour] = useState(null);
+  // tour dell'indirizzo (/booking/sunset) già dal primo disegno della pagina:
+  // serve al prerender (titolo e testi del tour giusti nel file HTML); nel browser il risultato è lo stesso di prima.
+  const slugTour = slug ? initialTours.find(t => t.slug === slug) || null : null;
+  const [currentStep, setCurrentStep] = useState(slugTour ? 2 : 1);
+  const [selectedTour, setSelectedTour] = useState(slugTour);
   const [selectedDate, setSelectedDate] = useState(null);
   const [halfDayChoiceItinerary, setHalfDayChoiceItinerary] = useState(null);
   const [halfDayChoiceTime, setHalfDayChoiceTime] = useState(null);
@@ -3749,9 +3752,10 @@ function HtmlLang() {
 // contenuto interno dell'app, indipendente dal tipo di router.
 // così lo stesso blocco di route funziona sia col BrowserRouter (browser)
 // sia col StaticRouter (durante il prerender in fase di build).
-function AppRoutes() {
+// helmetContext: usato solo dal prerender per leggere titolo e meta della pagina; nel browser non serve.
+function AppRoutes({ helmetContext } = {}) {
   return (
-    <HelmetProvider>
+    <HelmetProvider context={helmetContext}>
       {/* meta tag globale per la verifica di Google Search Console.
           presente su ogni pagina del dominio così google riesce sempre a verificare la proprietà. */}
       <Helmet>

@@ -16,4 +16,7 @@ const copy404 = () => ({
 
 export default defineConfig({
   plugins: [react(), copy404()],
+  // solo per il prerender (vite build --ssr): include queste librerie nel pacchetto,
+  // altrimenti Node non le legge (sono in un formato vecchio). Non cambia nulla per il browser.
+  ssr: { noExternal: ['react-helmet-async', 'lucide-react'] },
 })
