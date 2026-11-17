@@ -968,11 +968,6 @@ function BookingApp() {
     }
   };
 
-  const handleTourSelect = (tour) => {
-    // naviga all'URL pulito del tour; l'effetto sul routing pre-seleziona e va allo step 2
-    navigate(p(`/booking/${tour.slug}`));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
   const toggleAddOn = (id) => setSelectedAddOns(selectedAddOns.includes(id) ? selectedAddOns.filter(a => a !== id) : [...selectedAddOns, id]);
 
   // ============ LOGICA SLOT ============
@@ -1829,8 +1824,8 @@ ${customerData.notes || 'No special requests'}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tours.map(tr).map((tour) => (
-              <div key={tour.id} onClick={() => handleTourSelect(tour)}
-                className="group cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
+              <Link key={tour.id} to={p(`/booking/${tour.slug}`)} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="group block cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-800">
@@ -1852,7 +1847,7 @@ ${customerData.notes || 'No special requests'}
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -1869,7 +1864,7 @@ ${customerData.notes || 'No special requests'}
       {/* STEP 2 */}
       {currentStep === 2 && selectedTour && (
         <div className="max-w-5xl mx-auto px-4 py-12">
-          <button onClick={() => { navigate(p('/booking')); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">{t('step2.changeTour')}</button>
+          <Link to={p('/booking')} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="inline-block text-amber-400 hover:text-amber-300 text-xs tracking-widest mb-6">{t('step2.changeTour')}</Link>
 
           {/* box rassicurazione: il cliente sta solo richiedendo un preventivo, niente obblighi */}
           <div className="mb-6 p-4 bg-amber-400/5 border border-amber-400/20 flex items-start gap-3">
@@ -2196,7 +2191,7 @@ ${customerData.notes || 'No special requests'}
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {tours.filter(ot => ot.id !== selectedTour.id && !ot.isCustom).map(tr).map(ot => (
-                  <button key={ot.id}
+                  <Link key={ot.id} to={p(`/booking/${ot.slug}`)}
                     onClick={() => {
                       // reset delle scelte del tour precedente e switch al nuovo (via URL pulito)
                       setSelectedDate(null);
@@ -2204,10 +2199,9 @@ ${customerData.notes || 'No special requests'}
                       setHalfDayChoiceTime(null);
                       setMeetingPoint('Porto Mirabello (La Spezia)');
                       setCustomMeetingPoint('');
-                      navigate(p(`/booking/${ot.slug}`));
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="text-left bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400 group">
+                    className="block text-left bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400 group">
                     <TourCardImage tour={ot} />
                     <div className="p-4">
                       <p className="text-white text-sm mb-1" style={{ fontFamily: 'Georgia, serif', fontWeight: 600 }}>{ot.name}</p>
@@ -2216,14 +2210,14 @@ ${customerData.notes || 'No special requests'}
                         {t('step2.viewTour')}
                       </div>
                     </div>
-                  </button>
+                  </Link>
                 ))}
               </div>
               <div className="text-center mt-8">
-                <button onClick={() => { navigate(p('/booking')); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                <Link to={p('/booking')} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                   className="text-amber-400 hover:text-amber-300 text-xs tracking-[0.3em] transition">
                   {t('step2.backToAll')}
-                </button>
+                </Link>
               </div>
             </div>
           )}
@@ -2980,7 +2974,7 @@ function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {initialTours.slice(0, 3).map(tr).map(tour => (
+            {initialTours.map(tr).map(tour => (
               <Link key={tour.id} to={p(`/booking/${tour.slug}`)}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
