@@ -359,7 +359,7 @@ const it = {
       seoName: 'alle Cinque Terre',
       shortDesc: "I cinque borghi visti dal mare, con soste per il bagno, snorkeling e pranzo servito a bordo.",
       longDesc: "Una giornata intera dedicata alle Cinque Terre, patrimonio UNESCO, da scoprire dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Soste per il bagno nelle calette più suggestive, snorkeling nelle acque dell'area marina protetta e un pranzo leggero servito a bordo, con prodotti tipici liguri. A Vernazza e a Monterosso avrete il tempo di scendere a terra e passeggiare tra i vicoli.",
-      notIncluded: "Il pranzo al ristorante a terra, se lo preferite al pranzo leggero a bordo (che è incluso). Lo prenotiamo volentieri noi.",
+      notIncluded: "Il pranzo al ristorante a terra. Di base il pranzo lo offriamo noi a bordo; se preferite pranzare a terra, ci pensiamo noi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
@@ -382,7 +382,7 @@ const it = {
       seoName: 'nel Golfo dei Poeti',
       shortDesc: "Portovenere, le isole, Lerici e Tellaro: il golfo che incantò Byron e Shelley.",
       longDesc: "Il golfo che incantò Byron e Shelley, in una giornata tutta per voi. Dalla Portovenere medievale, patrimonio UNESCO, alle isole Palmaria, Tino e Tinetto, con soste per il bagno e lo snorkeling in acque limpidissime. Poi la traversata verso San Terenzo e Lerici, dominata dal suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero servito a bordo.",
-      notIncluded: "Il pranzo al ristorante a terra, se lo preferite al pranzo leggero a bordo (che è incluso). Lo prenotiamo volentieri noi.",
+      notIncluded: "Il pranzo al ristorante a terra. Di base il pranzo lo offriamo noi a bordo; se preferite pranzare a terra, ci pensiamo noi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
@@ -405,7 +405,7 @@ const it = {
       seoName: 'a Portofino',
       shortDesc: "Portofino e l'abbazia di San Fruttuoso, con le Cinque Terre sulla rotta del ritorno.",
       longDesc: "Una giornata lungo la Riviera di Levante, fino a uno dei porti più celebri al mondo. Prima tappa a San Fruttuoso, con la sua abbazia affacciata sul mare; poi Portofino, con tempo libero per una passeggiata e il pranzo al ristorante. Bagno e snorkeling nell'area marina protetta e, al rientro, la costa delle Cinque Terre vista dal mare.",
-      notIncluded: "Il pranzo al ristorante a Portofino, se lo preferite al pranzo leggero a bordo (che è incluso). Lo prenotiamo volentieri noi.",
+      notIncluded: "Il pranzo al ristorante a Portofino. Di base il pranzo lo offriamo noi a bordo; se preferite pranzare a Portofino, ci pensiamo noi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Costa ligure', note: 'Navigazione panoramica lungo la riviera' },

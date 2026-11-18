@@ -350,7 +350,7 @@ const initialTours = [
     itineraryAccent: '#d4a355',
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
-    notIncluded: "Restaurant lunch ashore, if you prefer it to the light lunch on board (which is included). We're happy to book it for you.",
+    notIncluded: "Restaurant lunch ashore. Lunch is normally offered by us on board; if you'd rather eat ashore, we'll take care of everything.",
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'Scenic cruise past the village' },
@@ -375,7 +375,7 @@ const initialTours = [
     itineraryAccent: '#d4a355',
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
-    notIncluded: "Restaurant lunch ashore, if you prefer it to the light lunch on board (which is included). We're happy to book it for you.",
+    notIncluded: "Restaurant lunch ashore. Lunch is normally offered by us on board; if you'd rather eat ashore, we'll take care of everything.",
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
@@ -400,7 +400,7 @@ const initialTours = [
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
-    notIncluded: "Restaurant lunch in Portofino, if you prefer it to the light lunch on board (which is included). We're happy to book it for you.",
+    notIncluded: "Restaurant lunch in Portofino. Lunch is normally offered by us on board; if you'd rather eat in Portofino, we'll take care of everything.",
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Ligurian Coast', note: 'Scenic cruise along the riviera' },
