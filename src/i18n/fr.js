@@ -338,8 +338,8 @@ const fr = {
         { place: 'Riomaggiore', note: "Le premier des cinq villages" },
         { place: 'Manarola', note: "Snorkeling dans une eau cristalline" },
         { place: 'Corniglia', note: "Le seul village perché en haut de la falaise" },
-        { place: 'Vernazza', note: "Pause déjeuner • Temps libre à terre" },
-        { place: 'Monterosso', note: "Encore un peu de temps à terre, puis on rentre" },
+        { place: 'Vernazza', note: "Pause déjeuner • Possibilité de descendre à terre" },
+        { place: 'Monterosso', note: "Possibilité de descendre à terre • Dernière étape" },
         { place: 'Retour', note: "On vous ramène au point de départ" }
       ],
       itineraryFootnote: 'Environ 7 heures • Horaires flexibles',
@@ -355,7 +355,7 @@ const fr = {
       longDesc: "Le golfe qui a charmé Byron et Shelley, le temps d'une journée rien qu'à vous. De Portovenere la médiévale, classée à l'UNESCO, aux îles Palmaria, Tino et Tinetto, avec arrêts baignade et snorkeling dans une eau limpide. Puis la traversée vers San Terenzo et Lerici, dominée par son château, jusqu'au petit village de Tellaro. Déjeuner léger servi à bord.",
       itinerary: [
         { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
-        { place: 'Portovenere', note: "Vous descendez flâner dans le village, classé à l'UNESCO" },
+        { place: 'Portovenere', note: "Village classé à l'UNESCO • Possibilité de descendre à terre" },
         { place: 'Palmaria', note: "Baignade et snorkeling, avec la Grotte Bleue" },
         { place: 'Tino', note: "L'île du phare et de l'ancien monastère" },
         { place: 'Tinetto', note: "On fait le tour du plus petit des trois îlots" },
@@ -403,7 +403,7 @@ const fr = {
             { place: 'Portovenere', note: "Passage panoramique devant le village" },
             { place: 'Riomaggiore', note: "Le premier des cinq villages" },
             { place: 'Manarola', note: "Snorkeling dans une eau cristalline" },
-            { place: 'Vernazza', note: "Temps libre à terre • Dernière étape" },
+            { place: 'Vernazza', note: "Possibilité de descendre à terre • Dernière étape" },
             { place: 'Retour', note: "On vous ramène au point de départ" }
           ]
         },
@@ -411,9 +411,9 @@ const fr = {
           name: 'Golfe des Poètes',
           itinerary: [
             { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
-            { place: 'Portovenere', note: "Vous descendez flâner dans le village, classé à l'UNESCO" },
+            { place: 'Portovenere', note: "Village classé à l'UNESCO • Possibilité de descendre à terre" },
             { place: 'Palmaria', note: "Baignade et snorkeling, avec la Grotte Bleue" },
-            { place: 'Lerici', note: "Vue sur le château • Temps libre à terre" },
+            { place: 'Lerici', note: "Vue sur le château • Possibilité de descendre à terre" },
             { place: 'Tellaro', note: "Petit village au bord de la mer • Dernière étape" },
             { place: 'Retour', note: "On vous ramène au point de départ" }
           ]

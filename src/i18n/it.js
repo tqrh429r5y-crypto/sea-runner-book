@@ -342,8 +342,8 @@ const it = {
         { place: 'Riomaggiore', note: "Il primo dei cinque borghi" },
         { place: 'Manarola', note: "Snorkeling in acque cristalline" },
         { place: 'Corniglia', note: "L'unico borgo in cima alla scogliera" },
-        { place: 'Vernazza', note: "Sosta pranzo • Tempo a terra" },
-        { place: 'Monterosso', note: "Ancora un po' di tempo a terra, poi si rientra" },
+        { place: 'Vernazza', note: "Sosta pranzo • Possibilità di scendere a terra" },
+        { place: 'Monterosso', note: "Possibilità di scendere a terra • Ultima tappa" },
         { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
       itineraryFootnote: 'Circa 7 ore • Orari flessibili',
@@ -359,7 +359,7 @@ const it = {
       longDesc: "Il golfo che incantò Byron e Shelley, in una giornata tutta per voi. Dalla Portovenere medievale, patrimonio UNESCO, alle isole Palmaria, Tino e Tinetto, con soste per il bagno e lo snorkeling in acque limpidissime. Poi la traversata verso San Terenzo e Lerici, dominata dal suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero servito a bordo.",
       itinerary: [
         { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
-        { place: 'Portovenere', note: "Scendete a passeggiare nel borgo, patrimonio UNESCO" },
+        { place: 'Portovenere', note: "Borgo UNESCO • Possibilità di scendere a terra" },
         { place: 'Palmaria', note: "Bagno e snorkeling, con la Grotta Azzurra" },
         { place: 'Tino', note: "L'isola del faro e dell'antico monastero" },
         { place: 'Tinetto', note: "Facciamo il giro del più piccolo dei tre isolotti" },
@@ -407,7 +407,7 @@ const it = {
             { place: 'Portovenere', note: "Passaggio panoramico davanti al borgo" },
             { place: 'Riomaggiore', note: "Il primo dei cinque borghi" },
             { place: 'Manarola', note: "Snorkeling in acque cristalline" },
-            { place: 'Vernazza', note: "Tempo a terra • Ultima tappa" },
+            { place: 'Vernazza', note: "Possibilità di scendere a terra • Ultima tappa" },
             { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         },
@@ -415,9 +415,9 @@ const it = {
           name: 'Golfo dei Poeti',
           itinerary: [
             { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
-            { place: 'Portovenere', note: "Scendete a passeggiare nel borgo, patrimonio UNESCO" },
+            { place: 'Portovenere', note: "Borgo UNESCO • Possibilità di scendere a terra" },
             { place: 'Palmaria', note: "Bagno e snorkeling, con la Grotta Azzurra" },
-            { place: 'Lerici', note: "Vista sul castello • Tempo a terra" },
+            { place: 'Lerici', note: "Vista sul castello • Possibilità di scendere a terra" },
             { place: 'Tellaro', note: "Piccolo borgo sul mare • Ultima tappa" },
             { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]

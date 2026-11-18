@@ -357,8 +357,8 @@ const initialTours = [
       { place: 'Riomaggiore', note: "The first of the five villages" },
       { place: 'Manarola', note: "Snorkeling in crystal waters" },
       { place: 'Corniglia', note: "The only village perched on top of the cliff" },
-      { place: 'Vernazza', note: "Lunch stop • Time ashore" },
-      { place: 'Monterosso', note: "A little more time ashore, then we head back" },
+      { place: 'Vernazza', note: "Lunch stop • Option to go ashore" },
+      { place: 'Monterosso', note: "Option to go ashore • Final stop" },
       { place: 'Drop-off point', note: "We bring you back to where we started" }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
@@ -376,7 +376,7 @@ const initialTours = [
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
     itinerary: [
       { place: 'Pickup point', note: "From the meeting point of your choice" },
-      { place: 'Portovenere', note: "Go ashore and stroll through the village, a UNESCO site" },
+      { place: 'Portovenere', note: "UNESCO village • Option to go ashore" },
       { place: 'Palmaria', note: "Swimming and snorkeling, with the Blue Grotto" },
       { place: 'Tino', note: "The island of the lighthouse and the old monastery" },
       { place: 'Tinetto', note: "We sail around the smallest of the three islands" },
@@ -427,16 +427,16 @@ const initialTours = [
           { place: 'Portovenere', note: "Scenic cruise past the village" },
           { place: 'Riomaggiore', note: "The first of the five villages" },
           { place: 'Manarola', note: "Snorkeling in crystal waters" },
-          { place: 'Vernazza', note: "Time ashore • Final stop" },
+          { place: 'Vernazza', note: "Option to go ashore • Final stop" },
           { place: 'Drop-off point', note: "We bring you back to where we started" }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
         itinerary: [
           { place: 'Pickup point', note: "From the meeting point of your choice" },
-          { place: 'Portovenere', note: "Go ashore and stroll through the village, a UNESCO site" },
+          { place: 'Portovenere', note: "UNESCO village • Option to go ashore" },
           { place: 'Palmaria', note: "Swimming and snorkeling, with the Blue Grotto" },
-          { place: 'Lerici', note: "Castle views • Time ashore" },
+          { place: 'Lerici', note: "Castle views • Option to go ashore" },
           { place: 'Tellaro', note: "Little village by the sea • Final stop" },
           { place: 'Drop-off point', note: "We bring you back to where we started" }
         ]
