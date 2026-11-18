@@ -221,30 +221,6 @@ const en = {
     {
       q: 'Can we bring our dog on board?',
       a: `Yes, dogs are very welcome on board. If you're traveling with your four-legged companion, just let us know in advance so we can make sure everything is set up for their comfort too.`
-    },
-    {
-      q: "How and when do we pay?",
-      a: "Nothing is paid when you send a request: it is free and with no obligation. Once Captain Marco confirms availability and you accept the quote, we agree the payment with you directly (cash, card or bank transfer)."
-    },
-    {
-      q: "Where do we meet? Is there parking?",
-      a: "Our main departure point is Porto Mirabello in La Spezia, with two free parking spaces for our guests. We can also meet you in Portovenere, in Lerici or near the cruise terminal: just choose the meeting point in the request form."
-    },
-    {
-      q: "We arrive on a cruise ship. Will we be back in time?",
-      a: "Yes. Cruise passengers are among our most frequent guests. When you send the request, tell us your ship and your all-aboard time: Captain Marco plans the whole day around your schedule, so you are back at the port well before departure. We meet you near the cruise terminal, a short walk (about 7 minutes) from your ship."
-    },
-    {
-      q: "Can we book at the last minute?",
-      a: "Often, yes, if the boat is free that day. For a tour within the next 48 hours the fastest way is to message us on WhatsApp or call +39 348 828 9438."
-    },
-    {
-      q: "What should we bring?",
-      a: "Swimsuit, sunscreen, sunglasses and a hat, plus a light jacket for the evening and for sunset tours. Towels and snorkeling equipment are always provided on board."
-    },
-    {
-      q: "How far ahead should we book for July and August?",
-      a: "As early as you can: summer dates, especially weekends, are the first to go. Sending a request costs nothing and is not binding, so it is worth asking as soon as you know your dates."
     }
   ],
 

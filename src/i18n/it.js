@@ -222,30 +222,6 @@ const it = {
     {
       q: 'Possiamo portare il nostro cane?',
       a: `Sì, i cani sono i benvenuti a bordo. Avvisateci in anticipo: ci assicureremo che sia tutto pronto anche per il loro comfort.`
-    },
-    {
-      q: "Come e quando si paga?",
-      a: "Quando invii la richiesta non paghi nulla: è gratuita e senza impegno. Dopo che il capitano Marco ha confermato la disponibilità e hai accettato il preventivo, concordiamo direttamente con te il pagamento (contanti, carta o bonifico)."
-    },
-    {
-      q: "Dove ci incontriamo? C'è parcheggio?",
-      a: "Il punto di partenza principale è Porto Mirabello, a La Spezia, con due posti auto gratuiti per i nostri ospiti. Possiamo incontrarvi anche a Portovenere, a Lerici o vicino al terminal crociere: basta indicare il punto d'incontro nel modulo di richiesta."
-    },
-    {
-      q: "Arriviamo in nave da crociera. Rientreremo in tempo?",
-      a: "Sì. I crocieristi sono tra i nostri ospiti più frequenti. Quando invii la richiesta, indicaci la nave e l'orario di rientro a bordo: il capitano Marco organizza tutta la giornata sui vostri orari, così sarete al porto con largo anticipo sulla partenza. Ci incontriamo vicino al terminal crociere, a pochi passi (circa 7 minuti a piedi) dalla nave."
-    },
-    {
-      q: "Si può prenotare all'ultimo momento?",
-      a: "Spesso sì, se la barca è libera quel giorno. Per un tour nelle prossime 48 ore il modo più veloce è scriverci su WhatsApp o chiamare il +39 348 828 9438."
-    },
-    {
-      q: "Cosa portare?",
-      a: "Costume, crema solare, occhiali da sole e cappello, più una giacca leggera per la sera e per il tour al tramonto. Teli e attrezzatura per lo snorkeling sono sempre a bordo."
-    },
-    {
-      q: "Con quanto anticipo prenotare per luglio e agosto?",
-      a: "Il prima possibile: le date estive, soprattutto nei fine settimana, sono le prime a esaurirsi. Inviare una richiesta non costa nulla e non impegna, quindi conviene chiedere appena conosci le date."
     }
   ],
 
@@ -360,13 +336,13 @@ const it = {
       shortDesc: "I cinque borghi visti dal mare, con soste per il bagno, snorkeling e pranzo servito a bordo.",
       longDesc: "Una giornata intera dedicata alle Cinque Terre, patrimonio UNESCO, da scoprire dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Soste per il bagno nelle calette più suggestive, snorkeling nelle acque dell'area marina protetta e un pranzo leggero servito a bordo, con prodotti tipici liguri. A Vernazza e a Monterosso avrete il tempo di scendere a terra e passeggiare tra i vicoli.",
       itinerary: [
-        { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
-        { place: 'Portovenere', note: "Passiamo davanti al borgo e alle sue case colorate" },
+        { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
+        { place: 'Portovenere', note: "Passaggio panoramico davanti al borgo" },
         { place: 'Monesteroli — Campiglia', note: "Costa selvaggia: prima sosta per un bagno" },
         { place: 'Riomaggiore', note: "Il primo dei cinque borghi" },
-        { place: 'Manarola', note: "Bagno e snorkeling nell'area marina protetta" },
+        { place: 'Manarola', note: "Snorkeling in acque cristalline" },
         { place: 'Corniglia', note: "L'unico borgo in cima alla scogliera" },
-        { place: 'Vernazza', note: "Scendete a terra a passeggiare tra i vicoli" },
+        { place: 'Vernazza', note: "Sosta pranzo • Tempo a terra" },
         { place: 'Monterosso', note: "Ancora un po' di tempo a terra, poi si rientra" },
         { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
@@ -382,14 +358,14 @@ const it = {
       shortDesc: "Portovenere, le isole, Lerici e Tellaro: il golfo che incantò Byron e Shelley.",
       longDesc: "Il golfo che incantò Byron e Shelley, in una giornata tutta per voi. Dalla Portovenere medievale, patrimonio UNESCO, alle isole Palmaria, Tino e Tinetto, con soste per il bagno e lo snorkeling in acque limpidissime. Poi la traversata verso San Terenzo e Lerici, dominata dal suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero servito a bordo.",
       itinerary: [
-        { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+        { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
         { place: 'Portovenere', note: "Scendete a passeggiare nel borgo, patrimonio UNESCO" },
         { place: 'Palmaria', note: "Bagno e snorkeling, con la Grotta Azzurra" },
         { place: 'Tino', note: "L'isola del faro e dell'antico monastero" },
         { place: 'Tinetto', note: "Facciamo il giro del più piccolo dei tre isolotti" },
         { place: 'San Terenzo', note: "Il borgo dei pescatori con il suo castello" },
-        { place: 'Lerici', note: "Tempo a terra sotto il castello" },
-        { place: 'Tellaro', note: "Un piccolo borgo aggrappato alla roccia" },
+        { place: 'Lerici', note: "Sosta pranzo • Vista sul castello" },
+        { place: 'Tellaro', note: "Il piccolo borgo sul mare" },
         { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
       itineraryFootnote: 'Circa 7 ore • Orari flessibili',
@@ -404,11 +380,11 @@ const it = {
       shortDesc: "Portofino e l'abbazia di San Fruttuoso, con le Cinque Terre sulla rotta del ritorno.",
       longDesc: "Una giornata lungo la Riviera di Levante, fino a uno dei porti più celebri al mondo. Prima tappa a San Fruttuoso, con la sua abbazia affacciata sul mare; poi Portofino, con tempo libero per una passeggiata e il pranzo al ristorante. Bagno e snorkeling nell'area marina protetta e, al rientro, la costa delle Cinque Terre vista dal mare.",
       itinerary: [
-        { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+        { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
         { place: 'Costa ligure', note: "Navighiamo lungo la riviera verso Portofino" },
         { place: 'San Fruttuoso', note: "L'abbazia nella baia: bagno e visita" },
-        { place: 'Portofino', note: "Tempo libero per passeggiare nel borgo" },
-        { place: 'Riserva marina', note: "Bagno e snorkeling nell'area marina" },
+        { place: 'Portofino', note: "Sosta • Tour del borgo" },
+        { place: 'Riserva marina', note: "Snorkeling in acque cristalline" },
         { place: 'Cinque Terre', note: "Le Cinque Terre dal mare, sulla via del ritorno" },
         { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
@@ -427,22 +403,22 @@ const it = {
         cinque: {
           name: 'Cinque Terre',
           itinerary: [
-            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
-            { place: 'Portovenere', note: "Passiamo davanti al borgo e alle sue case colorate" },
+            { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
+            { place: 'Portovenere', note: "Passaggio panoramico davanti al borgo" },
             { place: 'Riomaggiore', note: "Il primo dei cinque borghi" },
-            { place: 'Manarola', note: "Bagno e snorkeling nell'area marina protetta" },
-            { place: 'Vernazza', note: "Un po' di tempo a terra, poi si rientra" },
+            { place: 'Manarola', note: "Snorkeling in acque cristalline" },
+            { place: 'Vernazza', note: "Tempo a terra • Ultima tappa" },
             { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         },
         golfo: {
           name: 'Golfo dei Poeti',
           itinerary: [
-            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
             { place: 'Portovenere', note: "Scendete a passeggiare nel borgo, patrimonio UNESCO" },
             { place: 'Palmaria', note: "Bagno e snorkeling, con la Grotta Azzurra" },
-            { place: 'Lerici', note: "Tempo a terra sotto il castello" },
-            { place: 'Tellaro', note: "Un piccolo borgo aggrappato alla roccia, poi si rientra" },
+            { place: 'Lerici', note: "Vista sul castello • Tempo a terra" },
+            { place: 'Tellaro', note: "Piccolo borgo sul mare • Ultima tappa" },
             { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         }
@@ -467,20 +443,20 @@ const it = {
         cinque: {
           name: 'Cinque Terre al tramonto',
           itinerary: [
-            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
             { place: 'Portovenere', note: "Il borgo con la luce della sera" },
             { place: 'Riomaggiore', note: "Il tramonto visto dal mare" },
-            { place: 'Manarola', note: "Aperitivo a bordo davanti al borgo" },
+            { place: 'Manarola', note: "Aperitivo • Ultima tappa" },
             { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         },
         golfo: {
           name: 'Golfo dei Poeti al tramonto',
           itinerary: [
-            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: "Punto d'incontro", note: "Dal punto da voi scelto" },
             { place: 'Portovenere', note: "Il borgo con la luce della sera" },
             { place: 'Palmaria', note: "Il sole che cala vicino all'isola" },
-            { place: 'Lerici', note: "Aperitivo a bordo davanti al castello" },
+            { place: 'Lerici', note: "Aperitivo con vista sul castello" },
             { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         }

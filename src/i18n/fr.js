@@ -220,30 +220,6 @@ const fr = {
     {
       q: 'Peut-on venir avec notre chien ?',
       a: `Oui, les chiens sont les bienvenus à bord. Prévenez-nous à l'avance : nous veillerons à ce que tout soit prêt pour leur confort aussi.`
-    },
-    {
-      q: "Comment et quand paie-t-on ?",
-      a: "Vous ne payez rien en envoyant votre demande : elle est gratuite et sans engagement. Une fois la disponibilité confirmée par le capitaine Marco et le devis accepté, nous convenons directement avec vous du paiement (espèces, carte ou virement)."
-    },
-    {
-      q: "Où se retrouve-t-on ? Y a-t-il un parking ?",
-      a: "Le point de départ principal est Porto Mirabello, à La Spezia, avec deux places de parking gratuites pour nos hôtes. Nous pouvons aussi vous retrouver à Portovenere, à Lerici ou près du terminal de croisière : il suffit d'indiquer le point de rendez-vous dans le formulaire."
-    },
-    {
-      q: "Nous arrivons en bateau de croisière. Serons-nous rentrés à temps ?",
-      a: "Oui. Les croisiéristes font partie de nos hôtes les plus fréquents. En envoyant votre demande, indiquez-nous votre navire et l'heure de retour à bord : le capitaine Marco organise toute la journée selon vos horaires, pour que vous soyez au port bien avant le départ. Nous vous retrouvons près du terminal de croisière, à quelques pas (environ 7 minutes à pied) de votre navire."
-    },
-    {
-      q: "Peut-on réserver à la dernière minute ?",
-      a: "Souvent oui, si le bateau est libre ce jour-là. Pour une excursion dans les 48 prochaines heures, le plus rapide est de nous écrire sur WhatsApp ou d'appeler le +39 348 828 9438."
-    },
-    {
-      q: "Que faut-il apporter ?",
-      a: "Maillot de bain, crème solaire, lunettes de soleil et chapeau, ainsi qu'une veste légère pour le soir et pour l'excursion au coucher du soleil. Les serviettes et l'équipement de snorkeling sont toujours fournis à bord."
-    },
-    {
-      q: "Combien de temps à l'avance réserver pour juillet et août ?",
-      a: "Le plus tôt possible : les dates d'été, surtout le week-end, partent en premier. Envoyer une demande ne coûte rien et n'engage à rien, il vaut donc mieux demander dès que vous connaissez vos dates."
     }
   ],
 
@@ -356,13 +332,13 @@ const fr = {
       shortDesc: "Les cinq villages vus de la mer, avec arrêts baignade, snorkeling et déjeuner servi à bord.",
       longDesc: "Une journée entière consacrée aux Cinque Terre, classées à l'UNESCO, à découvrir depuis la mer : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso. Baignade dans les plus belles criques, snorkeling dans les eaux de l'aire marine protégée et déjeuner léger servi à bord, avec des produits typiques de Ligurie. À Vernazza et à Monterosso, vous aurez le temps de descendre à terre et de flâner dans les ruelles.",
       itinerary: [
-        { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
-        { place: 'Portovenere', note: "On passe devant le village et ses maisons colorées" },
+        { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
+        { place: 'Portovenere', note: "Passage panoramique devant le village" },
         { place: 'Monesteroli — Campiglia', note: "Une côte sauvage : premier arrêt baignade" },
         { place: 'Riomaggiore', note: "Le premier des cinq villages" },
-        { place: 'Manarola', note: "Baignade et snorkeling dans la réserve marine" },
+        { place: 'Manarola', note: "Snorkeling dans une eau cristalline" },
         { place: 'Corniglia', note: "Le seul village perché en haut de la falaise" },
-        { place: 'Vernazza', note: "Vous descendez à terre flâner dans les ruelles" },
+        { place: 'Vernazza', note: "Pause déjeuner • Temps libre à terre" },
         { place: 'Monterosso', note: "Encore un peu de temps à terre, puis on rentre" },
         { place: 'Retour', note: "On vous ramène au point de départ" }
       ],
@@ -378,14 +354,14 @@ const fr = {
       shortDesc: "Portovenere, les îles, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
       longDesc: "Le golfe qui a charmé Byron et Shelley, le temps d'une journée rien qu'à vous. De Portovenere la médiévale, classée à l'UNESCO, aux îles Palmaria, Tino et Tinetto, avec arrêts baignade et snorkeling dans une eau limpide. Puis la traversée vers San Terenzo et Lerici, dominée par son château, jusqu'au petit village de Tellaro. Déjeuner léger servi à bord.",
       itinerary: [
-        { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
+        { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
         { place: 'Portovenere', note: "Vous descendez flâner dans le village, classé à l'UNESCO" },
         { place: 'Palmaria', note: "Baignade et snorkeling, avec la Grotte Bleue" },
         { place: 'Tino', note: "L'île du phare et de l'ancien monastère" },
         { place: 'Tinetto', note: "On fait le tour du plus petit des trois îlots" },
         { place: 'San Terenzo', note: "Le village de pêcheurs et son château" },
-        { place: 'Lerici', note: "Temps libre à terre au pied du château" },
-        { place: 'Tellaro', note: "Un petit village accroché à la roche" },
+        { place: 'Lerici', note: "Pause déjeuner • Vue sur le château" },
+        { place: 'Tellaro', note: "Le petit village au bord de la mer" },
         { place: 'Retour', note: "On vous ramène au point de départ" }
       ],
       itineraryFootnote: 'Environ 7 heures • Horaires flexibles',
@@ -400,11 +376,11 @@ const fr = {
       shortDesc: "Portofino et l'abbaye de San Fruttuoso, avec les Cinque Terre sur la route du retour.",
       longDesc: "Une journée le long de la Riviera du Levant, jusqu'à l'un des ports les plus célèbres au monde. Première escale à San Fruttuoso et son abbaye au bord de l'eau, puis Portofino, avec du temps libre pour une promenade et le déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, au retour, la côte des Cinque Terre vue de la mer.",
       itinerary: [
-        { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
+        { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
         { place: 'Côte ligure', note: "On longe la Riviera jusqu'à Portofino" },
         { place: 'San Fruttuoso', note: "L'abbaye au fond de la baie : baignade et visite" },
-        { place: 'Portofino', note: "Temps libre pour flâner dans le village" },
-        { place: 'Réserve marine', note: "Baignade et snorkeling dans la réserve marine" },
+        { place: 'Portofino', note: "Escale • Visite du village" },
+        { place: 'Réserve marine', note: "Snorkeling dans une eau cristalline" },
         { place: 'Cinque Terre', note: "Les Cinque Terre vues de la mer, sur le chemin du retour" },
         { place: 'Retour', note: "On vous ramène au point de départ" }
       ],
@@ -423,22 +399,22 @@ const fr = {
         cinque: {
           name: 'Cinque Terre',
           itinerary: [
-            { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
-            { place: 'Portovenere', note: "On passe devant le village et ses maisons colorées" },
+            { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
+            { place: 'Portovenere', note: "Passage panoramique devant le village" },
             { place: 'Riomaggiore', note: "Le premier des cinq villages" },
-            { place: 'Manarola', note: "Baignade et snorkeling dans la réserve marine" },
-            { place: 'Vernazza', note: "Un peu de temps à terre, puis on rentre" },
+            { place: 'Manarola', note: "Snorkeling dans une eau cristalline" },
+            { place: 'Vernazza', note: "Temps libre à terre • Dernière étape" },
             { place: 'Retour', note: "On vous ramène au point de départ" }
           ]
         },
         golfo: {
           name: 'Golfe des Poètes',
           itinerary: [
-            { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
+            { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
             { place: 'Portovenere', note: "Vous descendez flâner dans le village, classé à l'UNESCO" },
             { place: 'Palmaria', note: "Baignade et snorkeling, avec la Grotte Bleue" },
-            { place: 'Lerici', note: "Temps libre à terre au pied du château" },
-            { place: 'Tellaro', note: "Un petit village accroché à la roche, puis on rentre" },
+            { place: 'Lerici', note: "Vue sur le château • Temps libre à terre" },
+            { place: 'Tellaro', note: "Petit village au bord de la mer • Dernière étape" },
             { place: 'Retour', note: "On vous ramène au point de départ" }
           ]
         }
@@ -463,20 +439,20 @@ const fr = {
         cinque: {
           name: 'Cinque Terre au coucher du soleil',
           itinerary: [
-            { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
+            { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
             { place: 'Portovenere', note: "Le village dans la lumière du soir" },
             { place: 'Riomaggiore', note: "Le coucher de soleil vu de la mer" },
-            { place: 'Manarola', note: "Apéritif à bord face au village" },
+            { place: 'Manarola', note: "Apéritif • Dernière étape" },
             { place: 'Retour', note: "On vous ramène au point de départ" }
           ]
         },
         golfo: {
           name: 'Golfe des Poètes au coucher du soleil',
           itinerary: [
-            { place: 'Point de rendez-vous', note: "On part du point de rendez-vous que vous avez choisi" },
+            { place: 'Point de rendez-vous', note: "Depuis le point de rendez-vous de votre choix" },
             { place: 'Portovenere', note: "Le village dans la lumière du soir" },
             { place: 'Palmaria', note: "Le soleil qui descend près de l'île" },
-            { place: 'Lerici', note: "Apéritif à bord face au château" },
+            { place: 'Lerici', note: "Apéritif avec vue sur le château" },
             { place: 'Retour', note: "On vous ramène au point de départ" }
           ]
         }

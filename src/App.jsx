@@ -351,13 +351,13 @@ const initialTours = [
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
     itinerary: [
-      { place: 'Pickup point', note: "We set off from the meeting point you chose" },
-      { place: 'Portovenere', note: "We sail past the village and its colourful houses" },
+      { place: 'Pickup point', note: "From the meeting point of your choice" },
+      { place: 'Portovenere', note: "Scenic cruise past the village" },
       { place: 'Monesteroli — Campiglia', note: "Wild coastline: first stop for a swim" },
       { place: 'Riomaggiore', note: "The first of the five villages" },
-      { place: 'Manarola', note: "Swimming and snorkeling in the marine reserve" },
+      { place: 'Manarola', note: "Snorkeling in crystal waters" },
       { place: 'Corniglia', note: "The only village perched on top of the cliff" },
-      { place: 'Vernazza', note: "Go ashore and wander through the narrow streets" },
+      { place: 'Vernazza', note: "Lunch stop • Time ashore" },
       { place: 'Monterosso', note: "A little more time ashore, then we head back" },
       { place: 'Drop-off point', note: "We bring you back to where we started" }
     ],
@@ -375,14 +375,14 @@ const initialTours = [
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
     itinerary: [
-      { place: 'Pickup point', note: "We set off from the meeting point you chose" },
+      { place: 'Pickup point', note: "From the meeting point of your choice" },
       { place: 'Portovenere', note: "Go ashore and stroll through the village, a UNESCO site" },
       { place: 'Palmaria', note: "Swimming and snorkeling, with the Blue Grotto" },
       { place: 'Tino', note: "The island of the lighthouse and the old monastery" },
       { place: 'Tinetto', note: "We sail around the smallest of the three islands" },
       { place: 'San Terenzo', note: "The fishermen's village with its castle" },
-      { place: 'Lerici', note: "Time ashore below the castle" },
-      { place: 'Tellaro', note: "A tiny village clinging to the rocks" },
+      { place: 'Lerici', note: "Lunch stop • Castle views" },
+      { place: 'Tellaro', note: "The little village by the sea" },
       { place: 'Drop-off point', note: "We bring you back to where we started" }
     ],
     itineraryFootnote: 'Approx. 7 hours • Flexible schedule',
@@ -399,11 +399,11 @@ const initialTours = [
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
     itinerary: [
-      { place: 'Pickup point', note: "We set off from the meeting point you chose" },
+      { place: 'Pickup point', note: "From the meeting point of your choice" },
       { place: 'Ligurian Coast', note: "We cruise along the Riviera towards Portofino" },
       { place: 'San Fruttuoso', note: "The abbey in the bay: a swim and a visit" },
-      { place: 'Portofino', note: "Free time to stroll around the village" },
-      { place: 'Marine Reserve', note: "Swimming and snorkeling in the marine reserve" },
+      { place: 'Portofino', note: "Stop • Tour of the village" },
+      { place: 'Marine Reserve', note: "Snorkeling in crystal waters" },
       { place: 'Cinque Terre', note: "The Cinque Terre from the sea, on the way back" },
       { place: 'Drop-off point', note: "We bring you back to where we started" }
     ],
@@ -423,21 +423,21 @@ const initialTours = [
     itineraryOptions: [
       { id: 'cinque', name: 'Cinque Terre', desc: 'Portovenere → Riomaggiore → Manarola → Vernazza',
         itinerary: [
-          { place: 'Pickup point', note: "We set off from the meeting point you chose" },
-          { place: 'Portovenere', note: "We sail past the village and its colourful houses" },
+          { place: 'Pickup point', note: "From the meeting point of your choice" },
+          { place: 'Portovenere', note: "Scenic cruise past the village" },
           { place: 'Riomaggiore', note: "The first of the five villages" },
-          { place: 'Manarola', note: "Swimming and snorkeling in the marine reserve" },
-          { place: 'Vernazza', note: "A little time ashore, then we head back" },
+          { place: 'Manarola', note: "Snorkeling in crystal waters" },
+          { place: 'Vernazza', note: "Time ashore • Final stop" },
           { place: 'Drop-off point', note: "We bring you back to where we started" }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti', desc: 'Portovenere → Palmaria → Lerici → Tellaro',
         itinerary: [
-          { place: 'Pickup point', note: "We set off from the meeting point you chose" },
+          { place: 'Pickup point', note: "From the meeting point of your choice" },
           { place: 'Portovenere', note: "Go ashore and stroll through the village, a UNESCO site" },
           { place: 'Palmaria', note: "Swimming and snorkeling, with the Blue Grotto" },
-          { place: 'Lerici', note: "Time ashore below the castle" },
-          { place: 'Tellaro', note: "A tiny village clinging to the rocks, then we head back" },
+          { place: 'Lerici', note: "Castle views • Time ashore" },
+          { place: 'Tellaro', note: "Little village by the sea • Final stop" },
           { place: 'Drop-off point', note: "We bring you back to where we started" }
         ]
       }
@@ -464,19 +464,19 @@ const initialTours = [
     itineraryOptions: [
       { id: 'cinque', name: 'Cinque Terre at sunset', desc: 'Portovenere → Riomaggiore → Manarola',
         itinerary: [
-          { place: 'Pickup point', note: "We set off from the meeting point you chose" },
+          { place: 'Pickup point', note: "From the meeting point of your choice" },
           { place: 'Portovenere', note: "The village in the evening light" },
           { place: 'Riomaggiore', note: "The sunset seen from the sea" },
-          { place: 'Manarola', note: "Aperitivo on board in front of the village" },
+          { place: 'Manarola', note: "Aperitivo • Final stop" },
           { place: 'Drop-off point', note: "We bring you back to where we started" }
         ]
       },
       { id: 'golfo', name: 'Golfo dei Poeti at sunset', desc: 'Portovenere → Palmaria → Lerici',
         itinerary: [
-          { place: 'Pickup point', note: "We set off from the meeting point you chose" },
+          { place: 'Pickup point', note: "From the meeting point of your choice" },
           { place: 'Portovenere', note: "The village in the evening light" },
           { place: 'Palmaria', note: "The sun going down by the island" },
-          { place: 'Lerici', note: "Aperitivo on board in front of the castle" },
+          { place: 'Lerici', note: "Aperitivo with castle views" },
           { place: 'Drop-off point', note: "We bring you back to where we started" }
         ]
       }
