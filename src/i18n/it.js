@@ -360,15 +360,15 @@ const it = {
       shortDesc: "I cinque borghi visti dal mare, con soste per il bagno, snorkeling e pranzo servito a bordo.",
       longDesc: "Una giornata intera dedicata alle Cinque Terre, patrimonio UNESCO, da scoprire dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Soste per il bagno nelle calette più suggestive, snorkeling nelle acque dell'area marina protetta e un pranzo leggero servito a bordo, con prodotti tipici liguri. A Vernazza e a Monterosso avrete il tempo di scendere a terra e passeggiare tra i vicoli.",
       itinerary: [
-        { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-        { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
-        { place: 'Monesteroli — Campiglia', note: 'Costa selvaggia e sosta per un bagno' },
-        { place: 'Riomaggiore', note: 'La prima delle Cinque Terre' },
-        { place: 'Manarola', note: 'Snorkeling in acque cristalline' },
-        { place: 'Corniglia', note: 'Il borgo sulla scogliera visto dal mare' },
-        { place: 'Vernazza', note: 'Sosta pranzo • Tempo a terra' },
-        { place: 'Monterosso', note: 'Tempo a terra • Ultima tappa' },
-        { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+        { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+        { place: 'Portovenere', note: "Passiamo davanti al borgo e alle sue case colorate" },
+        { place: 'Monesteroli — Campiglia', note: "Costa selvaggia: prima sosta per un bagno" },
+        { place: 'Riomaggiore', note: "Il primo dei cinque borghi" },
+        { place: 'Manarola', note: "Bagno e snorkeling nell'area marina protetta" },
+        { place: 'Corniglia', note: "L'unico borgo in cima alla scogliera" },
+        { place: 'Vernazza', note: "Scendete a terra a passeggiare tra i vicoli" },
+        { place: 'Monterosso', note: "Ancora un po' di tempo a terra, poi si rientra" },
+        { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
       itineraryFootnote: 'Circa 7 ore • Orari flessibili',
       includes: ['Pranzo leggero con prodotti tipici', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
@@ -382,15 +382,15 @@ const it = {
       shortDesc: "Portovenere, le isole, Lerici e Tellaro: il golfo che incantò Byron e Shelley.",
       longDesc: "Il golfo che incantò Byron e Shelley, in una giornata tutta per voi. Dalla Portovenere medievale, patrimonio UNESCO, alle isole Palmaria, Tino e Tinetto, con soste per il bagno e lo snorkeling in acque limpidissime. Poi la traversata verso San Terenzo e Lerici, dominata dal suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero servito a bordo.",
       itinerary: [
-        { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-        { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
-        { place: 'Palmaria', note: 'Grotta Azzurra • Snorkeling' },
-        { place: 'Tino', note: "L'isola dell'antico monastero" },
-        { place: 'Tinetto', note: "Giro panoramico attorno all'isolotto" },
-        { place: 'San Terenzo', note: 'Il borgo dei pescatori e il castello' },
-        { place: 'Lerici', note: 'Sosta pranzo • Vista sul castello' },
-        { place: 'Tellaro', note: 'Il piccolo borgo sul mare' },
-        { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+        { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+        { place: 'Portovenere', note: "Scendete a passeggiare nel borgo, patrimonio UNESCO" },
+        { place: 'Palmaria', note: "Bagno e snorkeling, con la Grotta Azzurra" },
+        { place: 'Tino', note: "L'isola del faro e dell'antico monastero" },
+        { place: 'Tinetto', note: "Facciamo il giro del più piccolo dei tre isolotti" },
+        { place: 'San Terenzo', note: "Il borgo dei pescatori con il suo castello" },
+        { place: 'Lerici', note: "Tempo a terra sotto il castello" },
+        { place: 'Tellaro', note: "Un piccolo borgo aggrappato alla roccia" },
+        { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
       itineraryFootnote: 'Circa 7 ore • Orari flessibili',
       includes: ['Pranzo leggero con prodotti tipici', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
@@ -404,13 +404,13 @@ const it = {
       shortDesc: "Portofino e l'abbazia di San Fruttuoso, con le Cinque Terre sulla rotta del ritorno.",
       longDesc: "Una giornata lungo la Riviera di Levante, fino a uno dei porti più celebri al mondo. Prima tappa a San Fruttuoso, con la sua abbazia affacciata sul mare; poi Portofino, con tempo libero per una passeggiata e il pranzo al ristorante. Bagno e snorkeling nell'area marina protetta e, al rientro, la costa delle Cinque Terre vista dal mare.",
       itinerary: [
-        { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-        { place: 'Costa ligure', note: 'Navigazione panoramica lungo la riviera' },
-        { place: 'San Fruttuoso', note: "Sosta • Visita all'abbazia e bagno" },
-        { place: 'Portofino', note: 'Sosta • Tempo libero e pranzo al ristorante' },
-        { place: 'Riserva marina', note: 'Snorkeling in acque cristalline' },
-        { place: 'Cinque Terre', note: 'Navigazione al tramonto lungo la costa' },
-        { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+        { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+        { place: 'Costa ligure', note: "Navighiamo lungo la riviera verso Portofino" },
+        { place: 'San Fruttuoso', note: "L'abbazia nella baia: bagno e visita" },
+        { place: 'Portofino', note: "Tempo libero per passeggiare nel borgo" },
+        { place: 'Riserva marina', note: "Bagno e snorkeling nell'area marina" },
+        { place: 'Cinque Terre', note: "Le Cinque Terre dal mare, sulla via del ritorno" },
+        { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
       ],
       itineraryFootnote: 'Circa 10 ore • Pranzo al ristorante non incluso',
       includes: ['Pranzo leggero a bordo', 'Open bar', 'Hostess multilingue', 'Carburante e skipper', 'Parcheggio privato', 'Teli mare e attrezzatura']
@@ -427,23 +427,23 @@ const it = {
         cinque: {
           name: 'Cinque Terre',
           itinerary: [
-            { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-            { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
-            { place: 'Riomaggiore', note: 'La prima delle Cinque Terre' },
-            { place: 'Manarola', note: 'Snorkeling in acque cristalline' },
-            { place: 'Vernazza', note: 'Tempo a terra • Ultima tappa' },
-            { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: 'Portovenere', note: "Passiamo davanti al borgo e alle sue case colorate" },
+            { place: 'Riomaggiore', note: "Il primo dei cinque borghi" },
+            { place: 'Manarola', note: "Bagno e snorkeling nell'area marina protetta" },
+            { place: 'Vernazza', note: "Un po' di tempo a terra, poi si rientra" },
+            { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         },
         golfo: {
           name: 'Golfo dei Poeti',
           itinerary: [
-            { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-            { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
-            { place: 'Palmaria', note: 'Grotta Azzurra • Snorkeling' },
-            { place: 'Lerici', note: 'Vista sul castello • Tempo a terra' },
-            { place: 'Tellaro', note: 'Piccolo borgo sul mare • Ultima tappa' },
-            { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: 'Portovenere', note: "Scendete a passeggiare nel borgo, patrimonio UNESCO" },
+            { place: 'Palmaria', note: "Bagno e snorkeling, con la Grotta Azzurra" },
+            { place: 'Lerici', note: "Tempo a terra sotto il castello" },
+            { place: 'Tellaro', note: "Un piccolo borgo aggrappato alla roccia, poi si rientra" },
+            { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         }
       },
@@ -467,21 +467,21 @@ const it = {
         cinque: {
           name: 'Cinque Terre al tramonto',
           itinerary: [
-            { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-            { place: 'Portovenere', note: 'Le prime luci del tramonto' },
-            { place: 'Riomaggiore', note: 'Il tramonto sulle scogliere' },
-            { place: 'Manarola', note: 'Aperitivo • Ultima tappa' },
-            { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: 'Portovenere', note: "Il borgo con la luce della sera" },
+            { place: 'Riomaggiore', note: "Il tramonto visto dal mare" },
+            { place: 'Manarola', note: "Aperitivo a bordo davanti al borgo" },
+            { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         },
         golfo: {
           name: 'Golfo dei Poeti al tramonto',
           itinerary: [
-            { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
-            { place: 'Portovenere', note: 'Il borgo medievale al tramonto' },
-            { place: 'Palmaria', note: "Il sole che scende dietro l'isola" },
-            { place: 'Lerici', note: 'Aperitivo con vista sul castello' },
-            { place: 'Rientro', note: "Ritorno al punto d'incontro scelto" }
+            { place: "Punto d'incontro", note: "Partiamo dal punto che avete scelto" },
+            { place: 'Portovenere', note: "Il borgo con la luce della sera" },
+            { place: 'Palmaria', note: "Il sole che cala vicino all'isola" },
+            { place: 'Lerici', note: "Aperitivo a bordo davanti al castello" },
+            { place: 'Rientro', note: "Vi riportiamo al punto di partenza" }
           ]
         }
       },
