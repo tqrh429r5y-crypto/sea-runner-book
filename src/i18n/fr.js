@@ -25,6 +25,8 @@ const fr = {
   'footer.place': 'PORTO MIRABELLO • LA SPEZIA • RIVIERA ITALIENNE',
   'footer.privacy': 'POLITIQUE DE CONFIDENTIALITÉ',
   'footer.cookieSettings': 'PARAMÈTRES DES COOKIES',
+  'footer.reviews': "AVIS GOOGLE",
+  'footer.faq': "QUESTIONS FRÉQUENTES",
 
   // --- elementi comuni dei tour ---
   'tour.altSuffix': ' – excursion privée en bateau au départ de La Spezia',
@@ -66,6 +68,7 @@ const fr = {
   'step2.itineraryNote': "Voici l'itinéraire indicatif : il peut être adapté à vos envies et à l'état de la mer.",
   'step2.included': 'CE QUI EST INCLUS',
   'step2.notIncluded': 'NON INCLUS :',
+  'step2.lastMinute': "Excursion dans les 48 prochaines heures ? Contactez-nous directement :",
   'step2.chooseItinerary': 'CHOISISSEZ VOTRE ITINÉRAIRE',
   'step2.selectDate': 'CHOISISSEZ LA DATE',
   'step2.checkingBanner': "Nous vérifions les disponibilités : merci de patienter un instant avant de choisir une date",
@@ -218,6 +221,38 @@ const fr = {
     {
       q: 'Peut-on venir avec notre chien ?',
       a: `Oui, les chiens sont les bienvenus à bord. Prévenez-nous à l'avance : nous veillerons à ce que tout soit prêt pour leur confort aussi.`
+    },
+    {
+      q: "Comment et quand paie-t-on ?",
+      a: "Vous ne payez rien en envoyant votre demande : elle est gratuite et sans engagement. Une fois la disponibilité confirmée par le capitaine Marco et le devis accepté, nous convenons directement avec vous du paiement (espèces, carte ou virement)."
+    },
+    {
+      q: "Où se retrouve-t-on ? Y a-t-il un parking ?",
+      a: "Le point de départ principal est Porto Mirabello, à La Spezia, avec deux places de parking gratuites pour nos hôtes. Nous pouvons aussi vous retrouver à Portovenere, à Lerici ou près du terminal de croisière : il suffit d'indiquer le point de rendez-vous dans le formulaire."
+    },
+    {
+      q: "Nous arrivons en bateau de croisière. Serons-nous rentrés à temps ?",
+      a: "Oui, les croisiéristes font partie de nos hôtes les plus fréquents. Indiquez-nous votre navire et l'heure de retour à bord dans la demande : le capitaine Marco organise l'itinéraire en conséquence et vous ramène avec une marge confortable. Nous nous retrouvons près du terminal de croisière, à environ 7 minutes à pied du navire."
+    },
+    {
+      q: "Peut-on réserver à la dernière minute ?",
+      a: "Souvent oui, si le bateau est libre ce jour-là. Pour une excursion dans les 48 prochaines heures, le plus rapide est de nous écrire sur WhatsApp ou d'appeler le +39 348 828 9438."
+    },
+    {
+      q: "Que faut-il apporter ?",
+      a: "Maillot de bain, crème solaire, lunettes de soleil et chapeau, ainsi qu'une veste légère pour le soir et pour l'excursion au coucher du soleil. Les serviettes sont à bord, et l'équipement de snorkeling pour les excursions à la journée."
+    },
+    {
+      q: "Comment descendre à terre à Vernazza et à Monterosso ?",
+      a: "À Vernazza, on descend avec le bateau-taxi local, 5 € par personne à régler sur place. À Monterosso, la descente à terre est gratuite."
+    },
+    {
+      q: "Et si j'ai le mal de mer ?",
+      a: "Le système de flaps rend la navigation stable et douce. Si vous êtes sujet au mal de mer, prenez votre remède habituel avant l'excursion et prévenez-nous : le capitaine Marco choisira l'itinéraire le plus calme et des arrêts dans des criques abritées."
+    },
+    {
+      q: "Combien de temps à l'avance réserver pour juillet et août ?",
+      a: "Le plus tôt possible : les dates d'été, surtout le week-end, partent en premier. Envoyer une demande ne coûte rien et n'engage à rien, il vaut donc mieux demander dès que vous connaissez vos dates."
     }
   ],
 
@@ -258,7 +293,7 @@ const fr = {
   'home.contactText': 'Une question avant de réserver ? Nous vous répondons nous-mêmes, Marco et Paola, au plus vite.',
 
   // --- pagina della barca ---
-  'boat.seoTitle': 'Le bateau — Cap Camarat 9.0 WA, yacht primé pour excursions privées',
+  'boat.seoTitle': "Le bateau — Jeanneau Cap Camarat 9.0 WA pour excursions privées",
   'boat.seoDescription': 'Découvrez le Cap Camarat 9.0 WA de Sea Runner : silence grâce au solaire, navigation douce, bimini extensible, toilettes à bord. Le bateau primé de nos excursions privées aux Cinque Terre et à Portofino.',
   'boat.breadcrumb': 'Le bateau',
   'boat.kicker': 'LE BATEAU',
@@ -329,6 +364,7 @@ const fr = {
       seoName: 'aux Cinque Terre',
       shortDesc: "Les cinq villages vus de la mer, avec arrêts baignade, snorkeling et déjeuner servi à bord.",
       longDesc: "Une journée entière consacrée aux Cinque Terre, classées à l'UNESCO, à découvrir depuis la mer : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso. Baignade dans les plus belles criques, snorkeling dans les eaux de l'aire marine protégée et déjeuner léger servi à bord, avec des produits typiques de Ligurie. À Vernazza et à Monterosso, vous aurez le temps de descendre à terre et de flâner dans les ruelles.",
+      notIncluded: "Déjeuner au restaurant à terre (nous le réservons volontiers pour vous) · Bateau-taxi pour Vernazza, 5 € par personne à régler sur place",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: 'Passage panoramique devant le village' },
@@ -351,6 +387,7 @@ const fr = {
       seoName: 'dans le Golfe des Poètes',
       shortDesc: "Portovenere, les îles, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
       longDesc: "Le golfe qui a charmé Byron et Shelley, le temps d'une journée rien qu'à vous. De Portovenere la médiévale, classée à l'UNESCO, aux îles Palmaria, Tino et Tinetto, avec arrêts baignade et snorkeling dans une eau limpide. Puis la traversée vers San Terenzo et Lerici, dominée par son château, jusqu'au petit village de Tellaro. Déjeuner léger servi à bord.",
+      notIncluded: "Déjeuner au restaurant à terre (nous le réservons volontiers pour vous)",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: "Village classé à l'UNESCO • Temps libre à terre" },
@@ -373,6 +410,7 @@ const fr = {
       seoName: 'à Portofino',
       shortDesc: "Portofino et l'abbaye de San Fruttuoso, avec les Cinque Terre sur la route du retour.",
       longDesc: "Une journée le long de la Riviera du Levant, jusqu'à l'un des ports les plus célèbres au monde. Première escale à San Fruttuoso et son abbaye au bord de l'eau, puis Portofino, avec du temps libre pour une promenade et le déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, au retour, la côte des Cinque Terre vue de la mer.",
+      notIncluded: "Déjeuner au restaurant à Portofino (nous le réservons volontiers pour vous)",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Côte ligure', note: 'Navigation panoramique le long de la riviera' },

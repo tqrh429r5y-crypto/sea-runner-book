@@ -26,6 +26,8 @@ const en = {
   'footer.place': 'PORTO MIRABELLO • LA SPEZIA • ITALIAN RIVIERA',
   'footer.privacy': 'PRIVACY POLICY',
   'footer.cookieSettings': 'COOKIE SETTINGS',
+  'footer.reviews': "GOOGLE REVIEWS",
+  'footer.faq': "FAQ",
 
   // --- elementi comuni dei tour ---
   'tour.altSuffix': ' – private boat tour from La Spezia',
@@ -35,7 +37,7 @@ const en = {
   // --- prenotazione: SEO e dati per Google ---
   'booking.seoTitle': 'Request a Free Quote — Private Boat Tours from La Spezia',
   'booking.seoDescription': 'Request a free quote for a fully private boat tour to Cinque Terre, Portofino or Golfo dei Poeti. Captain Marco replies within 24 hours — no payment required upfront.',
-  'booking.seoTitleTour': (tour) => `${tour.name} Private Boat Tour — Request a Quote`,
+  'booking.seoTitleTour': (tour) => ({"cinque-terre": "Cinque Terre Private Boat Tour from La Spezia", "golfo-poeti": "Golfo dei Poeti Private Boat Tour — Portovenere & Lerici", "portofino": "Portofino Private Boat Tour from La Spezia", "half-day-choice": "Half-Day Private Boat Tour from La Spezia", "sunset": "Sunset Boat Tour — Cinque Terre & Gulf of Poets", "custom": "Tailored Private Boat Tour — Italian Riviera"})[tour.id] || `${tour.name} Private Boat Tour from La Spezia`,
   'booking.seoDescriptionTour': (tour) => `Request a free quote for the ${tour.name} private boat tour. ${tour.shortDesc} No payment required, reply within 24 hours from Captain Marco.`,
   'booking.h1': 'Private boat tours from La Spezia',
   'schema.tripName': (name) => `${name} — Private Boat Tour`,
@@ -67,6 +69,7 @@ const en = {
   'step2.itineraryNote': 'This is the standard itinerary. It may vary depending on guest preferences or weather conditions.',
   'step2.included': "WHAT'S INCLUDED",
   'step2.notIncluded': 'NOT INCLUDED:',
+  'step2.lastMinute': "Tour within the next 48 hours? Reach us directly:",
   'step2.chooseItinerary': 'CHOOSE YOUR ITINERARY',
   'step2.selectDate': 'SELECT DATE',
   'step2.checkingBanner': 'Checking availability — please wait before selecting a date',
@@ -98,7 +101,7 @@ const en = {
   'step3.title': 'Where should we reply?',
   'step3.intro': "Leave us your details and we'll send you a tailored quote within 24 hours. No payment required at this stage.",
   'step3.name': 'FULL NAME *',
-  'step3.namePlaceholder': 'Mario Rossi',
+  'step3.namePlaceholder': 'Jane Smith',
   'step3.email': 'EMAIL *',
   'step3.emailPlaceholder': 'you@email.com',
   'step3.phone': 'PHONE *',
@@ -219,6 +222,38 @@ const en = {
     {
       q: 'Can we bring our dog on board?',
       a: `Yes, dogs are very welcome on board. If you're traveling with your four-legged companion, just let us know in advance so we can make sure everything is set up for their comfort too.`
+    },
+    {
+      q: "How and when do we pay?",
+      a: "Nothing is paid when you send a request: it is free and with no obligation. Once Captain Marco confirms availability and you accept the quote, we agree the payment with you directly (cash, card or bank transfer)."
+    },
+    {
+      q: "Where do we meet? Is there parking?",
+      a: "Our main departure point is Porto Mirabello in La Spezia, with two free parking spaces for our guests. We can also meet you in Portovenere, in Lerici or near the cruise terminal: just choose the meeting point in the request form."
+    },
+    {
+      q: "We arrive on a cruise ship. Will we be back in time?",
+      a: "Yes, cruise passengers are among our most frequent guests. Tell us your ship and all-aboard time in the request: Captain Marco plans the route around it and brings you back with a comfortable margin. We meet near the cruise terminal, about 7 minutes on foot from the ship."
+    },
+    {
+      q: "Can we book at the last minute?",
+      a: "Often, yes, if the boat is free that day. For a tour within the next 48 hours the fastest way is to message us on WhatsApp or call +39 348 828 9438."
+    },
+    {
+      q: "What should we bring?",
+      a: "Swimsuit, sunscreen, sunglasses and a hat, plus a light jacket for the evening and for sunset tours. Towels are provided on board, and snorkeling equipment on full day tours."
+    },
+    {
+      q: "How do we go ashore in Vernazza and Monterosso?",
+      a: "In Vernazza you go ashore with the local water taxi, €5 per person, paid on site. In Monterosso going ashore is free."
+    },
+    {
+      q: "What if I get seasick?",
+      a: "The flap system keeps the ride smooth. If you are prone to seasickness, take your usual remedy before the tour and let us know: Captain Marco will choose the calmest route and stops in sheltered coves."
+    },
+    {
+      q: "How far ahead should we book for July and August?",
+      a: "As early as you can: summer dates, especially weekends, are the first to go. Sending a request costs nothing and is not binding, so it is worth asking as soon as you know your dates."
     }
   ],
 
@@ -259,7 +294,7 @@ const en = {
   'home.contactText': 'Questions before booking? They reply personally, as soon as possible.',
 
   // --- pagina della barca ---
-  'boat.seoTitle': 'The Boat — Cap Camarat 9.0 WA, Award-Winning Yacht for Private Tours',
+  'boat.seoTitle': "The Boat — Jeanneau Cap Camarat 9.0 WA for Private Tours",
   'boat.seoDescription': "Discover Sea Runner's Cap Camarat 9.0 WA: silent solar power, smooth cruising, extendable bimini, bathroom on board. The award-winning vessel of our Cinque Terre and Portofino private tours.",
   'boat.breadcrumb': 'The Boat',
   'boat.kicker': 'THE BOAT',

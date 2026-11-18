@@ -27,6 +27,8 @@ const it = {
   'footer.place': 'PORTO MIRABELLO • LA SPEZIA • RIVIERA LIGURE',
   'footer.privacy': 'PRIVACY POLICY',
   'footer.cookieSettings': 'IMPOSTAZIONI COOKIE',
+  'footer.reviews': "RECENSIONI GOOGLE",
+  'footer.faq': "DOMANDE FREQUENTI",
 
   // --- elementi comuni dei tour ---
   'tour.altSuffix': ' – tour privato in barca da La Spezia',
@@ -68,6 +70,7 @@ const it = {
   'step2.itineraryNote': "Questo è l'itinerario indicativo: può essere adattato alle vostre preferenze e alle condizioni del mare.",
   'step2.included': 'COSA È INCLUSO',
   'step2.notIncluded': 'NON INCLUSO:',
+  'step2.lastMinute': "Tour nelle prossime 48 ore? Contattaci direttamente:",
   'step2.chooseItinerary': 'SCEGLI IL TUO ITINERARIO',
   'step2.selectDate': 'SCEGLI LA DATA',
   'step2.checkingBanner': "Stiamo verificando la disponibilità: attendi un istante prima di scegliere la data",
@@ -220,6 +223,38 @@ const it = {
     {
       q: 'Possiamo portare il nostro cane?',
       a: `Sì, i cani sono i benvenuti a bordo. Avvisateci in anticipo: ci assicureremo che sia tutto pronto anche per il loro comfort.`
+    },
+    {
+      q: "Come e quando si paga?",
+      a: "Quando invii la richiesta non paghi nulla: è gratuita e senza impegno. Dopo che il capitano Marco ha confermato la disponibilità e hai accettato il preventivo, concordiamo direttamente con te il pagamento (contanti, carta o bonifico)."
+    },
+    {
+      q: "Dove ci incontriamo? C'è parcheggio?",
+      a: "Il punto di partenza principale è Porto Mirabello, a La Spezia, con due posti auto gratuiti per i nostri ospiti. Possiamo incontrarvi anche a Portovenere, a Lerici o vicino al terminal crociere: basta indicare il punto d'incontro nel modulo di richiesta."
+    },
+    {
+      q: "Arriviamo in nave da crociera. Rientreremo in tempo?",
+      a: "Sì, i crocieristi sono tra i nostri ospiti più frequenti. Indicaci nella richiesta la nave e l'orario di rientro a bordo: il capitano Marco organizza il percorso di conseguenza e vi riporta indietro con un margine tranquillo. Ci incontriamo vicino al terminal crociere, a circa 7 minuti a piedi dalla nave."
+    },
+    {
+      q: "Si può prenotare all'ultimo momento?",
+      a: "Spesso sì, se la barca è libera quel giorno. Per un tour nelle prossime 48 ore il modo più veloce è scriverci su WhatsApp o chiamare il +39 348 828 9438."
+    },
+    {
+      q: "Cosa portare?",
+      a: "Costume, crema solare, occhiali da sole e cappello, più una giacca leggera per la sera e per il tour al tramonto. I teli sono a bordo, e nei tour di una giornata intera anche l'attrezzatura per lo snorkeling."
+    },
+    {
+      q: "Come si scende a terra a Vernazza e a Monterosso?",
+      a: "A Vernazza si scende con il taxi boat locale, 5 € a persona da pagare sul posto. A Monterosso la discesa a terra è gratuita."
+    },
+    {
+      q: "E se soffro il mal di mare?",
+      a: "Il sistema di flap rende la navigazione stabile e morbida. Se soffrite il mal di mare, prendete il vostro solito rimedio prima del tour e avvisateci: il capitano Marco sceglierà il percorso più tranquillo e soste in calette riparate."
+    },
+    {
+      q: "Con quanto anticipo prenotare per luglio e agosto?",
+      a: "Il prima possibile: le date estive, soprattutto nei fine settimana, sono le prime a esaurirsi. Inviare una richiesta non costa nulla e non impegna, quindi conviene chiedere appena conosci le date."
     }
   ],
 
@@ -260,7 +295,7 @@ const it = {
   'home.contactText': 'Hai qualche domanda prima di prenotare? Ti rispondiamo noi, Marco e Paola, il prima possibile.',
 
   // --- pagina della barca ---
-  'boat.seoTitle': 'La barca — Cap Camarat 9.0 WA, yacht pluripremiato per tour privati',
+  'boat.seoTitle': "La barca — Jeanneau Cap Camarat 9.0 WA per tour privati",
   'boat.seoDescription': 'Scopri la Cap Camarat 9.0 WA di Sea Runner: silenziosa grazie ai pannelli solari, navigazione stabile, bimini estendibile, bagno a bordo. La barca pluripremiata dei nostri tour privati alle Cinque Terre e a Portofino.',
   'boat.breadcrumb': 'La barca',
   'boat.kicker': 'LA BARCA',
@@ -333,6 +368,7 @@ const it = {
       seoName: 'alle Cinque Terre',
       shortDesc: "I cinque borghi visti dal mare, con soste per il bagno, snorkeling e pranzo servito a bordo.",
       longDesc: "Una giornata intera dedicata alle Cinque Terre, patrimonio UNESCO, da scoprire dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Soste per il bagno nelle calette più suggestive, snorkeling nelle acque dell'area marina protetta e un pranzo leggero servito a bordo, con prodotti tipici liguri. A Vernazza e a Monterosso avrete il tempo di scendere a terra e passeggiare tra i vicoli.",
+      notIncluded: "Pranzo al ristorante a terra (lo prenotiamo volentieri noi) · Taxi boat per Vernazza, 5 € a persona da pagare sul posto",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
@@ -355,6 +391,7 @@ const it = {
       seoName: 'nel Golfo dei Poeti',
       shortDesc: "Portovenere, le isole, Lerici e Tellaro: il golfo che incantò Byron e Shelley.",
       longDesc: "Il golfo che incantò Byron e Shelley, in una giornata tutta per voi. Dalla Portovenere medievale, patrimonio UNESCO, alle isole Palmaria, Tino e Tinetto, con soste per il bagno e lo snorkeling in acque limpidissime. Poi la traversata verso San Terenzo e Lerici, dominata dal suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero servito a bordo.",
+      notIncluded: "Pranzo al ristorante a terra (lo prenotiamo volentieri noi)",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
@@ -377,6 +414,7 @@ const it = {
       seoName: 'a Portofino',
       shortDesc: "Portofino e l'abbazia di San Fruttuoso, con le Cinque Terre sulla rotta del ritorno.",
       longDesc: "Una giornata lungo la Riviera di Levante, fino a uno dei porti più celebri al mondo. Prima tappa a San Fruttuoso, con la sua abbazia affacciata sul mare; poi Portofino, con tempo libero per una passeggiata e il pranzo al ristorante. Bagno e snorkeling nell'area marina protetta e, al rientro, la costa delle Cinque Terre vista dal mare.",
+      notIncluded: "Pranzo al ristorante a Portofino (lo prenotiamo volentieri noi)",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Costa ligure', note: 'Navigazione panoramica lungo la riviera' },

@@ -350,6 +350,7 @@ const initialTours = [
     itineraryAccent: '#d4a355',
     shortDesc: 'All five villages by sea. Swim, snorkel, Italian lunch on board.',
     longDesc: 'Cruise the entire UNESCO coastline past Riomaggiore, Manarola, Corniglia, Vernazza and Monterosso. Swim in hidden coves, snorkel the marine reserve, and enjoy a light Italian lunch on board as the colourful villages drift by.',
+    notIncluded: "Restaurant lunch ashore (we're happy to book it for you) · Vernazza water taxi, €5 per person, paid on site",
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'Scenic cruise past the village' },
@@ -374,6 +375,7 @@ const initialTours = [
     itineraryAccent: '#d4a355',
     shortDesc: "Byron's gulf. Portovenere, Palmaria island, Lerici and hidden Tellaro.",
     longDesc: 'Explore the gulf that enchanted Byron and Shelley. Medieval Portovenere, the wild islands of Palmaria and Tino, elegant Lerici and the hidden gem of Tellaro, with swim stops and a light lunch on board.',
+    notIncluded: "Restaurant lunch ashore (we're happy to book it for you)",
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Portovenere', note: 'UNESCO village • Time ashore' },
@@ -398,6 +400,7 @@ const initialTours = [
     itineraryAccent: '#2dd4bf',
     shortDesc: 'The full Riviera. Portofino, San Fruttuoso abbey, Cinque Terre on the way back.',
     longDesc: "A long day along the Riviera di Levante to Italy's most iconic harbour. Stop at the medieval abbey of San Fruttuoso, dock in Portofino for free time ashore, snorkel the Marine Protected Area, then cruise past the Cinque Terre on the way back.",
+    notIncluded: "Restaurant lunch in Portofino (we're happy to book it for you)",
     itinerary: [
       { place: 'Pickup point', note: 'Your chosen meeting point • Departure' },
       { place: 'Ligurian Coast', note: 'Scenic cruise along the riviera' },
@@ -1961,6 +1964,13 @@ ${customerData.notes || 'No special requests'}
               <p className="text-center text-white text-base mb-3">
                 {customerCalendarMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}
               </p>
+              {/* tour all'ultimo momento: meglio WhatsApp o telefono che il modulo (analisi del 16/11, A8) */}
+              <p className="mb-3 text-[11px] text-slate-400 leading-relaxed text-center">
+                {t('step2.lastMinute')}{' '}
+                <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">WhatsApp</a>
+                {' · '}
+                <a href="tel:+393488289438" className="text-amber-400 hover:text-amber-300">+39 348 828 9438</a>
+              </p>
               {/* striscia di stato caricamento: visibile solo finché gcal non ha finito.
                   se 'synced' o 'error' (in error usiamo dati locali) la nascondiamo */}
               {(gcalStatus === 'idle' || gcalStatus === 'syncing') && (
@@ -2501,6 +2511,7 @@ ${submitError.rawResponse ? `Response: ${JSON.stringify(submitError.rawResponse,
           <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">{t('footer.tagline')}</p>
           <FooterContacts />
           <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">{t('footer.place')}</p>
+          <FooterLinks />
           {/* accesso dashboard skipper: spostato qui dall'intestazione (ott 2026) */}
           <button onClick={() => setShowSkipperLogin(true)} className="inline-flex items-center gap-1.5 mt-6 text-[10px] text-slate-400 hover:text-amber-400 transition tracking-widest">
             <Lock className="w-3 h-3" /> Area riservata
@@ -3314,6 +3325,35 @@ function BoatPage() {
 
 // ============ FOOTER CONDIVISO ============
 // telefono e Instagram del footer, cliccabili (usato da entrambi i footer: prenotazione e resto del sito)
+// link nel piè di pagina: i 6 tour, la barca, le FAQ, email, WhatsApp e recensioni Google (analisi del 16/11, B9)
+function FooterLinks() {
+  const { t, p, tr } = useLang();
+  const cls = 'hover:text-amber-400 transition';
+  return (
+    <nav className="mt-5 text-[10px] text-slate-400 tracking-widest leading-loose" aria-label="Footer">
+      <p>
+        {initialTours.map(tr).map((tour, i) => (
+          <React.Fragment key={tour.id}>
+            {i > 0 && <span aria-hidden="true"> · </span>}
+            <Link to={p(`/booking/${tour.slug}`)} className={cls}>{tour.name.toUpperCase()}</Link>
+          </React.Fragment>
+        ))}
+      </p>
+      <p>
+        <Link to={p('/boat')} className={cls}>{t('nav.boat').toUpperCase()}</Link>
+        <span aria-hidden="true"> · </span>
+        <Link to={p('/#faq')} className={cls}>{t('footer.faq')}</Link>
+        <span aria-hidden="true"> · </span>
+        <a href="mailto:searunnerprenotazioni@gmail.com" className={cls}>EMAIL</a>
+        <span aria-hidden="true"> · </span>
+        <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className={cls}>WHATSAPP</a>
+        <span aria-hidden="true"> · </span>
+        <a href="https://share.google/6jVbuTak13P75aq2Y" target="_blank" rel="noopener noreferrer" className={cls}>{t('footer.reviews')}</a>
+      </p>
+    </nav>
+  );
+}
+
 function FooterContacts() {
   return (
     <p className="text-slate-400 text-xs tracking-[0.3em]">
@@ -3334,6 +3374,7 @@ function SharedFooter() {
         <p className="text-amber-400/70 text-[10px] tracking-[0.3em] mb-4">{t('footer.tagline')}</p>
         <FooterContacts />
         <p className="text-slate-400 text-[10px] tracking-[0.3em] mt-2">{t('footer.place')}</p>
+          <FooterLinks />
 
         {/* info aziendali — d.lgs 70/2003 */}
         <div className="mt-6 pt-6 border-t border-slate-800/50">
