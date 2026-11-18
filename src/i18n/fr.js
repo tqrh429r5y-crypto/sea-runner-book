@@ -68,7 +68,6 @@ const fr = {
   'step2.itineraryNote': "Voici l'itinéraire indicatif : il peut être adapté à vos envies et à l'état de la mer.",
   'step2.included': 'CE QUI EST INCLUS',
   'step2.notIncluded': 'NON INCLUS :',
-  'step2.lastMinute': "Excursion dans les 48 prochaines heures ? Contactez-nous directement :",
   'step2.chooseItinerary': 'CHOISISSEZ VOTRE ITINÉRAIRE',
   'step2.selectDate': 'CHOISISSEZ LA DATE',
   'step2.checkingBanner': "Nous vérifions les disponibilités : merci de patienter un instant avant de choisir une date",
@@ -232,7 +231,7 @@ const fr = {
     },
     {
       q: "Nous arrivons en bateau de croisière. Serons-nous rentrés à temps ?",
-      a: "Oui, les croisiéristes font partie de nos hôtes les plus fréquents. Indiquez-nous votre navire et l'heure de retour à bord dans la demande : le capitaine Marco organise l'itinéraire en conséquence et vous ramène avec une marge confortable. Nous nous retrouvons près du terminal de croisière, à environ 7 minutes à pied du navire."
+      a: "Oui. Les croisiéristes font partie de nos hôtes les plus fréquents. En envoyant votre demande, indiquez-nous votre navire et l'heure de retour à bord : le capitaine Marco organise toute la journée selon vos horaires, pour que vous soyez au port bien avant le départ. Nous vous retrouvons près du terminal de croisière, à quelques pas (environ 7 minutes à pied) de votre navire."
     },
     {
       q: "Peut-on réserver à la dernière minute ?",
@@ -240,15 +239,7 @@ const fr = {
     },
     {
       q: "Que faut-il apporter ?",
-      a: "Maillot de bain, crème solaire, lunettes de soleil et chapeau, ainsi qu'une veste légère pour le soir et pour l'excursion au coucher du soleil. Les serviettes sont à bord, et l'équipement de snorkeling pour les excursions à la journée."
-    },
-    {
-      q: "Comment descendre à terre à Vernazza et à Monterosso ?",
-      a: "À Vernazza, on descend avec le bateau-taxi local, 5 € par personne à régler sur place. À Monterosso, la descente à terre est gratuite."
-    },
-    {
-      q: "Et si j'ai le mal de mer ?",
-      a: "Le système de flaps rend la navigation stable et douce. Si vous êtes sujet au mal de mer, prenez votre remède habituel avant l'excursion et prévenez-nous : le capitaine Marco choisira l'itinéraire le plus calme et des arrêts dans des criques abritées."
+      a: "Maillot de bain, crème solaire, lunettes de soleil et chapeau, ainsi qu'une veste légère pour le soir et pour l'excursion au coucher du soleil. Les serviettes et l'équipement de snorkeling sont toujours fournis à bord."
     },
     {
       q: "Combien de temps à l'avance réserver pour juillet et août ?",
@@ -364,7 +355,7 @@ const fr = {
       seoName: 'aux Cinque Terre',
       shortDesc: "Les cinq villages vus de la mer, avec arrêts baignade, snorkeling et déjeuner servi à bord.",
       longDesc: "Une journée entière consacrée aux Cinque Terre, classées à l'UNESCO, à découvrir depuis la mer : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso. Baignade dans les plus belles criques, snorkeling dans les eaux de l'aire marine protégée et déjeuner léger servi à bord, avec des produits typiques de Ligurie. À Vernazza et à Monterosso, vous aurez le temps de descendre à terre et de flâner dans les ruelles.",
-      notIncluded: "Déjeuner au restaurant à terre (nous le réservons volontiers pour vous) · Bateau-taxi pour Vernazza, 5 € par personne à régler sur place",
+      notIncluded: "Le déjeuner au restaurant à terre, si vous le préférez au déjeuner léger à bord (qui est inclus). Nous le réservons volontiers pour vous.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: 'Passage panoramique devant le village' },
@@ -387,7 +378,7 @@ const fr = {
       seoName: 'dans le Golfe des Poètes',
       shortDesc: "Portovenere, les îles, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
       longDesc: "Le golfe qui a charmé Byron et Shelley, le temps d'une journée rien qu'à vous. De Portovenere la médiévale, classée à l'UNESCO, aux îles Palmaria, Tino et Tinetto, avec arrêts baignade et snorkeling dans une eau limpide. Puis la traversée vers San Terenzo et Lerici, dominée par son château, jusqu'au petit village de Tellaro. Déjeuner léger servi à bord.",
-      notIncluded: "Déjeuner au restaurant à terre (nous le réservons volontiers pour vous)",
+      notIncluded: "Le déjeuner au restaurant à terre, si vous le préférez au déjeuner léger à bord (qui est inclus). Nous le réservons volontiers pour vous.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: "Village classé à l'UNESCO • Temps libre à terre" },
@@ -410,7 +401,7 @@ const fr = {
       seoName: 'à Portofino',
       shortDesc: "Portofino et l'abbaye de San Fruttuoso, avec les Cinque Terre sur la route du retour.",
       longDesc: "Une journée le long de la Riviera du Levant, jusqu'à l'un des ports les plus célèbres au monde. Première escale à San Fruttuoso et son abbaye au bord de l'eau, puis Portofino, avec du temps libre pour une promenade et le déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, au retour, la côte des Cinque Terre vue de la mer.",
-      notIncluded: "Déjeuner au restaurant à Portofino (nous le réservons volontiers pour vous)",
+      notIncluded: "Le déjeuner au restaurant à Portofino, si vous le préférez au déjeuner léger à bord (qui est inclus). Nous le réservons volontiers pour vous.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Côte ligure', note: 'Navigation panoramique le long de la riviera' },

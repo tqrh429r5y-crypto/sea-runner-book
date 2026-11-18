@@ -69,7 +69,6 @@ const en = {
   'step2.itineraryNote': 'This is the standard itinerary. It may vary depending on guest preferences or weather conditions.',
   'step2.included': "WHAT'S INCLUDED",
   'step2.notIncluded': 'NOT INCLUDED:',
-  'step2.lastMinute': "Tour within the next 48 hours? Reach us directly:",
   'step2.chooseItinerary': 'CHOOSE YOUR ITINERARY',
   'step2.selectDate': 'SELECT DATE',
   'step2.checkingBanner': 'Checking availability — please wait before selecting a date',
@@ -233,7 +232,7 @@ const en = {
     },
     {
       q: "We arrive on a cruise ship. Will we be back in time?",
-      a: "Yes, cruise passengers are among our most frequent guests. Tell us your ship and all-aboard time in the request: Captain Marco plans the route around it and brings you back with a comfortable margin. We meet near the cruise terminal, about 7 minutes on foot from the ship."
+      a: "Yes. Cruise passengers are among our most frequent guests. When you send the request, tell us your ship and your all-aboard time: Captain Marco plans the whole day around your schedule, so you are back at the port well before departure. We meet you near the cruise terminal, a short walk (about 7 minutes) from your ship."
     },
     {
       q: "Can we book at the last minute?",
@@ -241,15 +240,7 @@ const en = {
     },
     {
       q: "What should we bring?",
-      a: "Swimsuit, sunscreen, sunglasses and a hat, plus a light jacket for the evening and for sunset tours. Towels are provided on board, and snorkeling equipment on full day tours."
-    },
-    {
-      q: "How do we go ashore in Vernazza and Monterosso?",
-      a: "In Vernazza you go ashore with the local water taxi, €5 per person, paid on site. In Monterosso going ashore is free."
-    },
-    {
-      q: "What if I get seasick?",
-      a: "The flap system keeps the ride smooth. If you are prone to seasickness, take your usual remedy before the tour and let us know: Captain Marco will choose the calmest route and stops in sheltered coves."
+      a: "Swimsuit, sunscreen, sunglasses and a hat, plus a light jacket for the evening and for sunset tours. Towels and snorkeling equipment are always provided on board."
     },
     {
       q: "How far ahead should we book for July and August?",

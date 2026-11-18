@@ -70,7 +70,6 @@ const it = {
   'step2.itineraryNote': "Questo è l'itinerario indicativo: può essere adattato alle vostre preferenze e alle condizioni del mare.",
   'step2.included': 'COSA È INCLUSO',
   'step2.notIncluded': 'NON INCLUSO:',
-  'step2.lastMinute': "Tour nelle prossime 48 ore? Contattaci direttamente:",
   'step2.chooseItinerary': 'SCEGLI IL TUO ITINERARIO',
   'step2.selectDate': 'SCEGLI LA DATA',
   'step2.checkingBanner': "Stiamo verificando la disponibilità: attendi un istante prima di scegliere la data",
@@ -234,7 +233,7 @@ const it = {
     },
     {
       q: "Arriviamo in nave da crociera. Rientreremo in tempo?",
-      a: "Sì, i crocieristi sono tra i nostri ospiti più frequenti. Indicaci nella richiesta la nave e l'orario di rientro a bordo: il capitano Marco organizza il percorso di conseguenza e vi riporta indietro con un margine tranquillo. Ci incontriamo vicino al terminal crociere, a circa 7 minuti a piedi dalla nave."
+      a: "Sì. I crocieristi sono tra i nostri ospiti più frequenti. Quando invii la richiesta, indicaci la nave e l'orario di rientro a bordo: il capitano Marco organizza tutta la giornata sui vostri orari, così sarete al porto con largo anticipo sulla partenza. Ci incontriamo vicino al terminal crociere, a pochi passi (circa 7 minuti a piedi) dalla nave."
     },
     {
       q: "Si può prenotare all'ultimo momento?",
@@ -242,15 +241,7 @@ const it = {
     },
     {
       q: "Cosa portare?",
-      a: "Costume, crema solare, occhiali da sole e cappello, più una giacca leggera per la sera e per il tour al tramonto. I teli sono a bordo, e nei tour di una giornata intera anche l'attrezzatura per lo snorkeling."
-    },
-    {
-      q: "Come si scende a terra a Vernazza e a Monterosso?",
-      a: "A Vernazza si scende con il taxi boat locale, 5 € a persona da pagare sul posto. A Monterosso la discesa a terra è gratuita."
-    },
-    {
-      q: "E se soffro il mal di mare?",
-      a: "Il sistema di flap rende la navigazione stabile e morbida. Se soffrite il mal di mare, prendete il vostro solito rimedio prima del tour e avvisateci: il capitano Marco sceglierà il percorso più tranquillo e soste in calette riparate."
+      a: "Costume, crema solare, occhiali da sole e cappello, più una giacca leggera per la sera e per il tour al tramonto. Teli e attrezzatura per lo snorkeling sono sempre a bordo."
     },
     {
       q: "Con quanto anticipo prenotare per luglio e agosto?",
@@ -368,7 +359,7 @@ const it = {
       seoName: 'alle Cinque Terre',
       shortDesc: "I cinque borghi visti dal mare, con soste per il bagno, snorkeling e pranzo servito a bordo.",
       longDesc: "Una giornata intera dedicata alle Cinque Terre, patrimonio UNESCO, da scoprire dal mare: Riomaggiore, Manarola, Corniglia, Vernazza e Monterosso. Soste per il bagno nelle calette più suggestive, snorkeling nelle acque dell'area marina protetta e un pranzo leggero servito a bordo, con prodotti tipici liguri. A Vernazza e a Monterosso avrete il tempo di scendere a terra e passeggiare tra i vicoli.",
-      notIncluded: "Pranzo al ristorante a terra (lo prenotiamo volentieri noi) · Taxi boat per Vernazza, 5 € a persona da pagare sul posto",
+      notIncluded: "Il pranzo al ristorante a terra, se lo preferite al pranzo leggero a bordo (che è incluso). Lo prenotiamo volentieri noi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Passaggio panoramico davanti al borgo' },
@@ -391,7 +382,7 @@ const it = {
       seoName: 'nel Golfo dei Poeti',
       shortDesc: "Portovenere, le isole, Lerici e Tellaro: il golfo che incantò Byron e Shelley.",
       longDesc: "Il golfo che incantò Byron e Shelley, in una giornata tutta per voi. Dalla Portovenere medievale, patrimonio UNESCO, alle isole Palmaria, Tino e Tinetto, con soste per il bagno e lo snorkeling in acque limpidissime. Poi la traversata verso San Terenzo e Lerici, dominata dal suo castello, fino al piccolo borgo di Tellaro. Pranzo leggero servito a bordo.",
-      notIncluded: "Pranzo al ristorante a terra (lo prenotiamo volentieri noi)",
+      notIncluded: "Il pranzo al ristorante a terra, se lo preferite al pranzo leggero a bordo (che è incluso). Lo prenotiamo volentieri noi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Portovenere', note: 'Borgo UNESCO • Tempo a terra' },
@@ -414,7 +405,7 @@ const it = {
       seoName: 'a Portofino',
       shortDesc: "Portofino e l'abbazia di San Fruttuoso, con le Cinque Terre sulla rotta del ritorno.",
       longDesc: "Una giornata lungo la Riviera di Levante, fino a uno dei porti più celebri al mondo. Prima tappa a San Fruttuoso, con la sua abbazia affacciata sul mare; poi Portofino, con tempo libero per una passeggiata e il pranzo al ristorante. Bagno e snorkeling nell'area marina protetta e, al rientro, la costa delle Cinque Terre vista dal mare.",
-      notIncluded: "Pranzo al ristorante a Portofino (lo prenotiamo volentieri noi)",
+      notIncluded: "Il pranzo al ristorante a Portofino, se lo preferite al pranzo leggero a bordo (che è incluso). Lo prenotiamo volentieri noi.",
       itinerary: [
         { place: "Punto d'incontro", note: 'Il punto scelto da voi • Partenza' },
         { place: 'Costa ligure', note: 'Navigazione panoramica lungo la riviera' },
