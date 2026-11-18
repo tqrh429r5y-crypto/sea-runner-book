@@ -355,7 +355,6 @@ const fr = {
       seoName: 'aux Cinque Terre',
       shortDesc: "Les cinq villages vus de la mer, avec arrêts baignade, snorkeling et déjeuner servi à bord.",
       longDesc: "Une journée entière consacrée aux Cinque Terre, classées à l'UNESCO, à découvrir depuis la mer : Riomaggiore, Manarola, Corniglia, Vernazza et Monterosso. Baignade dans les plus belles criques, snorkeling dans les eaux de l'aire marine protégée et déjeuner léger servi à bord, avec des produits typiques de Ligurie. À Vernazza et à Monterosso, vous aurez le temps de descendre à terre et de flâner dans les ruelles.",
-      notIncluded: "Le déjeuner au restaurant à terre. Le déjeuner est normalement offert par nous à bord ; si vous préférez déjeuner à terre, nous nous occupons de tout.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: 'Passage panoramique devant le village' },
@@ -378,7 +377,6 @@ const fr = {
       seoName: 'dans le Golfe des Poètes',
       shortDesc: "Portovenere, les îles, Lerici et Tellaro : le golfe qui a charmé Byron et Shelley.",
       longDesc: "Le golfe qui a charmé Byron et Shelley, le temps d'une journée rien qu'à vous. De Portovenere la médiévale, classée à l'UNESCO, aux îles Palmaria, Tino et Tinetto, avec arrêts baignade et snorkeling dans une eau limpide. Puis la traversée vers San Terenzo et Lerici, dominée par son château, jusqu'au petit village de Tellaro. Déjeuner léger servi à bord.",
-      notIncluded: "Le déjeuner au restaurant à terre. Le déjeuner est normalement offert par nous à bord ; si vous préférez déjeuner à terre, nous nous occupons de tout.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Portovenere', note: "Village classé à l'UNESCO • Temps libre à terre" },
@@ -401,7 +399,6 @@ const fr = {
       seoName: 'à Portofino',
       shortDesc: "Portofino et l'abbaye de San Fruttuoso, avec les Cinque Terre sur la route du retour.",
       longDesc: "Une journée le long de la Riviera du Levant, jusqu'à l'un des ports les plus célèbres au monde. Première escale à San Fruttuoso et son abbaye au bord de l'eau, puis Portofino, avec du temps libre pour une promenade et le déjeuner au restaurant. Baignade et snorkeling dans l'aire marine protégée et, au retour, la côte des Cinque Terre vue de la mer.",
-      notIncluded: "Le déjeuner au restaurant à Portofino. Le déjeuner est normalement offert par nous à bord ; si vous préférez déjeuner à Portofino, nous nous occupons de tout.",
       itinerary: [
         { place: 'Point de rendez-vous', note: 'Le point que vous avez choisi • Départ' },
         { place: 'Côte ligure', note: 'Navigation panoramique le long de la riviera' },
