@@ -1829,8 +1829,9 @@ ${customerData.notes || 'No special requests'}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tours.map(tr).map((tour) => (
-              <div key={tour.id} onClick={() => handleTourSelect(tour)}
-                className="group cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
+              <Link key={tour.id} to={p(`/booking/${tour.slug}`)}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="group block cursor-pointer bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-800">
@@ -1852,7 +1853,7 @@ ${customerData.notes || 'No special requests'}
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -2980,7 +2981,7 @@ function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {initialTours.slice(0, 3).map(tr).map(tour => (
+            {initialTours.map(tr).map(tour => (
               <Link key={tour.id} to={p(`/booking/${tour.slug}`)}
                 className="group block bg-slate-900 hover:shadow-2xl hover:shadow-amber-400/10 transition overflow-hidden border border-slate-800 hover:border-amber-400">
                 <TourCardImage tour={tour} />
