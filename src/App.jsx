@@ -2807,7 +2807,7 @@ function HomePage() {
   // la sede legale (via buonviaggio) resta solo nel footer per obblighi D.Lgs 70/2003 e in privacy.
   const localBusinessSchema = {
     "@context": "https://schema.org",
-    "@type": ["TravelAgency", "TouristInformationCenter"],
+    "@type": "TravelAgency",
     "name": "Sea Runner",
     "alternateName": "Sea Runner 5 Terre Boat Tours",
     "description": t('home.schemaDescription'),
@@ -2827,11 +2827,11 @@ function HomePage() {
       "postalCode": "19121",
       "addressCountry": "IT"
     },
-    // coordinate aggiornate al porto mirabello (la spezia)
+    // coordinate = stesse del profilo Google e di Apple Maps (porto mirabello)
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": 44.1003,
-      "longitude": 9.8237
+      "latitude": 44.1031309,
+      "longitude": 9.8256482
     },
     "areaServed": [
       { "@type": "Place", "name": "Cinque Terre" },
@@ -2841,6 +2841,7 @@ function HomePage() {
       { "@type": "Place", "name": "La Spezia" },
       { "@type": "Place", "name": "Italian Riviera" }
     ],
+    "hasMap": "https://www.google.com/maps/search/?api=1&query=Sea%20Runner%205%20Terre%20Boat%20Tours&query_place_id=ChIJfeTlhgX91BIRivaPPRJpeuo",
     "availableLanguage": ["Italian", "English", "French"],
     // aggregateRating rimosso (ott 2026): google non mostra stelle per recensioni dichiarate dall'azienda stessa
     // sameAs: link a tutti i profili "esterni" della stessa azienda.
@@ -2849,7 +2850,7 @@ function HomePage() {
       "https://www.instagram.com/searunner_laspezia/",
       "https://www.tiktok.com/@searunner.5terre",
       "https://www.tripadvisor.it/AttractionProductReview-g187824-d25176464-Cinque_Terre_and_Portovenere_Private_Boat_Tour_from_La_Spezia-La_Spezia_Province_o.html",
-      "https://share.google/kXcd0FNDaHPgSmngG"
+      "https://www.google.com/maps/search/?api=1&query=Sea%20Runner%205%20Terre%20Boat%20Tours&query_place_id=ChIJfeTlhgX91BIRivaPPRJpeuo"
     ]
   };
 
