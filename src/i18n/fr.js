@@ -36,8 +36,8 @@ const fr = {
   // --- prenotazione: SEO e dati per Google ---
   'booking.seoTitle': 'Devis gratuit — Excursions privées en bateau au départ de La Spezia',
   'booking.seoDescription': "Demandez un devis gratuit pour une excursion en bateau entièrement privée aux Cinque Terre, à Portofino ou dans le Golfe des Poètes. Le capitaine Marco vous répond sous 24 heures, aucun paiement à l'avance.",
-  'booking.seoTitleTour': (tour) => `Excursion privée en bateau ${tour.seoName} — Devis gratuit`,
-  'booking.seoDescriptionTour': (tour) => `Demandez un devis gratuit pour l'excursion privée en bateau ${tour.seoName}. ${tour.shortDesc} Aucun paiement demandé, réponse du capitaine Marco sous 24 heures.`,
+  'booking.seoTitleTour': (tour) => `Excursion privée en bateau ${tour.seoName}`,
+  'booking.seoDescriptionTour': (tour) => `${tour.shortDesc} Devis gratuit, réponse sous 24 heures.`,
   'booking.h1': 'Excursions privées en bateau au départ de La Spezia',
   'schema.tripName': (name) => `${name} — Excursion privée en bateau`,
   'schema.touristType': 'Excursion privée en bateau',

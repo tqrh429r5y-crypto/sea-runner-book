@@ -1726,7 +1726,7 @@ ${customerData.notes || 'No special requests'}
 
   // schema.org TouristTrip se siamo dentro un tour specifico:
   // dichiara a google "questa è un'esperienza turistica con prezzo da, durata, fornitore, location"
-  const tourTripSchema = selectedTour && !selectedTour.isCustom ? {
+  const tourTripSchema = selectedTour ? {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
     "name": t('schema.tripName', lt.name),
@@ -1741,11 +1741,12 @@ ${customerData.notes || 'No special requests'}
     })) : undefined,
     "provider": {
       "@type": "TravelAgency",
-      "name": "Sea Runner",
+      "name": "Sea Runner 5 Terre Boat Tours",
       "url": SITE_URL,
       "telephone": "+39 348 828 9438"
     },
-    "offers": {
+    // tour su misura (Tailored): prezzo su richiesta → nessuna offerta con prezzo
+    "offers": selectedTour.isCustom ? undefined : {
       "@type": "Offer",
       "price": selectedTour.basePrice,
       "priceCurrency": "EUR",
@@ -1757,7 +1758,7 @@ ${customerData.notes || 'No special requests'}
 
   // breadcrumb per il booking — appare solo se c'è un tour selezionato (deep link).
   // mostra a google: Sea Runner › Tours › [Nome del tour selezionato]
-  const bookingBreadcrumbSchema = selectedTour && !selectedTour.isCustom ? {
+  const bookingBreadcrumbSchema = selectedTour ? {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
@@ -2801,15 +2802,15 @@ function HomePage() {
   // dati strutturati JSON-LD per Google: dichiarano "questa è un'attività turistica nautica
   // con sede in italia, ecco prezzi/contatti/zona/recensioni". questi dati permettono a google
   // di mostrare rich snippets (stelle, prezzo da, indirizzo) direttamente nei risultati di ricerca.
-  // alternateName: collega al nome ufficiale del google business profile,
+  // name = nome ufficiale del google business profile (dal 24/11; alternateName = nome corto),
   // così google capisce che sito e profilo sono la stessa entità.
   // address: SEDE OPERATIVA (porto mirabello, dove i clienti si imbarcano) — coerente con google business.
   // la sede legale (via buonviaggio) resta solo nel footer per obblighi D.Lgs 70/2003 e in privacy.
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    "name": "Sea Runner",
-    "alternateName": "Sea Runner 5 Terre Boat Tours",
+    "name": "Sea Runner 5 Terre Boat Tours",
+    "alternateName": "Sea Runner",
     "description": t('home.schemaDescription'),
     "url": SITE_URL,
     "image": SITE_OG_IMAGE,

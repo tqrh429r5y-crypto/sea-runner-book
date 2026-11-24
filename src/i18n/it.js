@@ -38,8 +38,8 @@ const it = {
   // --- prenotazione: SEO e dati per Google ---
   'booking.seoTitle': 'Preventivo gratuito — Tour privati in barca da La Spezia',
   'booking.seoDescription': 'Richiedi un preventivo gratuito per un tour in barca completamente privato alle Cinque Terre, a Portofino o nel Golfo dei Poeti. Il capitano Marco risponde entro 24 ore, nessun pagamento anticipato.',
-  'booking.seoTitleTour': (tour) => `Giro in barca privato ${tour.seoName} — Preventivo gratuito`,
-  'booking.seoDescriptionTour': (tour) => `Richiedi un preventivo gratuito per il giro in barca privato ${tour.seoName}. ${tour.shortDesc} Nessun pagamento richiesto, risposta entro 24 ore dal capitano Marco.`,
+  'booking.seoTitleTour': (tour) => `Giro in barca privato ${tour.seoName} da La Spezia`,
+  'booking.seoDescriptionTour': (tour) => `${tour.shortDesc} Preventivo gratuito, risposta entro 24 ore.`,
   'booking.h1': 'Tour privati in barca da La Spezia',
   'schema.tripName': (name) => `${name} — Tour privato in barca`,
   'schema.touristType': 'Tour privato in barca',

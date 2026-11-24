@@ -38,7 +38,7 @@ const en = {
   'booking.seoTitle': 'Request a Free Quote — Private Boat Tours from La Spezia',
   'booking.seoDescription': 'Request a free quote for a fully private boat tour to Cinque Terre, Portofino or Golfo dei Poeti. Captain Marco replies within 24 hours — no payment required upfront.',
   'booking.seoTitleTour': (tour) => ({"cinque-terre": "Cinque Terre Private Boat Tour from La Spezia", "golfo-poeti": "Golfo dei Poeti Private Boat Tour — Portovenere & Lerici", "portofino": "Portofino Private Boat Tour from La Spezia", "half-day-choice": "Half-Day Private Boat Tour from La Spezia", "sunset": "Sunset Boat Tour — Cinque Terre & Gulf of Poets", "custom": "Tailored Private Boat Tour — Italian Riviera"})[tour.id] || `${tour.name} Private Boat Tour from La Spezia`,
-  'booking.seoDescriptionTour': (tour) => `Request a free quote for the ${tour.name} private boat tour. ${tour.shortDesc} No payment required, reply within 24 hours from Captain Marco.`,
+  'booking.seoDescriptionTour': (tour) => `${tour.shortDesc} Free quote, reply within 24 hours.`,
   'booking.h1': 'Private boat tours from La Spezia',
   'schema.tripName': (name) => `${name} — Private Boat Tour`,
   'schema.touristType': 'Private boat tour',
